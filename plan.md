@@ -1,9 +1,9 @@
-# HeraVision — Plan Hybrid Native
+# HeraVision — Plan Hybrid Native B++ Overpower
 
-> **Tagline:** The eyes for blind LLMs. Pure native, no model, no API, no daemon.
-> **Konsep:** HeraVision (mata native <8MB) + LLM buta (otak) = Vision tajam
-> **Status:** Approved — gas hybrid
-> **Tanggal:** 2026-08-19
+> **Tagline:** The eyes for blind LLMs. Pure native, no API, no daemon — now OVERPOWER 35MB.
+> **Konsep:** HeraVision B++ (mata super 35MB) + LLM buta (otak) = Vision 95% realistis blur tetep kebaca
+> **Status:** Approved — gas B++ (20-50MB allowed, makin tajam makin overpower wkwk)
+> **Tanggal:** 2026-08-19 → Update B++ 2026-08-20
 > **Owner:** David (papengcepoko@gmail.com)
 
 ---
@@ -15,316 +15,254 @@
 - Solusi cloud (Gemini API) butuh API key, kuota, internet, cost
 - Solusi local model (Ollama moondream) butuh 1-2GB RAM + download 500MB-2GB
 
-### Visi HeraVision Hybrid Native
-- **Super ringan:** Binary <10MB, RAM 20-50MB, startup <10ms, tanpa download model
-- **Pure native:** 100% algoritma Go (image processing + OCR tiny), `CGO_ENABLED=0`, single binary cross-compile
-- **Tajam via kolaborasi:** HeraVision ekstrak **fakta mentah terstruktur (JSON)** → LLM buta yang reasoning → hasil tajam
+### Visi HeraVision Hybrid Native B++
+- **Overpower tapi tetep native:** Binary 22-35MB (was 9MB), RAM 40-60MB (was 15MB), startup <15ms, offline 100%, `CGO_ENABLED=0`
+- **Batas baru:** 20-50MB GPP — tuker 75% → 95% akurat text buram 8px — worth!
+- **Pure Go/WASM:** 100% Go + WASM embed (wazero), single binary cross-compile, tanpa download model eksternal
+- **Tajam via kolaborasi:** HeraVision ekstrak **fakta mentah terstruktur (JSON) + mermaid** → LLM buta yang reasoning → hasil tajam
 - **Universal plugin:** 1 binary work di Opencode, Claude Code, Codex, Cursor via MCP stdio
 
-### Analogi SD
-- HeraVision = mata yang cuma bisa bilang "ada kotak biru di (400,300), ada tulisan 'Error line 42'"
+### Analogi SD — Before vs After B++
+- **Before (9MB):** Mata minus 3 tanpa kacamata — liat blur → tebak `[text]` doang
+- **After B++ (35MB):** Mata pakai kacamata super + mikroskop + otak AI kecil — blur 8px di-tajemin 2x dulu baru baca `Login` beneran
+- HeraVision = mata yang bilang "ada button biru #3B82F6 di (400,300), ada tulisan 'Error line 42' size 14"
 - LLM = otak yang simpulkan "oh itu button login error, fixnya cek null"
 
 ---
 
-## 2. Arsitektur Hybrid Native
+## 2. Arsitektur Hybrid Native B++
 
 ```
-┌──────┐  "fix UI 📸"  ┌──────────┐  tools/call extract  ┌──────────────────┐
-│ USER │ ───────────→ │ LLM Buta │ ──────────────────→ │ HeraVision Native│
-└──────┘              │(DeepSeek)│                      │  (Go <8MB)       │
-                      └────┬─────┘                      └────────┬─────────┘
-                           │  JSON fakta mentah                  │ pure Go:
-                           │  ←─────────────────────────────────┘  - decode + EXIF
-                           │  {texts:[...], boxes:[...],         - Canny edge
-                           │   colors:[...], lines:[...]}        - contour find
-                           ↓                                     - color histogram
-                      reasoning LLM:                              - OCR tiny (PP-OCR 3MB WASM)
-                      "Ini login page,                            - layout tree
-                       error line 42..."
-                           ↓
-                      "Ini fix code-nya" → USER
+┌──────┐  "fix UI 📸 blur"  ┌──────────┐  tools/call extract  ┌──────────────────────┐
+│ USER │ ───────────────→ │ LLM Buta │ ──────────────────→ │ HeraVision B++ Native│
+└──────┘                  │(DeepSeek)│                      │  (Go 35MB)           │
+                          └────┬─────┘                      └────────┬─────────────┘
+                               │  JSON fakta mentah                  │ Go+WASM:
+                               │  ←─────────────────────────────────┘  - EXIF real
+                               │  {texts:[Login:95%],                - CLAHE+Unsharp+SR 2x
+                               │   boxes:[...],                      - Canny hysteresis
+                               │   colors:Lab k-means,               - 8-connect + Hough
+                               │   mermaid: flowchart}               - PP-OCRv4 6MB WASM
+                               ↓                                     - RealESRGAN 8MB
+                          reasoning LLM:                              - Lab color + layout
+                          "Ini login page blur,
+                           error line 42..."
+                               ↓
+                          "Ini fix code-nya" → USER
 ```
 
-### Layer
+### Layer B++
 ```
-heravision (Go binary)
-├── cmd/heravision/        # CLI: describe, extract, compare, mcp, setup
+heravision (Go binary 35MB)
+├── cmd/heravision/        # CLI: extract, compare, mcp, setup, bench, doctor, version
 ├── internal/
-│   ├── processor/         # decode, EXIF fix, resize 1024, JPEG 80%
-│   ├── detector/          # edge (Canny) → contours → boxes classification
-│   ├── color/             # k-means / histogram → dominant hex
-│   ├── ocr/               # PP-OCR tiny WASM or gosseract tiny — pure Go path
-│   ├── layout/            # segmentasi → tree (header/card/button/input)
+│   ├── processor/         # decode, EXIF real rotate, resize 1024, JPEG 80%, preprocess (CLAHE, Unsharp, SR 2x, Sauvola/Otsu)
+│   ├── detector/          # Gaussian 3x3 → Canny 50/150 hysteresis → morph close → 8-connect → classify v2 (ar+edgeDensity+colorVar)
+│   ├── color/             # Lab k-means 5 + ΔE merge → dominant hex + bg/fg split
+│   ├── ocr/               # PP-OCRv4 6MB WASM (wazero) + RealESRGAN 8MB SR + heuristic fallback — pure Go path
+│   ├── diagram/           # HoughLinesP + arrow head → graph → Mermaid flowchart
+│   ├── layout/            # whitespace projection → rows/cols recursive → reading order
 │   └── prompt/            # template JSON → markdown untuk LLM (opsional)
-├── mcp/                   # MCP server stdio — 3 tools
+├── mcp/                   # MCP server stdio — 3 tools (extract/compare/describe) + mermaid
+├── vscode-extension/      # VSCode: HeraVision: Extract
 ├── plugins/               # opencode.json, claude.json, codex.json
-└── configs/               # heravision.json (thresholds, ocr lang)
+└── configs/               # heravision.json (thresholds, ocr lang, sr enable)
 ```
 
-### Kenapa Tidak Pakai Model AI di HeraVision?
-- Model = berat (500MB-2GB), butuh RAM besar, download lama
-- Hybrid = HeraVision fokus **ekstrak fakta** (yang bisa algoritma murni), LLM fokus **reasoning** (yang LLM sudah jago)
-- Hasil tetap tajam karena LLM modern reasoningnya kuat kalau dikasih fakta terstruktur
+### Kenapa B++ Pakai Model Kecil (Tapi Tetap Native)?
+- Dulu `<12MB` = nggak boleh model → heuristic 75% mentok
+- Sekarang `20-50MB GPP` → bundle `PP-OCR 6MB + SR 8MB` WASM embed (bukan download) — tetap offline, tetap Go, tapi akurat 95% blur — worth wkwkw
+- Hybrid tetep: HeraVision fokus **ekstrak fakta** (dengan AI kecil), LLM fokus **reasoning**
 
 ---
 
-## 3. Bahasa & Stack
+## 3. Bahasa & Stack B++
 
-| Pilihan | Keputusan |
-|---------|-----------|
+| Pilihan | Keputusan B++ |
+|---------|---------------|
 | **Bahasa core** | **Go 1.25** — `CGO_ENABLED=0`, single binary, cross-compile `GOOS=windows/darwin/linux` |
-| **Kenapa Go** | `image` stdlib + `disintegration/imaging` pure Go, startup 5ms, distribusi `go install`/`npm`/`brew`, MCP SDK `mark3labs/mcp-go` mature |
-| **Alternatif** | Rust + `imageproc` + `candle` lebih kencang 2x tapi build Windows ribet, dev velocity rendah — Go menang untuk OSS tool dev |
-| **MCP SDK** | `github.com/mark3labs/mcp-go` — stdio transport, 900+ star |
-| **Image lib** | `disintegration/imaging` + `golang.org/x/image` + `image/jpeg/png/webp` stdlib |
-| **OCR** | **Opsi 1 (primary):** `gopaddle-ocr` WASM / `GO-OCR` tiny 3MB — pure Go/WASM tanpa CGO. **Opsi 2 fallback:** `otiai10/gosseract` jika user install tesseract (CGO) — detect otomatis |
-| **Edge/Contour** | Implementasi pure Go: Gaussian blur → Sobel/Canny → findContours (port dari OpenCV, pure Go) atau `github.com/disintegration/gift` + custom |
-| **Color** | Pure Go k-means 5 cluster atau histogram 64-bin → hex |
+| **MCP SDK** | `github.com/mark3labs/mcp-go` — stdio transport |
+| **Image lib** | `disintegration/imaging` + `golang.org/x/image` + `image/jpeg/png/webp` + `wazero` WASM runtime |
+| **Preprocess** | `CLAHE clip 2.0 + Unsharp r1.0 amt0.6 + Lanczos 2x + Sauvola w31 k0.2 / Otsu` pure Go |
+| **Edge/Contour** | Gaussian 3x3 → Canny 50/150 + NMS + Hysteresis → Morph close 3x3 → 8-connect → `edgeDensity` classify v2 |
+| **Color** | `RGB→Lab` + `k-means 5 iter8` + `ΔE<12` merge → hex + bg dari border |
+| **OCR** | **Primary:** `PP-OCRv4 6MB WASM` via wazero (quantized, 95%) + **SR:** `RealESRGAN tiny 8MB WASM` untuk text <16px blur → **Fallback:** heuristic template 36 char |
+| **Diagram** | `HoughLinesP` + triangle arrow head → graph → Mermaid |
+| **Layout** | Whitespace projection gap>40px → recursive row/col |
 | **CLI** | `spf13/cobra` |
-| **Distribusi** | `go install` + `npm i -g heravision` (wrapper download binary OS) + `goreleaser` (win/mac/linux/arm64) |
+| **Distribusi** | `go install` + `npm i -g heravision` + `goreleaser` (win/mac/linux/arm64) — embed.gz WASM |
 
 ---
 
-## 4. MCP Tools — Spesifikasi Hybrid
+## 4. MCP Tools — Spesifikasi Hybrid B++
 
-Semua tools return **JSON terstruktur + markdown ringkas** — LLM pilih mau pakai JSON atau markdown.
+Semua tools return **JSON terstruktur + markdown + mermaid** — LLM pilih mau pakai JSON atau markdown.
 
-### Tool 1: `heravision_extract`
+### Tool 1: `heravision_extract` (B++: tambah mermaid + confidence)
 ```json
 {
   "name": "heravision_extract",
-  "description": "Extract structured facts from image — texts, boxes, colors, layout. Use for any image when you are text-only and need to see.",
   "inputSchema": {
-    "type": "object",
     "properties": {
-      "path": {"type": "string", "description": "Absolute or relative path to image (png/jpg/webp)"},
-      "mode": {"type": "string", "enum": ["general","ui","code","diagram","error"], "default": "general"}
+      "path": {"type": "string"},
+      "mode": {"type": "string", "enum": ["general","ui","code","diagram","error","blur"], "default": "general"}
     },
     "required": ["path"]
   }
 }
 ```
-**Output:**
+**Output B++:**
 ```json
 {
-  "meta": {"width":1024,"height":768,"mode":"ui","elapsed_ms":42},
-  "texts": [{"text":"Login","x":450,"y":30,"w":120,"h":28,"size":24},{"text":"Error: NullPointer line 42","x":20,"y":500,"w":400,"h":20}],
-  "boxes": [{"type":"input","x":20,"y":100,"w":984,"h":48},{"type":"button","x":400,"y":300,"w":200,"h":40,"color":"#3B82F6","text":"Submit"}],
+  "meta": {"width":1024,"height":768,"mode":"ui","elapsed_ms":78,"sr_used":true},
+  "texts": [{"text":"Login","x":450,"y":30,"w":120,"h":28,"size":24,"conf":0.96},{"text":"Error: NullPointer line 42","x":20,"y":500,"w":400,"h":20,"conf":0.93}],
+  "boxes": [{"type":"button","x":400,"y":300,"w":200,"h":40,"color":"#3B82F6","score":0.92}],
   "colors": {"dominant":["#FFFFFF","#3B82F6","#1F2937"],"background":"#FFFFFF"},
-  "layout": {"type":"column","children":[{"type":"header","y":0,"h":80},{"type":"card","y":100,"h":400}]},
-  "lines": [],
-  "markdown": "## Image Facts\n- Size: 1024x768\n- Texts: Login (450,30), Error NullPointer line 42 (20,500)\n- Boxes: 2 inputs, 1 button #3B82F6 Submit\n..."
+  "layout": {"type":"root","children":[{"type":"header","children":[...]},{"type":"body"}]},
+  "mermaid": "flowchart TD\n  N0[card Login]-->N1[button Submit]",
+  "markdown": "## Image Facts\n- Size: 1024x768\n- Texts: Login 0.96, Error 0.93\n..."
 }
 ```
 
-### Tool 2: `heravision_compare`
-```json
-{
-  "name": "heravision_compare",
-  "description": "Compare two images and return diff facts — added/removed/moved boxes and texts.",
-  "inputSchema": {
-    "type": "object",
-    "properties": {
-      "path_a": {"type":"string"},
-      "path_b": {"type":"string"}
-    },
-    "required": ["path_a","path_b"]
-  }
-}
-```
-Output: `{diff: {added:[...], removed:[...], moved:[...], color_changed:[...]}}`
-
-### Tool 3: `heravision_describe` (compat alias)
-Alias ke `extract` tapi return markdown only untuk LLM yang mau langsung baca tanpa parse JSON.
+### Tool 2: `heravision_compare` — sama, tambah `text_changed`
+### Tool 3: `heravision_describe` — alias markdown only
 
 ---
 
-## 5. Pipeline Internal Detail
+## 5. Pipeline Internal Detail B++
 
 ```
-Input: path/to/image.png (4K, 8MB)
+Input: path/to/image.png (4K, 8MB, blur 8px, miring 5°)
   ↓
-1. processor.Decode → image.Image (handle jpg/png/webp, EXIF orientation fix)
+1. processor.Decode → image.Image (jpg/png/webp, truncated recovery)
   ↓
-2. processor.Resize → longest side 1024 (Lanczos), JPEG 80% in-memory (hemat token & speed)
+2. processor.FixOrientation → baca EXIF 0x0112 → rotate real
   ↓
-3. Parallel:
-   ├── detector.Edges → Canny(50,150) → findContours → classify (aspect ratio, area → button/input/card/image)
-   ├── color.Extract → histogram → 5 dominant hex
-   ├── ocr.Extract → texts + bbox per word
-   └── layout.Build → cluster boxes → tree (header/body/footer, row/column)
+3. processor.Preprocess (B++ baru):
+   ├── blurMetric = Laplacian variance → jika <100 → blur
+   ├── if blur or mode==blur: UnsharpMask + CLAHE
+   ├── if text H<16px: RealESRGAN 8MB WASM 2x upscale crop
+   └── Sauvola w31 k0.2 vs Otsu auto (pilih variance terkecil)
   ↓
-4. Merge → JSON + markdown
+4. processor.Resize → longest 1024 (jika SR: 512→1024)
   ↓
-5. Return via MCP CallToolResult (content: [{type:"text", text: json_string}])
+5. Parallel B++:
+   ├── detector: Gaussian 3x3 → Canny(50,150)+NMS+Hysteresis → Morph close → 8-connect → classify v2 (ar+area+edgeDensity+colorVar+fillRatio → button/input/card/image/text_block)
+   ├── color: RGB→Lab → k-means 5 iter8 → ΔE merge → 5 dominant hex + bg border
+   ├── ocr: per text_block box → deskew Hough angle → 2x upscale → Sauvola → PP-OCRv4 6MB WASM → texts+conf (fallback heuristic)
+   ├── diagram: HoughLinesP → arrow head triangle → graph
+   └── layout: whitespace projection gap>40px → recursive row/col → reading order Y cluster → X
+  ↓
+6. Merge → JSON + markdown + mermaid
+  ↓
+7. Return via MCP CallToolResult
 ```
 
-**Performance target:** <100ms untuk 1024px image di CPU laptop (tanpa OCR), <500ms dengan OCR tiny.
+**Performance B++:** <80ms tanpa SR, <150ms dengan SR+OCR (was <100ms tanpa OCR) — masih <200ms, binary 35MB <50MB.
 
-**Tanpa OCR fallback:** Jika OCR WASM gagal load, tetap return boxes+colors — LLM masih bisa reasoning layout.
+**Fallback:** Jika WASM gagal load, heuristic `[input]/[text]` + boxes+colors tetap — LLM masih bisa reasoning.
 
 ---
 
-## 6. Struktur Project
+## 6. Struktur Project B++
 
 ```
 C:\Users\david\heravision\
 ├── plan.md
 ├── AGENTS.md
 ├── README.md
-├── go.mod (module heravision)
+├── go.mod (module heravision + wazero)
 ├── go.sum
 ├── Makefile
-├── .goreleaser.yaml
+├── .goreleaser.yaml (embed.gz WASM)
 ├── heravision.json.example
-├── cmd/
-│   └── heravision/
-│       └── main.go
+├── cmd/heravision/main.go
 ├── internal/
-│   ├── processor/
-│   │   ├── decode.go
-│   │   ├── resize.go
-│   │   └── exif.go
-│   ├── detector/
-│   │   ├── edge.go
-│   │   ├── contour.go
-│   │   └── classify.go
-│   ├── color/
-│   │   └── histogram.go
-│   ├── ocr/
-│   │   ├── ocr.go (interface)
-│   │   ├── wasm.go (primary)
-│   │   └── tesseract.go (fallback CGO)
-│   ├── layout/
-│   │   └── tree.go
-│   └── mcp/
-│       └── server.go
-├── mcp/
-│   └── server.go (mcp-go stdio, 3 tools)
-├── plugins/
-│   ├── opencode.json
-│   ├── claude.json
-│   └── codex.json
-├── scripts/
-│   ├── install.sh
-│   └── setup.go (heravision setup --agent)
-└── testdata/
-    ├── ui.png
-    ├── code_error.png
-    └── diagram.png
+│   ├── processor/ (decode, resize, exif real, preprocess: clahe, unsharp, sr, sauvola)
+│   ├── detector/ (edge Canny, contour 8, classify v2)
+│   ├── color/ (Lab k-means)
+│   ├── ocr/ (ocr.go interface, wasm.go PP-OCR 6MB, sr.go RealESRGAN 8MB)
+│   ├── diagram/ (mermaid.go Hough)
+│   ├── layout/ (tree.go whitespace)
+│   └── prompt/
+├── mcp/server.go (3 tools + mermaid)
+├── vscode-extension/ (package.json, extension.js)
+├── plugins/ (opencode/claude/codex)
+└── testdata/ (ui.png, blurry_*.png x20, diagram.png)
 ```
 
 ---
 
-## 7. Distribusi & Instalasi Universal
+## 7. Distribusi & Instalasi Universal — sama, binary 35MB
 
 ```bash
-# Install
 go install github.com/heravision/heravision@latest
-# atau
 npm i -g heravision
-# atau
-brew install heravision
-
-# Setup MCP untuk semua agent
 heravision setup --all
-# atau manual:
-heravision setup --agent opencode   # tulis ke C:\Users\david\.config\opencode\opencode.json
-heravision setup --agent claude
-heravision setup --agent codex
-heravision setup --agent cursor
-
-# Test
-heravision extract ./screenshot.png --mode ui --json
-heravision mcp  # run MCP stdio server
-
-# Verifikasi MCP
-heravision doctor  # cek binary, test extract, cek MCP config
-```
-
-**MCP config yang ditulis:**
-```json
-// opencode.json
-{"mcp": {"heravision": {"type":"local","command":["heravision","mcp"],"enabled":true}}}
-// claude.json
-{"mcpServers": {"heravision": {"command":"heravision","args":["mcp"]}}}
-// cursor mcp.json sama
+heravision extract ./screenshot.png --mode blur --json  # B++ blur mode
+heravision bench --n 20
 ```
 
 ---
 
-## 8. Roadmap Phase
+## 8. Roadmap Phase B++
 
-### Phase 0 — Scaffolding (Hari 1)
-- [ ] `go mod init heravision`, `cobra` CLI skeleton: `heravision extract`, `heravision mcp`, `heravision doctor`, `heravision setup`
-- [ ] `processor` — decode + EXIF + resize 1024
-- [ ] `mcp/server.go` — stdio hello world, 1 tool `heravision_extract` return dummy JSON
-- [ ] Test manual: `heravision extract testdata/ui.png`
+### Phase 0 — Scaffolding ✅ DONE (Hari 1)
+- [x] cobra CLI, processor decode/resize, mcp hello world, testdata/ui.png
 
-### Phase 1 — Core Native (Hari 2-5) — MVP
-- [ ] `detector` — Canny + contours + classify (button/input/card)
-- [ ] `color` — histogram dominant
-- [ ] `layout` — tree builder
-- [ ] `ocr` — integrate PP-OCR WASM tiny (fallback: return texts kosong jika belum ready)
-- [ ] MCP 3 tools full, return JSON+markdown real
-- [ ] Plugin `opencode.json` + test di DeepSeek V4 (text-only) — buktikan LLM bisa fix UI dari JSON
-- [ ] `heravision.json` config, `--mode` 5 variant
+### Phase 1 — Core Native ✅ DONE (Hari 2-5)
+- [x] detector Sobel→Canny awal, color histogram, layout tree, ocr heuristic, MCP 3 tools
 
-### Phase 2 — Polish OSS (Minggu 2)
-- [ ] `heravision_compare` diff
-- [ ] Benchmark `heravision bench` — latency, akurasi vs cloud vision (opsional)
-- [ ] Docs: README dengan demo GIF, arsitektur diagram, comparison table
-- [ ] `goreleaser` cross-compile win/mac/linux arm64, `npm` wrapper
-- [ ] GitHub Action CI (lint, test, build)
-- [ ] MIT LICENSE, CONTRIBUTING.md
-- [ ] `heravision setup --all` auto-detect agent config
+### Phase 2 — Polish OSS ✅ DONE (Minggu 2)
+- [x] compare diff, bench, README demo, goreleaser, npm wrapper, CI, LICENSE, setup merge fix
 
-### Phase 3 — Future (Opsional, tidak di MVP)
-- [ ] OCR WASM bundling lebih tajam (ganti PP-OCR dengan model 3MB ter-quantize)
-- [ ] Shape detection untuk diagram → Mermaid
-- [ ] VSCode extension wrapper
+### Phase 3 — B++ Overpower (Minggu 3) — CURRENT
+- [x] OCR wasm stub + heuristic fallback + diagram Mermaid + VSCode (done 22MB)
+- [ ] **B++ Upgrade:** EXIF real rotate, preprocess CLAHE+Unsharp+SR 2x, Canny hysteresis 8-connect, Lab k-means, PP-OCR 6MB + SR 8MB embed.gz
+- [ ] Test blurry_*.png x20 fixtures, bench <150ms, binary 35MB
+
+### Phase 3++ — Future Overpower+ (Opsional)
+- [ ] DocLayout 5MB WASM, angle classifier, table detection → JSON table
+- [ ] Video frame extract
 
 ---
 
-## 9. Kriteria Selesai (Definition of Done)
+## 9. Kriteria Selesai B++
 
-- [ ] Binary <12MB (Windows .exe), `heravision --version` jalan
-- [ ] `heravision extract testdata/ui.png --json` return JSON valid <200ms (tanpa OCR) / <600ms (dengan OCR)
-- [ ] MCP `tools/list` muncul 3 tools, `tools/call heravision_extract` return JSON
-- [ ] Opencode + Claude Code bisa panggil tool dan DeepSeek V4 berhasil reasoning dari JSON (test E2E)
-- [ ] `heravision setup --agent opencode` tulis config tanpa rusak existing `opencode.json`
-- [ ] `go test ./...` pass, `golangci-lint` pass
-- [ ] README + demo GIF + install instruction
+- [ ] Binary 22-35MB (was <12MB), `heravision --version` jalan
+- [ ] `heravision extract testdata/blurry_ui.png --mode blur --json` → texts real `Login` conf>0.9, <150ms
+- [ ] `heravision extract --mode diagram --json` → mermaid `flowchart TD` valid
+- [ ] MCP `tools/list` 3 tools, `tools/call` return JSON + mermaid
+- [ ] `heravision setup --agent opencode` merge tanpa rusak existing (fix backslash done)
+- [ ] `go test ./...` pass, `go vet` pass, `heravision bench --n 20` avg <100ms (no SR) / <150ms (SR)
+- [ ] README demo blur + architecture B++ + comparison table
+- [ ] Binary <50MB, RAM <80MB
 
 ---
 
-## 10. Risiko & Mitigasi
+## 10. Risiko & Mitigasi B++
 
 | Risiko | Mitigasi |
 |--------|----------|
-| OCR pure Go akurasi rendah | Pakai PP-OCR WASM 3MB tiny (pre-trained), fallback ke tesseract jika user punya; tanpa OCR tetap berguna (boxes+colors) |
-| Canny/contour false positive | Threshold tunable via `heravision.json`, mode `ui` vs `general` beda threshold |
-| Windows path spasi | Selalu `LiteralPath`, test di `C:\Users\david\heravision\testdata\file with space.png` |
-| MCP stdout tercemar log | Semua log ke `stderr`, `stdout` hanya JSON-RPC |
+| WASM 14MB bikin binary 35MB | `embed.gz` + `goreleaser` compress, masih <50MB GPP — worth |
+| SR 80ms latency | Hanya jika `blurMetric<100` atau `mode==blur` atau `H<16px`, else skip |
+| Canny false positive blur | Threshold tunable `heravision.json`, mode `blur` vs `general` beda |
+| Windows path spasi | `LiteralPath`, test `file with space.png` |
+| MCP stdout tercemar log | Semua log `stderr`, `stdout` hanya JSON-RPC |
+| OCR WASM load gagal | Fallback heuristic `[text]` + boxes+colors tetap |
 
 ---
 
-## 11. Open Source Strategy
-
-- **License:** MIT
-- **Nama:** `heravision` — cek `github.com/heravision/heravision` + `npm heravision` availability sebelum publish (fallback `@heravision/cli`)
-- **Repo:** `github.com/heravision/heravision` (atau `github.com/<user>/heravision`)
-- **BYO nothing:** Tanpa API key, tanpa server, tanpa download — benar-benar native
-- **Contributing:** Good first issue: tambah `mode: mobile`, improve classifier
+## 11. Open Source Strategy — sama MIT, repo `heravision`, BYO nothing
 
 ---
 
-## 12. Keputusan Final
+## 12. Keputusan Final B++
 
-- **Bahasa:** Go
-- **Arsitektur:** Hybrid Native — HeraVision ekstrak fakta, LLM reasoning
-- **OCR:** WASM tiny primary, fallback no-OCR
-- **Distribusi:** Go binary + MCP stdio universal
+- **Bahasa:** Go + WASM (wazero)
+- **Arsitektur:** Hybrid Native B++ — preprocess + SR + PP-OCR 6MB + LLM reasoning
+- **Size:** 35MB <50MB (was 9MB <12MB) — overpower wkwk
+- **OCR:** PP-OCRv4 6MB + SR 8MB primary, heuristic fallback
+- **Distribusi:** Go binary embed.gz + MCP stdio universal
 
-**Next:** Eksekusi Phase 0 via dev-team sequential: architect → senior-dev → qa-engineer
+**Next:** Eksekusi Phase 3++ B++ — preprocess + Canny 8 + Lab + OCR SR
