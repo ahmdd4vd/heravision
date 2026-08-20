@@ -88,6 +88,25 @@ heravision (Go, CGO_ENABLED=0)
 
 See `heravision.json.example` — thresholds, max_side, ocr lang.
 
+## Demo
+
+![demo](docs/demo.png)
+
+```bash
+heravision extract docs/demo.png --mode ui --json
+# → {"boxes":[{"type":"input","x":49,"y":29}],"colors":["#E0E0E0","#0000E0"],"elapsed_ms":2}
+```
+
+## Verification
+
+```bash
+go vet ./... && go test ./...
+heravision doctor
+heravision extract testdata/ui.png --json | jq .meta
+heravision bench --n 10
+# MCP E2E: echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | heravision mcp
+```
+
 ## Contributing
 
 See `CONTRIBUTING.md` — `go test ./...`, `golangci-lint`.

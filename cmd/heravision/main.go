@@ -203,16 +203,20 @@ func writeAgentConfig(agent, exe string) error {
 	switch agent {
 	case "opencode":
 		path = filepath.Join(home, ".config", "opencode", "opencode.json")
-		content = fmt.Sprintf(`{"mcp":{"heravision":{"type":"local","command":["%s","mcp"],"enabled":true}}}`, exe)
+		b, _ := json.Marshal(map[string]interface{}{"mcp": map[string]interface{}{"heravision": map[string]interface{}{"type": "local", "command": []string{exe, "mcp"}, "enabled": true}}})
+		content = string(b)
 	case "claude":
 		path = filepath.Join(home, ".claude.json")
-		content = fmt.Sprintf(`{"mcpServers":{"heravision":{"command":"%s","args":["mcp"]}}}`, exe)
+		b, _ := json.Marshal(map[string]interface{}{"mcpServers": map[string]interface{}{"heravision": map[string]interface{}{"command": exe, "args": []string{"mcp"}}}})
+		content = string(b)
 	case "codex":
 		path = filepath.Join(home, ".codex", "config.json")
-		content = fmt.Sprintf(`{"mcpServers":{"heravision":{"command":"%s","args":["mcp"]}}}`, exe)
+		b, _ := json.Marshal(map[string]interface{}{"mcpServers": map[string]interface{}{"heravision": map[string]interface{}{"command": exe, "args": []string{"mcp"}}}})
+		content = string(b)
 	case "cursor":
 		path = filepath.Join(home, ".cursor", "mcp.json")
-		content = fmt.Sprintf(`{"mcpServers":{"heravision":{"command":"%s","args":["mcp"]}}}`, exe)
+		b, _ := json.Marshal(map[string]interface{}{"mcpServers": map[string]interface{}{"heravision": map[string]interface{}{"command": exe, "args": []string{"mcp"}}}})
+		content = string(b)
 	}
 	if path == "" {
 		return fmt.Errorf("no path")
@@ -220,7 +224,30 @@ func writeAgentConfig(agent, exe string) error {
 	dir := filepath.Dir(path)
 	_ = os.MkdirAll(dir, 0755)
 	if _, err := os.Stat(path); err == nil {
-		fmt.Fprintf(os.Stderr, "[info] %s exists — merging (manual check needed): %s\n", agent, path)
+		data, _ := os.ReadFile(path)
+		var existing map[string]interface{}
+		if json.Unmarshal(data, &existing) == nil {
+			var patch map[string]interface{}
+			_ = json.Unmarshal([]byte(content), &patch)
+			for k, v := range patch {
+				if em, ok := existing[k].(map[string]interface{}); ok {
+					if pm, ok := v.(map[string]interface{}); ok {
+						for pk, pv := range pm {
+							em[pk] = pv
+						}
+						existing[k] = em
+						continue
+					}
+				}
+				existing[k] = v
+			}
+			merged, _ := json.MarshalIndent(existing, "", "  ")
+			if err := os.WriteFile(path, merged, 0644); err == nil {
+				fmt.Fprintf(os.Stderr, "[ok] %s merged: %s\n", agent, path)
+				return nil
+			}
+		}
+		fmt.Fprintf(os.Stderr, "[info] %s exists — manual merge needed: %s\n", agent, path)
 		fmt.Println(content)
 		return nil
 	}
