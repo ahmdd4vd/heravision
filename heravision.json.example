@@ -1,0 +1,12 @@
+{
+  "max_side": 1024,
+  "detector": {
+    "canny_low": 50,
+    "canny_high": 150,
+    "min_area": 500
+  },
+  "ocr": {
+    "enabled": false,
+    "lang": "en"
+  }
+}

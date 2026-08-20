@@ -1,0 +1,9 @@
+{
+  "mcp": {
+    "heravision": {
+      "type": "local",
+      "command": ["heravision", "mcp"],
+      "enabled": true
+    }
+  }
+}
