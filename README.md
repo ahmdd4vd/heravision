@@ -84,6 +84,12 @@ heravision (Go, CGO_ENABLED=0)
 | Cost | free | $$ | free |
 | RAM | 15MB | 0 | 2GB |
 
+## Phase 3 — OCR + Diagram + VSCode
+
+- **OCR:** `internal/ocr` heuristic (text_block → `[text]`), `WasmEngine` stub for PP-OCR 3MB future (pure Go, no CGO)
+- **Diagram→Mermaid:** `heravision extract --mode diagram --json` → `mermaid: "flowchart TD\n  N0[card] --> N1[button]"`
+- **VSCode:** `vscode-extension/` — command `HeraVision: Extract Image Facts`
+
 ## Config
 
 See `heravision.json.example` — thresholds, max_side, ocr lang.

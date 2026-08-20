@@ -10,6 +10,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 	"heravision/internal/color"
 	"heravision/internal/detector"
+	"heravision/internal/diagram"
 	"heravision/internal/layout"
 	"heravision/internal/ocr"
 	"heravision/internal/processor"
@@ -65,11 +66,16 @@ func handleExtract(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolR
 		bg = "#FFFFFF"
 	}
 	tree := layout.Build(boxes, w, h)
+	var mermaid string
+	if mode == "diagram" {
+		mermaid = diagram.ToMermaid(boxes)
+	}
 	result := map[string]interface{}{
 		"meta": map[string]interface{}{"width": w, "height": h, "mode": mode, "path": path},
 		"texts": texts, "boxes": boxes,
 		"colors": map[string]interface{}{"dominant": dominant, "background": bg},
 		"layout": tree, "lines": []interface{}{},
+		"mermaid": mermaid,
 	}
 	md := fmt.Sprintf("## HeraVision Extract (%s)\n- Size: %dx%d\n- Mode: %s\n- Texts: %d\n- Boxes: %d\n- Colors: %v\n- Layout: %s/%d header, %d body\n", mode, w, h, mode, len(texts), len(boxes), dominant, tree.Type, len(tree.Children), len(boxes))
 	j, _ := json.MarshalIndent(result, "", "  ")

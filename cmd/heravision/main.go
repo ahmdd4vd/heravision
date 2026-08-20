@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"heravision/internal/color"
 	"heravision/internal/detector"
+	"heravision/internal/diagram"
 	"heravision/internal/layout"
 	"heravision/internal/ocr"
 	"heravision/internal/processor"
@@ -55,12 +56,17 @@ func extractCmd() *cobra.Command {
 				bg = dominant[0]
 			}
 			tree := layout.Build(boxes, w, h)
+			var mermaid string
+			if mode == "diagram" {
+				mermaid = diagram.ToMermaid(boxes)
+			}
 			elapsed := time.Since(start).Milliseconds()
 			result := map[string]interface{}{
 				"meta": map[string]interface{}{"width": w, "height": h, "mode": mode, "path": path, "version": version, "elapsed_ms": elapsed},
 				"texts": texts, "boxes": boxes,
 				"colors": map[string]interface{}{"dominant": dominant, "background": bg},
 				"layout": tree, "lines": []interface{}{},
+				"mermaid": mermaid,
 				"markdown": fmt.Sprintf("## Image Facts\n- Size: %dx%d\n- Texts: %d\n- Boxes: %d\n- Colors: %v", w, h, len(texts), len(boxes), dominant),
 			}
 			if asJSON {

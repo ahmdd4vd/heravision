@@ -1,0 +1,12 @@
+{
+  "name": "heravision-vscode",
+  "displayName": "HeraVision - Eyes for blind LLMs",
+  "version": "0.1.0",
+  "publisher": "heravision",
+  "engines": { "vscode": "^1.80.0" },
+  "activationEvents": ["onCommand:heravision.extract"],
+  "contributes": {
+    "commands": [{ "command": "heravision.extract", "title": "HeraVision: Extract Image Facts" }]
+  },
+  "main": "./extension.js"
+}
