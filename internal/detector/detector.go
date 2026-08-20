@@ -18,35 +18,41 @@ type Box struct {
 
 func Detect(img image.Image) []Box {
 	gray := toGray(img)
-	edges := sobel(gray)
-	binary := threshold(edges, 30)
-	components := findComponents(binary)
-	boxes := make([]Box, 0, len(components))
+	blurred := gaussian3x3(gray)
+	edges := canny(blurred, 50, 150)
+	closed := morphClose(edges, 2)
+	components := findComponents(closed)
 	b := img.Bounds()
 	imgW, imgH := b.Dx(), b.Dy()
+	boxes := make([]Box, 0, len(components))
 	for _, c := range components {
-		if c.w < 20 || c.h < 12 {
+		if c.w < 12 || c.h < 10 {
 			continue
 		}
 		area := c.w * c.h
-		if area < 400 {
+		minArea := imgW * imgH / 5000
+		if minArea < 200 {
+			minArea = 200
+		}
+		if area < minArea {
 			continue
 		}
 		if area > imgW*imgH*9/10 {
 			continue
 		}
-		box := classify(c, imgW, imgH)
+		ed := edgeDensity(closed, c)
+		box := classifyV2(c, imgW, imgH, ed)
 		boxes = append(boxes, box)
 	}
 	boxes = dedup(boxes)
 	sort.Slice(boxes, func(i, j int) bool {
-		if boxes[i].Y == boxes[j].Y {
+		if boxes[i].Y/20 == boxes[j].Y/20 {
 			return boxes[i].X < boxes[j].X
 		}
 		return boxes[i].Y < boxes[j].Y
 	})
-	if len(boxes) > 30 {
-		boxes = boxes[:30]
+	if len(boxes) > 40 {
+		boxes = boxes[:40]
 	}
 	return boxes
 }
@@ -56,8 +62,8 @@ func dedup(boxes []Box) []Box {
 	for _, b := range boxes {
 		overlap := false
 		for j, o := range out {
-			if iou(b, o) > 0.6 {
-				if b.W*b.H > o.W*o.H {
+			if iou(b, o) > 0.45 {
+				if b.Score > o.Score {
 					out[j] = b
 				}
 				overlap = true
@@ -80,7 +86,7 @@ func iou(a, b Box) float64 {
 		return 0
 	}
 	inter := float64((x2 - x1) * (y2 - y1))
-	union := float64(a.W*a.H + b.W*b.H) - inter
+	union := float64(a.W*a.H+b.W*b.H) - inter
 	if union == 0 {
 		return 0
 	}
@@ -103,6 +109,68 @@ func toGray(img image.Image) [][]uint8 {
 		gray[y] = row
 	}
 	return gray
+}
+
+func gaussian3x3(gray [][]uint8) [][]uint8 {
+	h := len(gray)
+	if h == 0 {
+		return gray
+	}
+	w := len(gray[0])
+	out := make([][]uint8, h)
+	for y := range out {
+		out[y] = make([]uint8, w)
+		copy(out[y], gray[y])
+	}
+	kernel := [3][3]int{{1, 2, 1}, {2, 4, 2}, {1, 2, 1}}
+	for y := 1; y < h-1; y++ {
+		for x := 1; x < w-1; x++ {
+			sum := 0
+			for ky := -1; ky <= 1; ky++ {
+				for kx := -1; kx <= 1; kx++ {
+					sum += int(gray[y+ky][x+kx]) * kernel[ky+1][kx+1]
+				}
+			}
+			out[y][x] = uint8(sum / 16)
+		}
+	}
+	return out
+}
+
+func canny(gray [][]uint8, low, high uint8) [][]uint8 {
+	edges := sobel(gray)
+	strong := threshold(edges, high)
+	weak := threshold(edges, low)
+	h := len(edges)
+	if h == 0 {
+		return edges
+	}
+	w := len(edges[0])
+	out := make([][]uint8, h)
+	for y := range out {
+		out[y] = make([]uint8, w)
+		copy(out[y], strong[y])
+	}
+	dirs := [8][2]int{{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}}
+	changed := true
+	for changed {
+		changed = false
+		for y := 1; y < h-1; y++ {
+			for x := 1; x < w-1; x++ {
+				if out[y][x] != 0 || weak[y][x] == 0 {
+					continue
+				}
+				for _, d := range dirs {
+					if out[y+d[1]][x+d[0]] != 0 {
+						out[y][x] = 255
+						changed = true
+						break
+					}
+				}
+			}
+		}
+	}
+	return out
 }
 
 func sobel(gray [][]uint8) [][]uint8 {
@@ -144,6 +212,79 @@ func threshold(img [][]uint8, t uint8) [][]uint8 {
 	return out
 }
 
+func morphClose(bin [][]uint8, iter int) [][]uint8 {
+	h := len(bin)
+	if h == 0 {
+		return bin
+	}
+	w := len(bin[0])
+	cur := bin
+	for k := 0; k < iter; k++ {
+		dilated := make([][]uint8, h)
+		for y := range dilated {
+			dilated[y] = make([]uint8, w)
+		}
+		for y := 0; y < h; y++ {
+			for x := 0; x < w; x++ {
+				if cur[y][x] != 0 {
+					for dy := -1; dy <= 1; dy++ {
+						for dx := -1; dx <= 1; dx++ {
+							ny, nx := y+dy, x+dx
+							if ny >= 0 && ny < h && nx >= 0 && nx < w {
+								dilated[ny][nx] = 255
+							}
+						}
+					}
+				}
+			}
+		}
+		eroded := make([][]uint8, h)
+		for y := range eroded {
+			eroded[y] = make([]uint8, w)
+		}
+		for y := 0; y < h; y++ {
+			for x := 0; x < w; x++ {
+				all := true
+				for dy := -1; dy <= 1; dy++ {
+					for dx := -1; dx <= 1; dx++ {
+						ny, nx := y+dy, x+dx
+						if ny < 0 || ny >= h || nx < 0 || nx >= w || dilated[ny][nx] == 0 {
+							all = false
+						}
+					}
+				}
+				if all {
+					eroded[y][x] = 255
+				}
+			}
+		}
+		cur = eroded
+	}
+	return cur
+}
+
+func edgeDensity(bin [][]uint8, c comp) float64 {
+	cnt := 0
+	for y := c.y; y < c.y+c.h; y++ {
+		if y < 0 || y >= len(bin) {
+			continue
+		}
+		for x := c.x; x < c.x+c.w; x++ {
+			if x < 0 || x >= len(bin[0]) {
+				continue
+			}
+			if bin[y][x] != 0 {
+				cnt++
+			}
+		}
+	}
+	area := c.w * c.h
+	if area == 0 {
+		return 0
+	}
+	return float64(cnt) / float64(area)
+}
+
 func findComponents(bin [][]uint8) []comp {
 	h := len(bin)
 	if h == 0 {
@@ -155,7 +296,7 @@ func findComponents(bin [][]uint8) []comp {
 		visited[i] = make([]bool, w)
 	}
 	var comps []comp
-	dirs := [4][2]int{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}
+	dirs := [8][2]int{{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}}
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
 			if bin[y][x] == 0 || visited[y][x] {
@@ -197,23 +338,23 @@ func findComponents(bin [][]uint8) []comp {
 	return comps
 }
 
-func classify(c comp, imgW, imgH int) Box {
+func classifyV2(c comp, imgW, imgH int, ed float64) Box {
 	ar := float64(c.w) / float64(c.h)
 	area := c.w * c.h
 	typ := "card"
 	switch {
-	case ar > 3 && c.h < 60 && c.h > 18:
+	case ar > 3.2 && c.h < 70 && c.h > 14 && ed < 0.3:
 		typ = "input"
-	case ar > 1.5 && ar < 5 && c.w > 60 && c.h > 28 && c.h < 80 && area < 30000:
+	case ar > 1.4 && ar < 6 && c.w > 50 && c.h > 20 && c.h < 85 && area < 40000 && ed > 0.08 && ed < 0.5:
 		typ = "button"
-	case ar < 1.2 && c.w > 40 && c.h > 40 && c.w < 300 && c.h < 300:
+	case ar < 1.25 && c.w > 35 && c.h > 35 && c.w < 400 && c.h < 400 && ed < 0.4:
 		typ = "image"
-	case c.w > imgW*6/10 && c.h > 60:
+	case c.w > imgW*5/10 && c.h > 50:
 		typ = "card"
-	case c.w > 200 && c.h < 30:
+	case ed > 0.02 && ed < 0.25 && c.h < 35 && c.w > 25:
 		typ = "text_block"
 	}
-	score := float64(area) / float64(imgW*imgH)
+	score := float64(area)/float64(imgW*imgH)*0.5 + ed*0.5
 	if score > 1 {
 		score = 1
 	}

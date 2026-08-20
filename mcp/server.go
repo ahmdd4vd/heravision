@@ -23,7 +23,7 @@ func NewServer() *server.MCPServer {
 	s.AddTool(mcp.NewTool("heravision_extract",
 		mcp.WithDescription("Extract structured facts from image — texts, boxes, colors, layout. Use for any image when you are text-only and need to see."),
 		mcp.WithString("path", mcp.Required(), mcp.Description("Absolute or relative path to image (png/jpg/webp)")),
-		mcp.WithString("mode", mcp.Description("Mode: general, ui, code, diagram, error"), mcp.DefaultString("general")),
+		mcp.WithString("mode", mcp.Description("Mode: general, ui, code, diagram, error, blur"), mcp.DefaultString("general")),
 	), handleExtract)
 	s.AddTool(mcp.NewTool("heravision_compare",
 		mcp.WithDescription("Compare two images and return diff facts — added/removed/moved boxes and texts."),
@@ -33,7 +33,7 @@ func NewServer() *server.MCPServer {
 	s.AddTool(mcp.NewTool("heravision_describe",
 		mcp.WithDescription("Describe image as markdown — alias to extract but returns markdown only."),
 		mcp.WithString("path", mcp.Required(), mcp.Description("Path to image")),
-		mcp.WithString("mode", mcp.Description("Mode: general, ui, code, diagram, error"), mcp.DefaultString("general")),
+		mcp.WithString("mode", mcp.Description("Mode: general, ui, code, diagram, error, blur"), mcp.DefaultString("general")),
 	), handleDescribe)
 	return s
 }
@@ -54,16 +54,19 @@ func handleExtract(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolR
 		return mcp.NewToolResultError(fmt.Sprintf("decode failed: %v", err)), nil
 	}
 	img = processor.FixOrientation(img)
+	img = processor.Preprocess(img, mode)
 	img = processor.Resize(img, 1024)
 	b := img.Bounds()
 	w, h := b.Dx(), b.Dy()
 	boxes := detector.Detect(img)
 	texts := ocr.Extract(img)
 	dominant := color.Dominant(img, 5)
-	bg := dominant[0]
+	bg := color.Background(img)
 	if len(dominant) == 0 {
 		dominant = []string{"#FFFFFF"}
-		bg = "#FFFFFF"
+	}
+	if bg == "" {
+		bg = dominant[0]
 	}
 	tree := layout.Build(boxes, w, h)
 	var mermaid string

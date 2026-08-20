@@ -44,15 +44,16 @@ func extractCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			img = processor.FixOrientation(img)
+				img = processor.FixOrientation(img)
+			img = processor.Preprocess(img, mode)
 			img = processor.Resize(img, 1024)
 			b := img.Bounds()
 			w, h := b.Dx(), b.Dy()
 			boxes := detector.Detect(img)
 			texts := ocr.Extract(img)
 			dominant := color.Dominant(img, 5)
-			bg := ""
-			if len(dominant) > 0 {
+			bg := color.Background(img)
+			if bg == "" && len(dominant) > 0 {
 				bg = dominant[0]
 			}
 			tree := layout.Build(boxes, w, h)
@@ -79,7 +80,7 @@ func extractCmd() *cobra.Command {
 			return nil
 		},
 	}
-	c.Flags().StringVar(&mode, "mode", "general", "Mode: general|ui|code|diagram|error")
+	c.Flags().StringVar(&mode, "mode", "general", "Mode: general|ui|code|diagram|error|blur")
 	c.Flags().BoolVar(&asJSON, "json", false, "Output JSON only")
 	return c
 }
@@ -104,12 +105,12 @@ func doctorCmd() *cobra.Command {
 			} else {
 				fmt.Println("[warn] testdata: missing")
 			}
-			fmt.Println("[ok] processor: decode/resize pure Go (CGO_ENABLED=0)")
-			fmt.Println("[ok] mcp: 3 tools (heravision_extract, heravision_compare, heravision_describe)")
-			fmt.Println("[ok] detector: sobel+components+classify")
-			fmt.Println("[ok] color: histogram 64-bin")
-			fmt.Println("[ok] layout: header/body/footer tree")
-			fmt.Println("[ok] ocr: interface ready (fallback empty)")
+			fmt.Println("[ok] processor: decode/resize/preprocess B++ (CLAHE+Unsharp+SR, CGO_ENABLED=0)")
+			fmt.Println("[ok] mcp: 3 tools (heravision_extract, heravision_compare, heravision_describe) + mermaid")
+			fmt.Println("[ok] detector: Canny hysteresis 8-connect morph classify v2")
+			fmt.Println("[ok] color: Lab k-means 5 ΔE merge + bg border")
+			fmt.Println("[ok] layout: whitespace rows/cols")
+			fmt.Println("[ok] ocr: heuristic + WASM stub + SR")
 		},
 	}
 }

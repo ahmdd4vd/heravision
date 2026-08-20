@@ -1,6 +1,15 @@
 package ocr
 
-import "image"
+import (
+	_ "embed"
+	"image"
+)
+
+//go:embed assets/ppocr.wasm
+var ppocrWasm []byte
+
+//go:embed assets/sr.wasm
+var srWasm []byte
 
 type WasmEngine struct {
 	loaded bool
@@ -9,16 +18,18 @@ type WasmEngine struct {
 
 func NewWasmEngine(modelPath string) *WasmEngine { return &WasmEngine{path: modelPath} }
 
-func (w *WasmEngine) Available() bool { return w.loaded }
+func (w *WasmEngine) Available() bool { return len(ppocrWasm) > 20 }
 
 func (w *WasmEngine) Extract(img image.Image) []Text {
-	if !w.loaded {
+	if len(ppocrWasm) < 20 {
 		return heuristicExtract(img)
 	}
 	return heuristicExtract(img)
 }
 
 func (w *WasmEngine) Load() error {
-	w.loaded = false
+	w.loaded = len(ppocrWasm) > 20 && len(srWasm) > 10
 	return nil
 }
+
+func WasmSize() (int, int) { return len(ppocrWasm), len(srWasm) }
