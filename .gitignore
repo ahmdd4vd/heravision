@@ -1,0 +1,13 @@
+heravision
+heravision.exe
+plan.md
+.agents/
+.DS_Store
+*.log
+npm/node_modules/
+vscode-extension/node_modules/
+internal/ocr/assets/*.wasm
+!internal/ocr/assets/.gitkeep
+testdata/*.png
+!testdata/ui.png
+!testdata/demo.png
