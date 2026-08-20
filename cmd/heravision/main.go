@@ -20,7 +20,7 @@ var version = "0.1.0"
 
 func main() {
 	root := &cobra.Command{Use: "heravision", Short: "The eyes for blind LLMs — pure native vision", Long: "HeraVision — hybrid native vision: extract facts from images (pure Go, no model/API) for text-only LLMs like DeepSeek V4, GLM 5.3"}
-	root.AddCommand(versionCmd(), extractCmd(), mcpCmd(), doctorCmd(), setupCmd())
+	root.AddCommand(versionCmd(), extractCmd(), mcpCmd(), doctorCmd(), setupCmd(), benchCmd())
 	if err := root.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -155,6 +155,44 @@ func setupCmd() *cobra.Command {
 	}
 	c.Flags().String("agent", "", "Agent: opencode|claude|codex|cursor")
 	c.Flags().Bool("all", false, "Setup all agents")
+	return c
+}
+
+func benchCmd() *cobra.Command {
+	c := &cobra.Command{
+		Use: "bench [image]", Short: "Benchmark extract latency",
+		Args: cobra.MaximumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			n, _ := cmd.Flags().GetInt("n")
+			path := "testdata/ui.png"
+			if len(args) > 0 {
+				path = args[0]
+			}
+			img, _, err := processor.Decode(path)
+			if err != nil {
+				return err
+			}
+			img = processor.FixOrientation(img)
+			img = processor.Resize(img, 1024)
+			var total time.Duration
+			var boxes int
+			for i := 0; i < n; i++ {
+				start := time.Now()
+				b := detector.Detect(img)
+				_ = color.Dominant(img, 5)
+				_ = ocr.Extract(img)
+				boxes = len(b)
+				total += time.Since(start)
+			}
+			avg := float64(total.Microseconds()) / float64(n) / 1000
+			fmt.Printf("bench %s x%d: avg %.2fms, boxes %d, total %v\n", path, n, avg, boxes, total)
+			if avg > 100 {
+				fmt.Fprintln(os.Stderr, "[warn] avg >100ms target exceeded (without OCR)")
+			}
+			return nil
+		},
+	}
+	c.Flags().Int("n", 10, "iterations")
 	return c
 }
 

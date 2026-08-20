@@ -1,0 +1,14 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version: '1.25' }
+      - run: go vet ./...
+      - run: go test ./... -count=1
+      - run: CGO_ENABLED=0 go build -o heravision ./cmd/heravision
+      - run: ./heravision doctor
+      - run: ./heravision bench --n 5

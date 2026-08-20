@@ -1,0 +1,9 @@
+{
+  "name": "heravision",
+  "version": "0.1.0",
+  "description": "The eyes for blind LLMs — pure native vision",
+  "bin": { "heravision": "bin/heravision.js" },
+  "scripts": { "postinstall": "node install.js" },
+  "files": ["bin/", "install.js"],
+  "license": "MIT"
+}

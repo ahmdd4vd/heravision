@@ -1,0 +1,21 @@
+version: 2
+project_name: heravision
+builds:
+  - main: ./cmd/heravision
+    binary: heravision
+    env: [CGO_ENABLED=0]
+    goos: [windows, darwin, linux]
+    goarch: [amd64, arm64]
+    ignore:
+      - goos: windows
+        goarch: arm64
+    ldflags: ["-s -w -X main.version={{.Version}}"]
+archives:
+  - builds: [heravision]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+checksum:
+  name_template: checksums.txt
