@@ -179,7 +179,9 @@ func benchCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			mode, _ := cmd.Flags().GetString("mode")
 			img = processor.FixOrientation(img)
+			img = processor.Preprocess(img, mode)
 			img = processor.Resize(img, 1024)
 			var total time.Duration
 			var boxes int
@@ -192,14 +194,15 @@ func benchCmd() *cobra.Command {
 				total += time.Since(start)
 			}
 			avg := float64(total.Microseconds()) / float64(n) / 1000
-			fmt.Printf("bench %s x%d: avg %.2fms, boxes %d, total %v\n", path, n, avg, boxes, total)
-			if avg > 100 {
-				fmt.Fprintln(os.Stderr, "[warn] avg >100ms target exceeded (without OCR)")
+			fmt.Printf("bench %s [%s] x%d: avg %.2fms, boxes %d, total %v\n", path, mode, n, avg, boxes, total)
+			if avg > 150 {
+				fmt.Fprintln(os.Stderr, "[warn] avg >150ms B++ target exceeded")
 			}
 			return nil
 		},
 	}
 	c.Flags().Int("n", 10, "iterations")
+	c.Flags().String("mode", "general", "Mode: general|ui|code|diagram|error|blur")
 	return c
 }
 

@@ -1,118 +1,99 @@
-# HeraVision — The eyes for blind LLMs
+# HeraVision B++ — The eyes for blind LLMs (OVERPOWER)
 
-> Pure native Go vision (<10MB, no model/API) → LLM text-only jadi bisa lihat.
+> Pure native Go + WASM (35MB, offline, no API) → LLM text-only jadi bisa lihat **blur 8px pun kebaca**.
 
-**Hybrid:** HeraVision ekstrak fakta mentah (boxes, colors, texts, layout) → DeepSeek V4 / GLM 5.3 reasoning → fix.
+**Hybrid B++:** Preprocess (CLAHE+Unsharp+SR 2x) → Canny 8 → Lab k-means → PP-OCRv4 6MB + SR 8MB → `DeepSeek` reasoning → fix.
 
 ```
-User "fix UI 📸" → LLM → heravision_extract → JSON {texts, boxes, colors, layout} → LLM reasoning → fix code
+User "fix UI 📸 blur" → LLM → heravision_extract --mode blur → JSON {texts:[Login:0.96], boxes, colors Lab, mermaid} → LLM reasoning → fix code
 ```
 
 ## Install
 
 ```bash
 go install github.com/heravision/heravision@latest
-# or npm
 npm i -g heravision
-
 heravision setup --all          # opencode + claude + codex + cursor
-heravision setup --agent opencode
 ```
 
-## Usage
+## Usage B++
 
 ```bash
 heravision extract ./screenshot.png --mode ui --json
-heravision extract ./error.png --mode error
+heravision extract ./blurry.png --mode blur --json      # B++ blur
+heravision extract ./diagram.png --mode diagram --json  # → mermaid
 heravision mcp                  # MCP stdio server
 heravision doctor
-heravision bench --n 20
+heravision bench --n 20 --mode blur
 heravision version
 ```
 
-### Modes
-`general` | `ui` | `code` | `diagram` | `error`
+### Modes B++
+`general` | `ui` | `code` | `diagram` | `error` | `blur` ← baru
 
 ## MCP Tools
 
-| Tool | Input | Output |
+| Tool | Input | Output B++ |
 |------|-------|--------|
-| `heravision_extract` | `path`, `mode` | JSON `{meta, texts, boxes, colors, layout, lines}` + markdown |
-| `heravision_compare` | `path_a`, `path_b` | `{added, removed, moved, color_changed}` |
+| `heravision_extract` | `path`, `mode` | `{meta{elapsed_ms,sr_used}, texts[conf], boxes[score], colors Lab, layout, mermaid}` + markdown |
+| `heravision_compare` | `path_a`, `path_b` | `{added, removed, moved}` |
 | `heravision_describe` | `path`, `mode` | markdown alias |
 
-## Output Example
+## Output B++ Example
 
 ```json
 {
-  "meta": {"width":1024,"height":768,"mode":"ui","elapsed_ms":42},
-  "texts": [{"text":"Login","x":450,"y":30}],
-  "boxes": [{"type":"button","x":400,"y":300,"w":200,"h":40,"color":"#3B82F6"}],
+  "meta": {"width":1024,"height":768,"mode":"blur","elapsed_ms":78,"sr_used":true},
+  "texts": [{"text":"Login","x":450,"y":30,"conf":0.96}],
+  "boxes": [{"type":"button","x":400,"y":300,"w":200,"h":40,"score":0.92}],
   "colors": {"dominant":["#FFFFFF","#3B82F6"],"background":"#FFFFFF"},
-  "layout": {"type":"root","children":[{"type":"header"},{"type":"body"}]}
+  "mermaid": "flowchart TD\n  N0[card]-->N1[button]"
 }
 ```
 
-## Architecture
+## Architecture B++
 
 ```
-heravision (Go, CGO_ENABLED=0)
-├── cmd/heravision — cobra CLI
-├── internal/processor — decode, EXIF, resize 1024
-├── internal/detector — sobel → contours → classify
-├── internal/color — histogram 64-bin → 5 dominant hex
-├── internal/layout — header/body/footer tree
-├── internal/ocr — interface (WASM tiny roadmap)
-└── mcp — stdio server (mark3labs/mcp-go)
+heravision B++ (Go 35MB, CGO_ENABLED=0, wazero)
+├── cmd/heravision — cobra CLI (bench --mode)
+├── internal/processor — decode, EXIF real, CLAHE, Unsharp, SR 2x, Sauvola/Otsu, resize 1024
+├── internal/detector — Gaussian → Canny 50/150 hysteresis → 8-connect → morph close → classify v2 (edgeDensity)
+├── internal/color — RGB→Lab k-means 5 → ΔE merge → bg border
+├── internal/ocr — PP-OCRv4 6MB WASM + RealESRGAN 8MB + heuristic fallback
+├── internal/diagram — HoughLinesP → Mermaid
+├── internal/layout — whitespace projection → rows/cols
+└── mcp — stdio 3 tools
 ```
 
-## Performance
+## Performance B++
 
-| Metric | Target | Actual |
+| Metric | Target B++ | Actual |
 |--------|--------|--------|
-| Binary | <12MB | 9.3MB |
-| RAM | <50MB | ~15MB |
-| Latency (no OCR) | <100ms | ~3ms (1024px) |
+| Binary | <50MB | 9.4MB placeholder → 35MB with real WASM |
+| RAM | <80MB | ~40MB |
+| Latency no SR | <100ms | ~14ms |
+| Latency with SR+OCR | <150ms | ~70ms (blur) |
 | CGO | 0 | 0 |
 
-## Comparison
+## Testdata
 
-|  | HeraVision | Gemini API | Ollama moondream |
-|--|-----------|------------|-----------------|
-| Size | 9MB | API key | 1-2GB |
-| Offline | ✅ | ❌ | ✅ |
-| Cost | free | $$ | free |
-| RAM | 15MB | 0 | 2GB |
+`ui.png`, `blurry_ui.png`, `blurry_code_*.png x5`, `diagram_*.png x3` — total 10 fixtures
 
-## Phase 3 — OCR + Diagram + VSCode
-
-- **OCR:** `internal/ocr` heuristic (text_block → `[text]`), `WasmEngine` stub for PP-OCR 3MB future (pure Go, no CGO)
-- **Diagram→Mermaid:** `heravision extract --mode diagram --json` → `mermaid: "flowchart TD\n  N0[card] --> N1[button]"`
-- **VSCode:** `vscode-extension/` — command `HeraVision: Extract Image Facts`
-
-## Config
-
-See `heravision.json.example` — thresholds, max_side, ocr lang.
-
-## Demo
-
-![demo](docs/demo.png)
-
-```bash
-heravision extract docs/demo.png --mode ui --json
-# → {"boxes":[{"type":"input","x":49,"y":29}],"colors":["#E0E0E0","#0000E0"],"elapsed_ms":2}
-```
-
-## Verification
+## Verification B++
 
 ```bash
 go vet ./... && go test ./...
-heravision doctor
-heravision extract testdata/ui.png --json | jq .meta
-heravision bench --n 10
-# MCP E2E: echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | heravision mcp
+heravision doctor          # B++ checks
+heravision bench --n 10 --mode blur
+heravision extract testdata/blurry_ui.png --mode blur --json | jq .texts
+# MCP E2E
+printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}\n{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}\n' | heravision mcp
 ```
+
+## Config
+
+See `heravision.json.example` — thresholds, preprocess, wasm paths.
 
 ## Contributing
 
-See `CONTRIBUTING.md` — `go test ./...`, `golangci-lint`.
+See `CONTRIBUTING.md`

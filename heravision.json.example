@@ -3,10 +3,22 @@
   "detector": {
     "canny_low": 50,
     "canny_high": 150,
-    "min_area": 500
+    "min_area": 200,
+    "mode_overrides": { "blur": { "canny_low": 30, "canny_high": 100 } }
   },
+  "preprocess": {
+    "clahe_clip": 2.0,
+    "unsharp_radius": 1.0,
+    "unsharp_amount": 0.6,
+    "sr_enabled": true,
+    "sr_threshold_px": 16
+  },
+  "color": { "k": 5, "deltaE_merge": 12 },
   "ocr": {
-    "enabled": false,
-    "lang": "en"
-  }
+    "enabled": true,
+    "engine": "wasm",
+    "lang": "en",
+    "wasm": { "ppocr": "internal/ocr/assets/ppocr.wasm", "sr": "internal/ocr/assets/sr.wasm" }
+  },
+  "diagram": { "hough_thresh": 80 }
 }

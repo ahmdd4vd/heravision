@@ -11,4 +11,6 @@ jobs:
       - run: go test ./... -count=1
       - run: CGO_ENABLED=0 go build -o heravision ./cmd/heravision
       - run: ./heravision doctor
-      - run: ./heravision bench --n 5
+      - run: ./heravision bench --n 5 --mode blur
+      - run: ./heravision extract testdata/blurry_ui.png --mode blur --json | jq .meta
+
