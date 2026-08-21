@@ -19,6 +19,7 @@ func main() {
 	scaleStable := flag.Bool("scale-stable", false, "use multi-scale stable boundary-aware proposals")
 	relationPrune := flag.Bool("relation-prune", false, "prune distant relation candidate pairs")
 	scaleMinSupport := flag.Int("scale-min-support", 0, "minimum distinct-scale support for stable proposals; 0 uses default")
+	scaleExtraFraction := flag.Float64("scale-extra-fraction", 0, "optional extra stable scale fraction above 1.0")
 	legacyMaxPixels := flag.Int64("legacy-max-pixels", 24_000_000, "explicit B0 decode pixel budget")
 	flag.Parse()
 
@@ -33,6 +34,7 @@ func main() {
 		ScaleStable:           *scaleStable,
 		RelationPrune:         *relationPrune,
 		ScaleMinSupport:       *scaleMinSupport,
+		ScaleExtraFraction:    *scaleExtraFraction,
 	})
 	if err != nil {
 		log.Fatal(err)

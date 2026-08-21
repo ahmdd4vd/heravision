@@ -14,11 +14,12 @@ import (
 // StableConfig controls the deterministic multi-scale proposal ablation. The
 // base proposer remains available through Propose so B1-old is reproducible.
 type StableConfig struct {
-	Base              Config
-	ScaleFractions    []float64
-	MatchIoU          float64
-	MinSupport        int
-	BoundaryTolerance float64
+	Base               Config
+	ScaleFractions     []float64
+	MatchIoU           float64
+	MinSupport         int
+	BoundaryTolerance  float64
+	ExtraScaleFraction float64
 }
 
 func DefaultStableConfig() StableConfig {
@@ -68,6 +69,9 @@ func ProposeStable(img image.Image, maxSide int, cfg StableConfig) ([]schema.Reg
 	}
 	if len(cfg.ScaleFractions) == 0 {
 		cfg.ScaleFractions = DefaultStableConfig().ScaleFractions
+	}
+	if cfg.ExtraScaleFraction > 1 {
+		cfg.ScaleFractions = append(append([]float64(nil), cfg.ScaleFractions...), cfg.ExtraScaleFraction)
 	}
 	if cfg.MatchIoU <= 0 {
 		cfg.MatchIoU = DefaultStableConfig().MatchIoU

@@ -28,6 +28,7 @@ type RunOptions struct {
 	ScaleStable           bool
 	RelationPrune         bool
 	ScaleMinSupport       int
+	ScaleExtraFraction    float64
 }
 
 type Observation struct {
@@ -123,7 +124,7 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 	field := evidence.Compute(view)
 	var regions []schema.Region
 	if opts.ScaleStable {
-		stableCfg := region.StableConfig{Base: region.DefaultConfig(), MinSupport: opts.ScaleMinSupport}
+		stableCfg := region.StableConfig{Base: region.DefaultConfig(), MinSupport: opts.ScaleMinSupport, ExtraScaleFraction: opts.ScaleExtraFraction}
 		regions, err = region.ProposeStable(img, maxSide, stableCfg)
 		if err != nil {
 			return Observation{}, fmt.Errorf("b1 stable proposals: %w", err)
