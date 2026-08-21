@@ -8,6 +8,7 @@ import (
 	"heravision/internal/facts"
 	"heravision/internal/processor"
 	"heravision/internal/visionnext/answer"
+	"heravision/internal/visionnext/domain"
 	"heravision/internal/visionnext/evidence"
 	"heravision/internal/visionnext/graph"
 	"heravision/internal/visionnext/hypothesis"
@@ -139,9 +140,13 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 		if err != nil {
 			return Observation{}, fmt.Errorf("load semantic model: %w", err)
 		}
-		regionSemantic := semantic.InferWithView(regions, view.Width, view.Height, view, model)
-		hyps = append(hyps, regionSemantic...)
-		hyps = append(hyps, semantic.AggregateImageEvidence(regions, regionSemantic, model)...)
+		domainResult := domain.Classify(field)
+		hyps = append(hyps, domain.Hypothesis(regions, domainResult))
+		if domainResult.Label == domain.NaturalPhoto || (domainResult.Label == domain.DiagramDocument && domainResult.Confidence != "high") {
+			regionSemantic := semantic.InferWithView(regions, view.Width, view.Height, view, model)
+			hyps = append(hyps, regionSemantic...)
+			hyps = append(hyps, semantic.AggregateImageEvidence(regions, regionSemantic, model)...)
+		}
 	}
 	var edges []schema.Relation
 	if opts.RelationPrune {
