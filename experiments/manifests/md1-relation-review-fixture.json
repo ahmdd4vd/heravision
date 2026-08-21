@@ -1,0 +1,1196 @@
+{
+  "name": "md1-relation-review-fixture",
+  "description": "Independent review template for visible relation correctness. This evaluates predicted-edge precision only; missed relations require separate annotation.",
+  "annotation_status": "pending-independent-relation-review",
+  "independence": "not-yet-reviewed",
+  "samples": [
+    {
+      "sample_id": "blind-md0-imagenette-0020e126190f",
+      "image_path": "data/imagenette/imagenette2-160/val/n02979186/n02979186_12060.JPEG",
+      "domain": "imagenette",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagenette-140e47321913",
+      "image_path": "data/imagenette/imagenette2-160/val/n03888257/n03888257_9932.JPEG",
+      "domain": "imagenette",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagenette-3235df644822",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/n01440764_10470.JPEG",
+      "domain": "imagenette",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagenette-4c34e409eec9",
+      "image_path": "data/imagenette/imagenette2-160/val/n03888257/n03888257_19570.JPEG",
+      "domain": "imagenette",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagenette-64159a40c4de",
+      "image_path": "data/imagenette/imagenette2-160/val/n03000684/n03000684_9942.JPEG",
+      "domain": "imagenette",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagenette-81ae723b8b73",
+      "image_path": "data/imagenette/imagenette2-160/val/n03425413/ILSVRC2012_val_00000732.JPEG",
+      "domain": "imagenette",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagenette-a06d12b2ffd7",
+      "image_path": "data/imagenette/imagenette2-160/val/n03000684/n03000684_13071.JPEG",
+      "domain": "imagenette",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagenette-bd0a96d53e4f",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/n01440764_7411.JPEG",
+      "domain": "imagenette",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagenette-e757dbe33e0e",
+      "image_path": "data/imagenette/imagenette2-160/val/n02979186/n02979186_6012.JPEG",
+      "domain": "imagenette",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagenette-fff82b979667",
+      "image_path": "data/imagenette/imagenette2-160/val/n03417042/n03417042_29310.JPEG",
+      "domain": "imagenette",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-007c38e50b6b",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/n02086240_1312.JPEG",
+      "domain": "imagewoof",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-24fca83147eb",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02096294/n02096294_9982.JPEG",
+      "domain": "imagewoof",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-5089b36710c6",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02096294/n02096294_4142.JPEG",
+      "domain": "imagewoof",
+      "edges": [
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "contains",
+          "score": 0.21596858638743455,
+          "from_bbox": {
+            "x": 22,
+            "y": 0,
+            "w": 191,
+            "h": 160
+          },
+          "to_bbox": {
+            "x": 23,
+            "y": 101,
+            "w": 132,
+            "h": 50
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "overlapping",
+          "score": 0.21596858638743455,
+          "from_bbox": {
+            "x": 22,
+            "y": 0,
+            "w": 191,
+            "h": 160
+          },
+          "to_bbox": {
+            "x": 23,
+            "y": 101,
+            "w": 132,
+            "h": 50
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 22,
+            "y": 0,
+            "w": 191,
+            "h": 160
+          },
+          "to_bbox": {
+            "x": 23,
+            "y": 101,
+            "w": 132,
+            "h": 50
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0003",
+          "predicate": "overlapping",
+          "score": 0.09627981708070696,
+          "from_bbox": {
+            "x": 22,
+            "y": 0,
+            "w": 191,
+            "h": 160
+          },
+          "to_bbox": {
+            "x": 0,
+            "y": 78,
+            "w": 60,
+            "h": 82
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0003",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 22,
+            "y": 0,
+            "w": 191,
+            "h": 160
+          },
+          "to_bbox": {
+            "x": 0,
+            "y": 78,
+            "w": 60,
+            "h": 82
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0002",
+          "to": "r-0003",
+          "predicate": "overlapping",
+          "score": 0.19131334022750776,
+          "from_bbox": {
+            "x": 23,
+            "y": 101,
+            "w": 132,
+            "h": 50
+          },
+          "to_bbox": {
+            "x": 0,
+            "y": 78,
+            "w": 60,
+            "h": 82
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0002",
+          "to": "r-0003",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 23,
+            "y": 101,
+            "w": 132,
+            "h": 50
+          },
+          "to_bbox": {
+            "x": 0,
+            "y": 78,
+            "w": 60,
+            "h": 82
+          },
+          "review_decision": "",
+          "review_notes": ""
+        }
+      ]
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-5f83d078b0f8",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02088364/n02088364_8190.JPEG",
+      "domain": "imagewoof",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-82cb64a1114a",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02099601/n02099601_5240.JPEG",
+      "domain": "imagewoof",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-a42c41aa9865",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02115641/n02115641_2520.JPEG",
+      "domain": "imagewoof",
+      "edges": [
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "contains",
+          "score": 0.05766213389121339,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 239,
+            "h": 160
+          },
+          "to_bbox": {
+            "x": 46,
+            "y": 3,
+            "w": 49,
+            "h": 45
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "overlapping",
+          "score": 0.05766213389121339,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 239,
+            "h": 160
+          },
+          "to_bbox": {
+            "x": 46,
+            "y": 3,
+            "w": 49,
+            "h": 45
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 239,
+            "h": 160
+          },
+          "to_bbox": {
+            "x": 46,
+            "y": 3,
+            "w": 49,
+            "h": 45
+          },
+          "review_decision": "",
+          "review_notes": ""
+        }
+      ]
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-b8d750c4af6e",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02115641/ILSVRC2012_val_00001212.JPEG",
+      "domain": "imagewoof",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-ce2d28126f82",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02087394/n02087394_15341.JPEG",
+      "domain": "imagewoof",
+      "edges": [
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "contains",
+          "score": 0.119140625,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 240,
+            "h": 160
+          },
+          "to_bbox": {
+            "x": 88,
+            "y": 63,
+            "w": 75,
+            "h": 61
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "overlapping",
+          "score": 0.119140625,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 240,
+            "h": 160
+          },
+          "to_bbox": {
+            "x": 88,
+            "y": 63,
+            "w": 75,
+            "h": 61
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 240,
+            "h": 160
+          },
+          "to_bbox": {
+            "x": 88,
+            "y": 63,
+            "w": 75,
+            "h": 61
+          },
+          "review_decision": "",
+          "review_notes": ""
+        }
+      ]
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-ea7ac7e143bc",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02096294/n02096294_5480.JPEG",
+      "domain": "imagewoof",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-fee3361f1c41",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02099601/n02099601_2521.JPEG",
+      "domain": "imagewoof",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-0c2b052b49a2",
+      "image_path": "data/wikimedia14/flowchart_example.png",
+      "domain": "wikimedia-diagram",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-2a6e30f0a1d1",
+      "image_path": "data/wikimedia14/capacitor_schematic.png",
+      "domain": "wikimedia-diagram",
+      "edges": [
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "contains",
+          "score": 0.2860783261802575,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 233,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 3,
+            "y": 3,
+            "w": 79,
+            "h": 216
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "overlapping",
+          "score": 0.2860783261802575,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 233,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 3,
+            "y": 3,
+            "w": 79,
+            "h": 216
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 233,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 3,
+            "y": 3,
+            "w": 79,
+            "h": 216
+          },
+          "review_decision": "",
+          "review_notes": ""
+        }
+      ]
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-384fecf1094e",
+      "image_path": "data/wikimedia14/global_population_pie_chart.jpg",
+      "domain": "wikimedia-diagram",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-47b1925795f7",
+      "image_path": "data/wikimedia14/blank_scan_image.jpg",
+      "domain": "wikimedia-diagram",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-6b552e18e2d1",
+      "image_path": "data/wikimedia14/human_eye_schematic.png",
+      "domain": "wikimedia-diagram",
+      "edges": [
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "contains",
+          "score": 0.5224624764266708,
+          "from_bbox": {
+            "x": 49,
+            "y": 63,
+            "w": 207,
+            "h": 187
+          },
+          "to_bbox": {
+            "x": 53,
+            "y": 69,
+            "w": 158,
+            "h": 128
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "overlapping",
+          "score": 0.5224624764266708,
+          "from_bbox": {
+            "x": 49,
+            "y": 63,
+            "w": 207,
+            "h": 187
+          },
+          "to_bbox": {
+            "x": 53,
+            "y": 69,
+            "w": 158,
+            "h": 128
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 49,
+            "y": 63,
+            "w": 207,
+            "h": 187
+          },
+          "to_bbox": {
+            "x": 53,
+            "y": 69,
+            "w": 158,
+            "h": 128
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0003",
+          "predicate": "overlapping",
+          "score": 0.060666007253544346,
+          "from_bbox": {
+            "x": 49,
+            "y": 63,
+            "w": 207,
+            "h": 187
+          },
+          "to_bbox": {
+            "x": 13,
+            "y": 0,
+            "w": 243,
+            "h": 79
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0003",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 49,
+            "y": 63,
+            "w": 207,
+            "h": 187
+          },
+          "to_bbox": {
+            "x": 13,
+            "y": 0,
+            "w": 243,
+            "h": 79
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0012",
+          "predicate": "contains",
+          "score": 0.026970471983259706,
+          "from_bbox": {
+            "x": 49,
+            "y": 63,
+            "w": 207,
+            "h": 187
+          },
+          "to_bbox": {
+            "x": 62,
+            "y": 197,
+            "w": 29,
+            "h": 36
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0012",
+          "predicate": "overlapping",
+          "score": 0.026970471983259706,
+          "from_bbox": {
+            "x": 49,
+            "y": 63,
+            "w": 207,
+            "h": 187
+          },
+          "to_bbox": {
+            "x": 62,
+            "y": 197,
+            "w": 29,
+            "h": 36
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0012",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 49,
+            "y": 63,
+            "w": 207,
+            "h": 187
+          },
+          "to_bbox": {
+            "x": 62,
+            "y": 197,
+            "w": 29,
+            "h": 36
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0002",
+          "to": "r-0003",
+          "predicate": "overlapping",
+          "score": 0.04175365344467641,
+          "from_bbox": {
+            "x": 53,
+            "y": 69,
+            "w": 158,
+            "h": 128
+          },
+          "to_bbox": {
+            "x": 13,
+            "y": 0,
+            "w": 243,
+            "h": 79
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0002",
+          "to": "r-0003",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 53,
+            "y": 69,
+            "w": 158,
+            "h": 128
+          },
+          "to_bbox": {
+            "x": 13,
+            "y": 0,
+            "w": 243,
+            "h": 79
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0002",
+          "to": "r-0012",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 53,
+            "y": 69,
+            "w": 158,
+            "h": 128
+          },
+          "to_bbox": {
+            "x": 62,
+            "y": 197,
+            "w": 29,
+            "h": 36
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0002",
+          "to": "r-0012",
+          "predicate": "above",
+          "score": 1,
+          "from_bbox": {
+            "x": 53,
+            "y": 69,
+            "w": 158,
+            "h": 128
+          },
+          "to_bbox": {
+            "x": 62,
+            "y": 197,
+            "w": 29,
+            "h": 36
+          },
+          "review_decision": "",
+          "review_notes": ""
+        }
+      ]
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-7064f8675350",
+      "image_path": "data/wikimedia14/flow_chart_loop.png",
+      "domain": "wikimedia-diagram",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-80b81c884f3b",
+      "image_path": "data/wikimedia14/image_file_formats.png",
+      "domain": "wikimedia-diagram",
+      "edges": [
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "contains",
+          "score": 0.064361572265625,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 53,
+            "y": 64,
+            "w": 57,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "overlapping",
+          "score": 0.064361572265625,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 53,
+            "y": 64,
+            "w": 57,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0002",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 53,
+            "y": 64,
+            "w": 57,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0003",
+          "predicate": "contains",
+          "score": 0.063232421875,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 144,
+            "y": 64,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0003",
+          "predicate": "overlapping",
+          "score": 0.063232421875,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 144,
+            "y": 64,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0003",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 144,
+            "y": 64,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0004",
+          "predicate": "contains",
+          "score": 0.063232421875,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 54,
+            "y": 156,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0004",
+          "predicate": "overlapping",
+          "score": 0.063232421875,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 54,
+            "y": 156,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0004",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 54,
+            "y": 156,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0005",
+          "predicate": "contains",
+          "score": 0.063232421875,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 145,
+            "y": 156,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0005",
+          "predicate": "overlapping",
+          "score": 0.063232421875,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 145,
+            "y": 156,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0005",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 145,
+            "y": 156,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0007",
+          "predicate": "contains",
+          "score": 0.00982666015625,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 8,
+            "y": 6,
+            "w": 23,
+            "h": 28
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0007",
+          "predicate": "overlapping",
+          "score": 0.00982666015625,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 8,
+            "y": 6,
+            "w": 23,
+            "h": 28
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0007",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 256
+          },
+          "to_bbox": {
+            "x": 8,
+            "y": 6,
+            "w": 23,
+            "h": 28
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0002",
+          "to": "r-0003",
+          "predicate": "left_of",
+          "score": 1,
+          "from_bbox": {
+            "x": 53,
+            "y": 64,
+            "w": 57,
+            "h": 74
+          },
+          "to_bbox": {
+            "x": 144,
+            "y": 64,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0002",
+          "to": "r-0004",
+          "predicate": "above",
+          "score": 1,
+          "from_bbox": {
+            "x": 53,
+            "y": 64,
+            "w": 57,
+            "h": 74
+          },
+          "to_bbox": {
+            "x": 54,
+            "y": 156,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0003",
+          "to": "r-0005",
+          "predicate": "above",
+          "score": 1,
+          "from_bbox": {
+            "x": 144,
+            "y": 64,
+            "w": 56,
+            "h": 74
+          },
+          "to_bbox": {
+            "x": 145,
+            "y": 156,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0004",
+          "to": "r-0005",
+          "predicate": "left_of",
+          "score": 1,
+          "from_bbox": {
+            "x": 54,
+            "y": 156,
+            "w": 56,
+            "h": 74
+          },
+          "to_bbox": {
+            "x": 145,
+            "y": 156,
+            "w": 56,
+            "h": 74
+          },
+          "review_decision": "",
+          "review_notes": ""
+        }
+      ]
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-874b0038f0f7",
+      "image_path": "data/wikimedia14/sample_network_diagram.png",
+      "domain": "wikimedia-diagram",
+      "edges": []
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-c07bc8486d16",
+      "image_path": "data/wikimedia14/ssme_schematic.png",
+      "domain": "wikimedia-diagram",
+      "edges": [
+        {
+          "from": "r-0001",
+          "to": "r-0003",
+          "predicate": "contains",
+          "score": 0.05737704918032787,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 183
+          },
+          "to_bbox": {
+            "x": 49,
+            "y": 47,
+            "w": 56,
+            "h": 48
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0003",
+          "predicate": "overlapping",
+          "score": 0.05737704918032787,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 183
+          },
+          "to_bbox": {
+            "x": 49,
+            "y": 47,
+            "w": 56,
+            "h": 48
+          },
+          "review_decision": "",
+          "review_notes": ""
+        },
+        {
+          "from": "r-0001",
+          "to": "r-0003",
+          "predicate": "touching",
+          "score": 0.8,
+          "from_bbox": {
+            "x": 0,
+            "y": 0,
+            "w": 256,
+            "h": 183
+          },
+          "to_bbox": {
+            "x": 49,
+            "y": 47,
+            "w": 56,
+            "h": 48
+          },
+          "review_decision": "",
+          "review_notes": ""
+        }
+      ]
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-def1a5faff64",
+      "image_path": "data/wikimedia14/tracking_data_flow_chart.jpg",
+      "domain": "wikimedia-diagram",
+      "edges": []
+    }
+  ],
+  "total_predicted_edges": 50
+}
