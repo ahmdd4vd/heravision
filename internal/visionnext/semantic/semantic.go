@@ -7,6 +7,7 @@ import (
 	"os"
 	"sort"
 
+	"heravision/internal/visionnext/imageview"
 	"heravision/internal/visionnext/schema"
 )
 
@@ -46,12 +47,23 @@ func Features(r schema.Region, imageWidth, imageHeight int) []float64 {
 }
 
 func FeaturesNamed(r schema.Region, imageWidth, imageHeight int, names []string) []float64 {
+	return featuresNamedWithValues(r, imageWidth, imageHeight, names, nil)
+}
+
+// FeaturesNamedWithView adds bounded crop-pixel evidence to geometry features.
+// The fixed 8x8 sampling grid bounds CPU cost per region.
+func FeaturesNamedWithView(r schema.Region, imageWidth, imageHeight int, view imageview.View, names []string) []float64 {
+	return featuresNamedWithValues(r, imageWidth, imageHeight, names, cropValues(r, view))
+}
+
+func featuresNamedWithValues(r schema.Region, imageWidth, imageHeight int, names []string, crop map[string]float64) []float64 {
 	w, h := float64(max(1, imageWidth)), float64(max(1, imageHeight))
 	values := map[string]float64{
 		"area_ratio": clamp01(r.Features.AreaRatio), "aspect_ratio": clamp01(r.Features.AspectRatio / 8),
 		"compactness": clamp01(r.Features.Compactness), "solidity": clamp01(r.Features.Solidity),
 		"boundary_strength": clamp01(r.Features.BoundaryStrength), "scale_stability": clamp01(r.Features.ScaleStability),
 		"color0": clamp01(valueAt(r.Features.Color, 0)), "color1": clampSigned(r.Features.Color, 1), "color2": clampSigned(r.Features.Color, 2), "texture0": clamp01(first(r.Features.Texture)),
+		"crop_luma_mean": cropValue(crop, "crop_luma_mean"), "crop_luma_std": cropValue(crop, "crop_luma_std"), "crop_chroma_r_mean": cropValue(crop, "crop_chroma_r_mean"), "crop_chroma_b_mean": cropValue(crop, "crop_chroma_b_mean"), "crop_chroma_mag": cropValue(crop, "crop_chroma_mag"), "crop_edge_density": cropValue(crop, "crop_edge_density"), "crop_dark_fraction": cropValue(crop, "crop_dark_fraction"), "crop_bright_fraction": cropValue(crop, "crop_bright_fraction"),
 		"x": clamp01(float64(r.BBox.X) / w), "y": clamp01(float64(r.BBox.Y) / h),
 		"w": clamp01(float64(r.BBox.W) / w), "h": clamp01(float64(r.BBox.H) / h),
 	}
@@ -63,12 +75,22 @@ func FeaturesNamed(r schema.Region, imageWidth, imageHeight int, names []string)
 }
 
 func Infer(regions []schema.Region, imageWidth, imageHeight int, model Model) []schema.Hypothesis {
+	return inferWithFeatures(regions, imageWidth, imageHeight, model, func(r schema.Region) []float64 { return FeaturesNamed(r, imageWidth, imageHeight, model.FeatureNames) })
+}
+
+func InferWithView(regions []schema.Region, imageWidth, imageHeight int, view imageview.View, model Model) []schema.Hypothesis {
+	return inferWithFeatures(regions, imageWidth, imageHeight, model, func(r schema.Region) []float64 {
+		return FeaturesNamedWithView(r, imageWidth, imageHeight, view, model.FeatureNames)
+	})
+}
+
+func inferWithFeatures(regions []schema.Region, imageWidth, imageHeight int, model Model, featureFn func(schema.Region) []float64) []schema.Hypothesis {
 	if len(regions) == 0 {
 		return nil
 	}
 	var out []schema.Hypothesis
 	for _, r := range regions {
-		features := FeaturesNamed(r, imageWidth, imageHeight, model.FeatureNames)
+		features := featureFn(r)
 		type scored struct {
 			label string
 			score float64
@@ -115,6 +137,73 @@ func Infer(regions []schema.Region, imageWidth, imageHeight int, model Model) []
 	return out
 }
 
+func cropValue(values map[string]float64, key string) float64 {
+	if values == nil {
+		return 0
+	}
+	return values[key]
+}
+
+func cropValues(r schema.Region, view imageview.View) map[string]float64 {
+	out := map[string]float64{}
+	if view.Width <= 0 || view.Height <= 0 || r.BBox.W <= 0 || r.BBox.H <= 0 {
+		return out
+	}
+	const grid = 8
+	var sum, sum2, cr, cb, cm, edge, dark, bright, count float64
+	previous := make([]float64, grid)
+	seenRow := make([]bool, grid)
+	for gy := 0; gy < grid; gy++ {
+		for gx := 0; gx < grid; gx++ {
+			x := r.BBox.X + (gx*r.BBox.W+r.BBox.W/2)/grid
+			y := r.BBox.Y + (gy*r.BBox.H+r.BBox.H/2)/grid
+			l, vr, vb, ok := view.At(x, y)
+			if !ok {
+				continue
+			}
+			sum += l
+			sum2 += l * l
+			cr += vr
+			cb += vb
+			cm += math.Sqrt(vr*vr + vb*vb)
+			if l < 0.25 {
+				dark++
+			}
+			if l > 0.75 {
+				bright++
+			}
+			count++
+			if gx > 0 {
+				edge += math.Abs(l - previous[gx-1])
+			}
+			if seenRow[gx] {
+				edge += math.Abs(l - previous[gx])
+			}
+			previous[gx] = l
+			seenRow[gx] = true
+		}
+	}
+	if count == 0 {
+		return out
+	}
+	mean := sum / count
+	variance := sum2/count - mean*mean
+	if variance < 0 {
+		variance = 0
+	}
+	out["crop_luma_mean"] = mean
+	out["crop_luma_std"] = math.Sqrt(variance)
+	out["crop_chroma_r_mean"] = clampSignedValue(cr / count)
+	out["crop_chroma_b_mean"] = clampSignedValue(cb / count)
+	out["crop_chroma_mag"] = clamp01(cm / count)
+	out["crop_edge_density"] = clamp01(edge / (2 * count))
+	out["crop_dark_fraction"] = dark / count
+	out["crop_bright_fraction"] = bright / count
+	return out
+}
+
+func clampSignedValue(v float64) float64 { return clamp01((v + 4) / 8) }
+
 func evidenceQuality(r schema.Region) float64 {
 	return clamp01(0.45*clamp01(r.Features.BoundaryStrength) + 0.40*clamp01(r.Features.ScaleStability) + 0.15*clamp01(r.Features.AreaRatio*4))
 }
@@ -134,7 +223,7 @@ func valueAt(values []float64, index int) float64 {
 	return values[index]
 }
 func clampSigned(values []float64, index int) float64 {
-	return clamp01((valueAt(values, index) + 4) / 8)
+	return clampSignedValue(valueAt(values, index))
 }
 func first(values []float64) float64 {
 	if len(values) == 0 {

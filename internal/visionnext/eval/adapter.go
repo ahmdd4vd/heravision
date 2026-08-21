@@ -139,7 +139,7 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 		if err != nil {
 			return Observation{}, fmt.Errorf("load semantic model: %w", err)
 		}
-		hyps = append(hyps, semantic.Infer(regions, view.Width, view.Height, model)...)
+		hyps = append(hyps, semantic.InferWithView(regions, view.Width, view.Height, view, model)...)
 	}
 	var edges []schema.Relation
 	if opts.RelationPrune {

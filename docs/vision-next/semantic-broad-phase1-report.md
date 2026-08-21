@@ -26,25 +26,24 @@ The scorer was trained from 341 B1 regions across 106 COCO development images. T
 
 ## Results
 
-On the COCO development run, 800 semantic hypotheses were emitted across 126 samples with zero runtime errors. At the conservative threshold 0.65, no hypothesis was accepted because the evidence score remained below threshold. A development ablation at threshold 0.35 accepted 15 hypotheses across COCO.
+The first geometry/chroma model used 341 matched B1 regions across 106 COCO development images. On the 30-sample MD1 candidate run at diagnostic threshold 0.35 it achieved 10.0% accepted-sample coverage and 0.0% selective accuracy against the metadata-derived target. This was a failure and was not promoted.
 
-On the 30-sample MD1 candidate run at threshold 0.35:
+A v3 model added a fixed 8×8 crop-pixel sampler. The sampler computes luminance mean and standard deviation, two chroma means, chroma magnitude, edge density, dark-pixel fraction, and bright-pixel fraction. The same formulas are used in Python training and Go inference. On the COCO development split, the per-label holdout accuracies were 0.657 animal, 0.700 artifact, 0.686 person, and 0.714 vehicle; these are binary one-vs-rest region metrics with severe class imbalance and are not a semantic product accuracy.
 
-| Metric | Result |
-|---|---:|
-| Samples completed | 30/30 |
-| Semantic hypotheses | 152 |
-| Samples with accepted semantic | 3 |
-| Coverage | 10.0% |
-| Selective accuracy against metadata-derived target | 0.0% |
-| Evidence missing | 0 |
+On MD1, v3 produced the following results:
 
-The three accepted predictions did not match the provisional broad targets. This is a clear failure of semantic quality, not a success. The model is currently biased toward `vehicle` and its region geometry/chroma features are insufficient to distinguish the broad classes on MD1.
+| Configuration | Accepted samples | Coverage | Selective accuracy vs metadata target | Runtime mean |
+|---|---:|---:|---:|---:|
+| B1 baseline, no semantic | 0/30 | 0.0% | Not applicable | 30.7 ms |
+| v3, default evidence threshold 0.65 | 0/30 | 0.0% | Not applicable | 29.7 ms |
+| v3, diagnostic threshold 0.35 | 17/30 | 56.7% | 0.0% | Not used for product claim |
+
+The threshold-0.35 result demonstrates why lowering a threshold is not a solution: coverage increased, but the accepted labels were wrong, predominantly `vehicle`. The default 0.65 policy correctly abstained from making unsupported semantic claims. All 30 MD1 samples completed without runtime errors, and crop features added no measured mean latency in this small noisy run; the timing result is not a performance certification.
 
 ## Decision
 
-Do **not** promote the semantic model or threshold 0.35 to default. Keep semantic integration opt-in. The phase successfully establishes the contract, training path, provenance, and failure metrics, but it does not yet produce a useful `dog` or broad-category recognizer.
+Do **not** promote v3 or threshold 0.35 to the default semantic model. Keep semantic integration opt-in and keep the default evidence threshold at 0.65. The implementation phase is successful as engineering infrastructure: the scorer now has a bounded pixel sampler, matching training/runtime features, unit tests, provenance fields, and an evaluator. It is not yet a useful broad-category recognizer and must not claim to understand “this is a dog.”
 
 ## Next semantic engineering step
 
-Add lightweight crop-pixel features computed identically during training and inference, such as coarse luminance/chroma histograms and spatial texture summaries. Then retrain on a larger balanced COCO development sample, add hard negatives, and require a holdout semantic fixture before any label is accepted as a product claim.
+The next bottleneck is not another threshold. It is dataset and objective design. Build an independently reviewed image-level holdout with balanced animal, person, vehicle, artifact, diagram, and unknown classes; aggregate region evidence at image level with max-pooling/noisy-OR plus an abstention margin; and add hard negatives from diagrams, documents, and visually confusing objects. No new semantic label should be promoted until the independent holdout reports coverage, selective accuracy, unsafe-answer rate, and per-domain confusion.

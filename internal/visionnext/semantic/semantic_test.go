@@ -3,6 +3,7 @@ package semantic
 import (
 	"testing"
 
+	"heravision/internal/visionnext/imageview"
 	"heravision/internal/visionnext/schema"
 )
 
@@ -23,6 +24,20 @@ func TestInferAcceptsStrongCandidateWithMargin(t *testing.T) {
 	}
 	if len(out[0].Evidence) < 2 {
 		t.Fatalf("expected evidence provenance, got %+v", out[0].Evidence)
+	}
+}
+
+func TestFeaturesNamedWithViewUsesCropEvidence(t *testing.T) {
+	view := imageview.View{Width: 8, Height: 8, Luminance: make([]float64, 64), ChromaR: make([]float64, 64), ChromaB: make([]float64, 64)}
+	for i := range view.Luminance {
+		view.Luminance[i] = float64(i) / 63
+		view.ChromaR[i] = 0.4
+		view.ChromaB[i] = -0.2
+	}
+	region := schema.Region{BBox: schema.Rect{X: 0, Y: 0, W: 8, H: 8}}
+	features := FeaturesNamedWithView(region, 8, 8, view, []string{"crop_luma_mean", "crop_luma_std", "crop_chroma_r_mean", "crop_chroma_b_mean", "crop_chroma_mag", "crop_edge_density", "crop_dark_fraction", "crop_bright_fraction"})
+	if len(features) != 8 || features[0] <= 0 || features[1] <= 0 || features[4] <= 0 || features[5] <= 0 {
+		t.Fatalf("expected nontrivial crop features, got %v", features)
 	}
 }
 
