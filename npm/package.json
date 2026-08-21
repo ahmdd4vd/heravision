@@ -1,9 +1,42 @@
 {
   "name": "heravision",
   "version": "0.1.0",
-  "description": "UI structure extractor for blind LLMs — pure native vision",
-  "bin": { "heravision": "bin/heravision.js" },
-  "scripts": { "postinstall": "node install.js" },
-  "files": ["bin/", "install.js"],
+  "description": "UI structure extractor for text-only LLMs - pure Go binary, offline, CGO_ENABLED=0, MCP-native",
+  "bin": {
+    "heravision": "bin/heravision.js"
+  },
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "files": [
+    "bin/",
+    "install.js"
+  ],
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "ocr",
+    "computer-vision",
+    "llm",
+    "ai-agents",
+    "opencode",
+    "claude-code",
+    "cursor",
+    "codex",
+    "ui-analysis",
+    "onnx"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahmdd4vd/heravision.git"
+  },
+  "homepage": "https://github.com/ahmdd4vd/heravision#readme",
+  "bugs": {
+    "url": "https://github.com/ahmdd4vd/heravision/issues"
+  },
+  "author": "David <papengcepoko@gmail.com>",
   "license": "MIT"
 }

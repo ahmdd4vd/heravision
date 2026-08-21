@@ -173,11 +173,18 @@ Without the OCR bundle, `texts` contains shape placeholders (`[button]`, `[text]
 
 One line per platform — prebuilt binaries, no Go toolchain required:
 
-| Channel | Command |
-|---|---|
-| macOS / Linux | `curl -fsSL https://raw.githubusercontent.com/ahmdd4vd/heravision/main/install.sh \| bash` |
-| Windows | `irm https://raw.githubusercontent.com/ahmdd4vd/heravision/main/install.ps1 \| iex` |
-| npm (any platform) | `npm install -g heravision` |
+```bash
+# npm — any platform (recommended)
+npm install -g heravision
+
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/ahmdd4vd/heravision/main/install.sh | bash
+
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/ahmdd4vd/heravision/main/install.ps1 | iex
+```
+
+The package lives at [npmjs.com/package/heravision](https://www.npmjs.com/package/heravision).
 
 Every channel ends in the same interactive setup wizard:
 
