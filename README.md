@@ -291,7 +291,6 @@ mcp/                 MCP stdio server (mark3labs/mcp-go)
 plugins/             ready-made opencode / claude configs
 install.sh / .ps1    one-line installers (curl / PowerShell)
 npm/                 installer package: fetches release binary, wraps CLI
-vscode-extension/    command-palette bridge to the CLI
 testdata/            png fixtures used by tests and examples
 ```
 

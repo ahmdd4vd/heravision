@@ -6,7 +6,6 @@ plan.md
 *.log
 .serena/
 npm/node_modules/
-vscode-extension/node_modules/
 internal/ocr/assets/*.wasm
 !internal/ocr/assets/.gitkeep
 testdata/*.png
