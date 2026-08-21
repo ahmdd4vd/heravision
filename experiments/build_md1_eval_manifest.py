@@ -10,10 +10,13 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--accepted-only", action="store_true")
     args = parser.parse_args()
     data = json.loads(args.input.read_text())
     samples = []
     for sample in data["samples"]:
+        if args.accepted_only and sample.get("second_review", {}).get("status") != "accepted-provisional":
+            continue
         samples.append({
             "id": sample["sample_id"],
             "image_path": sample["image_path"],

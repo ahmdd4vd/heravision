@@ -1,0 +1,358 @@
+{
+  "name": "md1-ground-truth-provisional",
+  "count": 22,
+  "samples": [
+    {
+      "id": "blind-md0-imagenette-0020e126190f",
+      "image_path": "data/imagenette/imagenette2-160/val/n02979186/n02979186_12060.JPEG",
+      "width": 275,
+      "height": 160,
+      "domain": "imagenette",
+      "sha256": "0020e126190f240a73cdb18508d425e6bf6555e10c93098ac71800b2de6c59ff",
+      "ground_truth": [
+        {
+          "x": 16.5,
+          "y": 24.0,
+          "w": 239.25,
+          "h": 99.2
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagenette-4c34e409eec9",
+      "image_path": "data/imagenette/imagenette2-160/val/n03888257/n03888257_19570.JPEG",
+      "width": 240,
+      "height": 160,
+      "domain": "imagenette",
+      "sha256": "4c34e409eec99ef8247d9bea1f8597e50b997b8c668b05b9d94279067675aa52",
+      "ground_truth": [
+        {
+          "x": 84.0,
+          "y": 3.2,
+          "w": 72.0,
+          "h": 137.6
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagenette-81ae723b8b73",
+      "image_path": "data/imagenette/imagenette2-160/val/n03425413/ILSVRC2012_val_00000732.JPEG",
+      "width": 160,
+      "height": 213,
+      "domain": "imagenette",
+      "sha256": "81ae723b8b7357853ff2eed95c3cbab35b1379b945a99c50fab2496692bcb052",
+      "ground_truth": [
+        {
+          "x": 8.0,
+          "y": 21.3,
+          "w": 140.8,
+          "h": 174.66
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagenette-bd0a96d53e4f",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/n01440764_7411.JPEG",
+      "width": 213,
+      "height": 160,
+      "domain": "imagenette",
+      "sha256": "bd0a96d53e4f1dbdf80c9db94be286b4811dfb1efb7fe6be1d1cdcd8d09b7bc7",
+      "ground_truth": [
+        {
+          "x": 38.34,
+          "y": 43.2,
+          "w": 136.32,
+          "h": 73.6
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagenette-e757dbe33e0e",
+      "image_path": "data/imagenette/imagenette2-160/val/n02979186/n02979186_6012.JPEG",
+      "width": 160,
+      "height": 160,
+      "domain": "imagenette",
+      "sha256": "e757dbe33e0e1fe6dab3bbd0aec533a63804863f4c5ffbea1a8dec911757f76c",
+      "ground_truth": [
+        {
+          "x": 36.8,
+          "y": 32.0,
+          "w": 89.6,
+          "h": 102.4
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagenette-fff82b979667",
+      "image_path": "data/imagenette/imagenette2-160/val/n03417042/n03417042_29310.JPEG",
+      "width": 213,
+      "height": 160,
+      "domain": "imagenette",
+      "sha256": "fff82b97966714b96f53d060e9bf23605dd6c8ec482014d9d887c806ef88552e",
+      "ground_truth": [
+        {
+          "x": 8.52,
+          "y": 28.8,
+          "w": 195.96,
+          "h": 108.8
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagewoof-24fca83147eb",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02096294/n02096294_9982.JPEG",
+      "width": 213,
+      "height": 160,
+      "domain": "imagewoof",
+      "sha256": "24fca83147eb49752f784f8dca3087797a0126e2e387d40b387e0571fe69fe0c",
+      "ground_truth": [
+        {
+          "x": 4.26,
+          "y": 20.8,
+          "w": 204.48,
+          "h": 112.0
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagewoof-5089b36710c6",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02096294/n02096294_4142.JPEG",
+      "width": 213,
+      "height": 160,
+      "domain": "imagewoof",
+      "sha256": "5089b36710c6ff6c7b86772b3b65218a3ad6ecf1f437a0dab4e8b50347f5cffd",
+      "ground_truth": [
+        {
+          "x": 25.56,
+          "y": 19.2,
+          "w": 166.14,
+          "h": 120.0
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagewoof-5f83d078b0f8",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02088364/n02088364_8190.JPEG",
+      "width": 160,
+      "height": 238,
+      "domain": "imagewoof",
+      "sha256": "5f83d078b0f838f4fa381a69df5f84bb29b4c20e76f41f5fad282e5ccbb15cbe",
+      "ground_truth": [
+        {
+          "x": 8.0,
+          "y": 9.52,
+          "w": 137.6,
+          "h": 218.96
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagewoof-a42c41aa9865",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02115641/n02115641_2520.JPEG",
+      "width": 239,
+      "height": 160,
+      "domain": "imagewoof",
+      "sha256": "a42c41aa9865ad04e9a2ed17373a403037f969d9dd4de16117ffd6eb2d6b6fd3",
+      "ground_truth": [
+        {
+          "x": 9.56,
+          "y": 48.0,
+          "w": 167.3,
+          "h": 92.8
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagewoof-b8d750c4af6e",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02115641/ILSVRC2012_val_00001212.JPEG",
+      "width": 213,
+      "height": 160,
+      "domain": "imagewoof",
+      "sha256": "b8d750c4af6e65f1272d8408f2de58004fc923e7b954e153c75cf3e1ab2ed85a",
+      "ground_truth": [
+        {
+          "x": 38.34,
+          "y": 32.0,
+          "w": 127.8,
+          "h": 102.4
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagewoof-ce2d28126f82",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02087394/n02087394_15341.JPEG",
+      "width": 240,
+      "height": 160,
+      "domain": "imagewoof",
+      "sha256": "ce2d28126f826ef647330dd33809b68790f13c29a5af8411bc2acd341d026070",
+      "ground_truth": [
+        {
+          "x": 67.2,
+          "y": 44.8,
+          "w": 120.0,
+          "h": 73.6
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagewoof-ea7ac7e143bc",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02096294/n02096294_5480.JPEG",
+      "width": 160,
+      "height": 176,
+      "domain": "imagewoof",
+      "sha256": "ea7ac7e143bc38541e23cae117b50fceeee8e19ed0a7c924f39e4c30ff6a8246",
+      "ground_truth": [
+        {
+          "x": 35.2,
+          "y": 26.4,
+          "w": 99.2,
+          "h": 132.0
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-imagewoof-fee3361f1c41",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02099601/n02099601_2521.JPEG",
+      "width": 160,
+      "height": 231,
+      "domain": "imagewoof",
+      "sha256": "fee3361f1c417c09c48e71b26f351fbb1ddf2445d3413ff019143b419cc51bfa",
+      "ground_truth": [
+        {
+          "x": 20.8,
+          "y": 18.48,
+          "w": 115.2,
+          "h": 194.04
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-wikimedia-diagram-0c2b052b49a2",
+      "image_path": "data/wikimedia14/flowchart_example.png",
+      "width": 330,
+      "height": 604,
+      "domain": "wikimedia-diagram",
+      "sha256": "0c2b052b49a2d0784c5623c8f6be0749f21aeb8d4ffdc97d305d9688292d1e63",
+      "ground_truth": [
+        {
+          "x": 33.0,
+          "y": 18.12,
+          "w": 257.4,
+          "h": 567.76
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-wikimedia-diagram-2a6e30f0a1d1",
+      "image_path": "data/wikimedia14/capacitor_schematic.png",
+      "width": 500,
+      "height": 550,
+      "domain": "wikimedia-diagram",
+      "sha256": "2a6e30f0a1d137e74aa9fb4784e758b23ffc097475dd6e7abbf7218769f54038",
+      "ground_truth": [
+        {
+          "x": 40.0,
+          "y": 11.0,
+          "w": 420.0,
+          "h": 528.0
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-wikimedia-diagram-384fecf1094e",
+      "image_path": "data/wikimedia14/global_population_pie_chart.jpg",
+      "width": 900,
+      "height": 600,
+      "domain": "wikimedia-diagram",
+      "sha256": "384fecf1094ef8c879d226807dea7d15c985b11bc8920f78742fa572484f86cb",
+      "ground_truth": [
+        {
+          "x": 36.0,
+          "y": 24.0,
+          "w": 828.0,
+          "h": 540.0
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-wikimedia-diagram-6b552e18e2d1",
+      "image_path": "data/wikimedia14/human_eye_schematic.png",
+      "width": 3840,
+      "height": 3753,
+      "domain": "wikimedia-diagram",
+      "sha256": "6b552e18e2d163e84163d35170b97dfcd2c257db5fd19f75b214faecf4147c4e",
+      "ground_truth": [
+        {
+          "x": 38.4,
+          "y": 37.53,
+          "w": 3763.2,
+          "h": 3677.94
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-wikimedia-diagram-7064f8675350",
+      "image_path": "data/wikimedia14/flow_chart_loop.png",
+      "width": 250,
+      "height": 439,
+      "domain": "wikimedia-diagram",
+      "sha256": "7064f8675350e6e013c1f822cbe93363fac51b0a5f4518a57fd87befe7e21b49",
+      "ground_truth": [
+        {
+          "x": 20.0,
+          "y": 13.17,
+          "w": 210.0,
+          "h": 412.66
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-wikimedia-diagram-80b81c884f3b",
+      "image_path": "data/wikimedia14/image_file_formats.png",
+      "width": 1024,
+      "height": 1024,
+      "domain": "wikimedia-diagram",
+      "sha256": "80b81c884f3b547ea54f7ae3b928e8d88b28cf22ff67182659036622f20590f4",
+      "ground_truth": [
+        {
+          "x": 40.96,
+          "y": 40.96,
+          "w": 942.08,
+          "h": 942.08
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-wikimedia-diagram-c07bc8486d16",
+      "image_path": "data/wikimedia14/ssme_schematic.png",
+      "width": 3840,
+      "height": 2741,
+      "domain": "wikimedia-diagram",
+      "sha256": "c07bc8486d164d851b165c5f0f5bb3e87fc9ae349217af5220dc5955f5b5764e",
+      "ground_truth": [
+        {
+          "x": 38.4,
+          "y": 27.41,
+          "w": 3763.2,
+          "h": 2686.18
+        }
+      ]
+    },
+    {
+      "id": "blind-md0-wikimedia-diagram-def1a5faff64",
+      "image_path": "data/wikimedia14/tracking_data_flow_chart.jpg",
+      "width": 1785,
+      "height": 1276,
+      "domain": "wikimedia-diagram",
+      "sha256": "def1a5faff647aaad44b916c734c9e657a84ffe56d8d69d01e158759bc6836b9",
+      "ground_truth": [
+        {
+          "x": 35.7,
+          "y": 51.04,
+          "w": 1713.6,
+          "h": 1148.4
+        }
+      ]
+    }
+  ]
+}

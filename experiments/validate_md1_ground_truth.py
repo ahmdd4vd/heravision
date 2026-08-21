@@ -18,9 +18,10 @@ def sha256(path: Path) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, required=True)
+    parser.add_argument("--expected-count", type=int, default=30)
     args = parser.parse_args()
     data = json.loads(args.input.read_text())
-    assert data["count"] == len(data["samples"]) == 30
+    assert data["count"] == len(data["samples"]) == args.expected_count
     assert data["annotation_status"] == "provisional-review"
     sample_ids, region_ids = set(), set()
     total_regions = 0
