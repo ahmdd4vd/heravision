@@ -15,14 +15,14 @@ func TestClassifyFlatNeutralAsDiagramDocument(t *testing.T) {
 	if result.Label != DiagramDocument {
 		t.Fatalf("expected diagram_document, got %+v", result)
 	}
-	if result.Score < 0.58 || result.Confidence == "low" {
-		t.Fatalf("expected strong domain evidence, got %+v", result)
+	if result.Score < 0.58 || result.Confidence == "low" || result.Action != "block_object_semantic" {
+		t.Fatalf("expected strong blocking domain evidence, got %+v", result)
 	}
 }
 
 func TestClassifyEmptyFieldIsAmbiguous(t *testing.T) {
 	result := Classify(evidence.Field{})
-	if result.Label != Ambiguous {
-		t.Fatalf("expected ambiguous empty field, got %+v", result)
+	if result.Label != Ambiguous || result.Action != "abstain_domain" {
+		t.Fatalf("expected ambiguous abstaining domain result, got %+v", result)
 	}
 }

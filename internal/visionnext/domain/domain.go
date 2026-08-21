@@ -34,6 +34,7 @@ type Result struct {
 	Features   Features
 	Evidence   []schema.EvidenceRef
 	Confidence string
+	Action     string // allow_object_semantic | block_object_semantic | abstain_domain
 }
 
 // Classify uses bounded evidence-field statistics. It is deliberately a gate,
@@ -54,15 +55,22 @@ func Classify(field evidence.Field) Result {
 	if score >= 0.58 && margin >= 0.10 {
 		label = scores[0].label
 		confidence = "medium"
-		if score >= 0.72 && margin >= 0.18 {
+		if score >= 0.65 && margin >= 0.18 {
 			confidence = "high"
 		}
 	}
+	action := "abstain_domain"
+	if label == NaturalPhoto || (label == DiagramDocument && confidence != "high") {
+		action = "allow_object_semantic"
+	}
+	if label == DiagramDocument && confidence == "high" {
+		action = "block_object_semantic"
+	}
 	evidenceRefs := []schema.EvidenceRef{
 		{Kind: "domain-statistics", Stage: "domain-gate", Value: round(features.FlatnessMean), Note: fmt.Sprintf("flatness_mean=%.3f edge_density=%.3f contrast_mean=%.3f", features.FlatnessMean, features.EdgeDensity, features.ContrastMean)},
-		{Kind: "domain-score", Stage: "domain-gate", Value: round(score), Note: fmt.Sprintf("natural=%.3f diagram_document=%.3f margin=%.3f", natural, diagram, margin)},
+		{Kind: "domain-score", Stage: "domain-gate", Value: round(score), Note: fmt.Sprintf("natural=%.3f diagram_document=%.3f margin=%.3f action=%s", natural, diagram, margin, action)},
 	}
-	return Result{Label: label, Score: round(score), Margin: round(margin), Features: features, Evidence: evidenceRefs, Confidence: confidence}
+	return Result{Label: label, Score: round(score), Margin: round(margin), Features: features, Evidence: evidenceRefs, Confidence: confidence, Action: action}
 }
 
 func summarize(field evidence.Field) Features {
@@ -127,7 +135,7 @@ func Hypothesis(regions []schema.Region, result Result) schema.Hypothesis {
 	if result.Confidence == "high" {
 		status = "accepted"
 	}
-	if result.Label == Ambiguous {
+	if result.Label == Ambiguous || result.Action == "abstain_domain" {
 		status = "unknown"
 	}
 	return schema.Hypothesis{ID: "image-domain-" + string(result.Label), RegionIDs: ids, Label: string(result.Label), Score: result.Score, Uncertainty: round(1 - result.Score), Status: status, Evidence: result.Evidence}

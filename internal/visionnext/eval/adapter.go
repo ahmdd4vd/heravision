@@ -142,7 +142,7 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 		}
 		domainResult := domain.Classify(field)
 		hyps = append(hyps, domain.Hypothesis(regions, domainResult))
-		if domainResult.Label == domain.NaturalPhoto || (domainResult.Label == domain.DiagramDocument && domainResult.Confidence != "high") {
+		if domainResult.Action == "allow_object_semantic" {
 			regionSemantic := semantic.InferWithView(regions, view.Width, view.Height, view, model)
 			hyps = append(hyps, regionSemantic...)
 			hyps = append(hyps, semantic.AggregateImageEvidence(regions, regionSemantic, model)...)
