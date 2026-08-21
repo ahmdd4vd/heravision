@@ -17,6 +17,7 @@ func main() {
 	regionFilter := flag.String("region-filter", "", "optional trained B1 region filter JSON")
 	regionFilterThreshold := flag.Float64("region-filter-threshold", 0.95, "trained region filter threshold")
 	scaleStable := flag.Bool("scale-stable", false, "use multi-scale stable boundary-aware proposals")
+	relationPrune := flag.Bool("relation-prune", false, "prune distant relation candidate pairs")
 	legacyMaxPixels := flag.Int64("legacy-max-pixels", 24_000_000, "explicit B0 decode pixel budget")
 	flag.Parse()
 
@@ -29,6 +30,7 @@ func main() {
 		RegionFilterPath:      *regionFilter,
 		RegionFilterThreshold: *regionFilterThreshold,
 		ScaleStable:           *scaleStable,
+		RelationPrune:         *relationPrune,
 	})
 	if err != nil {
 		log.Fatal(err)

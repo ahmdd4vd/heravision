@@ -7,12 +7,41 @@ import (
 	"heravision/internal/visionnext/schema"
 )
 
+type PruneConfig struct {
+	MaxGapPixels int
+}
+
+func DefaultPruneConfig() PruneConfig {
+	return PruneConfig{MaxGapPixels: 48}
+}
+
 func Build(regions []schema.Region) []schema.Relation {
+	return build(regions, func(schema.Region, schema.Region) bool { return true })
+}
+
+// BuildPruned avoids evaluating obviously unrelated distant region pairs. It
+// never removes containment pairs and keeps pairs that touch, overlap, or are
+// close enough along an overlapping axis to support a visible relation.
+func BuildPruned(regions []schema.Region, cfg PruneConfig) []schema.Relation {
+	if cfg.MaxGapPixels < 0 {
+		cfg.MaxGapPixels = DefaultPruneConfig().MaxGapPixels
+	}
+	return build(regions, func(a, b schema.Region) bool {
+		if contains(a.BBox, b.BBox) || contains(b.BBox, a.BBox) {
+			return true
+		}
+		return boundaryGap(a.BBox, b.BBox) <= cfg.MaxGapPixels
+	})
+}
+
+func build(regions []schema.Region, keep func(schema.Region, schema.Region) bool) []schema.Relation {
 	var out []schema.Relation
 	for i := 0; i < len(regions); i++ {
 		for j := i + 1; j < len(regions); j++ {
 			a, b := regions[i], regions[j]
-			out = append(out, pair(a, b)...)
+			if keep(a, b) {
+				out = append(out, pair(a, b)...)
+			}
 		}
 	}
 	return out

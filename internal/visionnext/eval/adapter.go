@@ -25,6 +25,7 @@ type RunOptions struct {
 	RegionFilterPath      string
 	RegionFilterThreshold float64
 	ScaleStable           bool
+	RelationPrune         bool
 }
 
 type Observation struct {
@@ -134,7 +135,12 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 		regions = filter.Apply(regions, view.Width, view.Height, opts.RegionFilterThreshold)
 	}
 	hyps := hypothesis.Generate(regions, view.Width, view.Height)
-	edges := relation.Build(regions)
+	var edges []schema.Relation
+	if opts.RelationPrune {
+		edges = relation.BuildPruned(regions, relation.DefaultPruneConfig())
+	} else {
+		edges = relation.Build(regions)
+	}
 	g := graph.Build(regions, hyps, edges, schema.Provenance{
 		EngineVersion: version, SourcePath: path, ImageWidth: view.Width, ImageHeight: view.Height, Mode: opts.Mode,
 	})
