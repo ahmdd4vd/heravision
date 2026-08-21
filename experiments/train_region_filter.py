@@ -25,7 +25,7 @@ FEATURE_NAMES = [
 
 def iou(a: dict, b: dict) -> float:
     x1, y1 = max(a["x"], b["x"]), max(a["y"], b["y"])
-    x2, y2 = min(a["x"] + a["w"], b["x"] + b["h"]), min(a["y"] + a["h"], b["y"] + b["h"])
+    x2, y2 = min(a["x"] + a["w"], b["x"] + b["w"]), min(a["y"] + a["h"], b["y"] + b["h"])
     if x2 <= x1 or y2 <= y1:
         return 0.0
     inter = (x2 - x1) * (y2 - y1)
