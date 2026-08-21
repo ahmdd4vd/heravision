@@ -1,0 +1,96 @@
+{
+  "name": "md1-disagreement-log",
+  "reviewer": "Manus AI",
+  "independence": "same-agent-second-pass",
+  "disagreements": [
+    {
+      "sample_id": "blind-md0-imagenette-140e47321913",
+      "region_ids": [
+        "blind-md0-imagenette-140e47321913-gt-01"
+      ],
+      "category": "scope-ambiguity",
+      "provisional_status": "provisional-review",
+      "second_status": "needs-review",
+      "reason": "scene box includes city/background; object-vs-scene scope is ambiguous",
+      "reviewer": "Manus AI",
+      "independence": "same-agent-second-pass; independent human confirmation still required"
+    },
+    {
+      "sample_id": "blind-md0-imagenette-3235df644822",
+      "region_ids": [
+        "blind-md0-imagenette-3235df644822-gt-01"
+      ],
+      "category": "multiple-foreground",
+      "provisional_status": "provisional-review",
+      "second_status": "needs-review",
+      "reason": "foreground person and held fish create two plausible targets",
+      "reviewer": "Manus AI",
+      "independence": "same-agent-second-pass; independent human confirmation still required"
+    },
+    {
+      "sample_id": "blind-md0-imagenette-64159a40c4de",
+      "region_ids": [
+        "blind-md0-imagenette-64159a40c4de-gt-01"
+      ],
+      "category": "occlusion-scope",
+      "provisional_status": "provisional-review",
+      "second_status": "needs-review",
+      "reason": "person and large board/equipment overlap the candidate box",
+      "reviewer": "Manus AI",
+      "independence": "same-agent-second-pass; independent human confirmation still required"
+    },
+    {
+      "sample_id": "blind-md0-imagenette-a06d12b2ffd7",
+      "region_ids": [
+        "blind-md0-imagenette-a06d12b2ffd7-gt-01"
+      ],
+      "category": "scope-ambiguity",
+      "provisional_status": "provisional-review",
+      "second_status": "needs-review",
+      "reason": "person and equipment are visually connected but object scope is uncertain",
+      "reviewer": "Manus AI",
+      "independence": "same-agent-second-pass; independent human confirmation still required"
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-007c38e50b6b",
+      "region_ids": [
+        "blind-md0-imagewoof-007c38e50b6b-gt-01"
+      ],
+      "category": "multiple-foreground",
+      "provisional_status": "provisional-review",
+      "second_status": "needs-review",
+      "reason": "two dogs share one candidate region",
+      "reviewer": "Manus AI",
+      "independence": "same-agent-second-pass; independent human confirmation still required"
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-82cb64a1114a",
+      "region_ids": [
+        "blind-md0-imagewoof-82cb64a1114a-gt-01"
+      ],
+      "category": "occlusion-scope",
+      "provisional_status": "provisional-review",
+      "second_status": "needs-review",
+      "reason": "dog and human overlap; foreground ownership needs reviewer agreement",
+      "reviewer": "Manus AI",
+      "independence": "same-agent-second-pass; independent human confirmation still required"
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-874b0038f0f7",
+      "region_ids": [
+        "blind-md0-wikimedia-diagram-874b0038f0f7-gt-01"
+      ],
+      "category": "diagram-scope",
+      "provisional_status": "provisional-review",
+      "second_status": "needs-review",
+      "reason": "whole-diagram box includes network whitespace and connector extent",
+      "reviewer": "Manus AI",
+      "independence": "same-agent-second-pass; independent human confirmation still required"
+    }
+  ],
+  "counts": {
+    "accepted": 22,
+    "needs_review": 7,
+    "accepted_ignore": 1
+  }
+}
