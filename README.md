@@ -19,7 +19,7 @@
 
 HeraVision adalah **plugin vision struktural** untuk AI coding agent (Opencode, Claude Code, Codex, Cursor) via MCP. LLM text-only tidak bisa lihat gambar — HeraVision melihat **struktur layar**: posisi & ukuran elemen UI, warna dominan, peta layout — lalu mengirimnya sebagai JSON terstruktur untuk direasoning oleh LLM.
 
-**Yang DIDETEKSI:** page type guess (`login`/`dashboard`/`terminal`/`chat`/`form`/`general` + confidence); element boxes (`button` / `input` / `card` / `image` / `text_block` / `icon` / `checkbox` / `avatar`) dengan koordinat presisi (Canny+NMS edge 1px), ukuran, skor, warna rata-rata, **reading order**, dan **caption naratif** ("blue button 200x40 medium at bottom-right"); grid detection (3x2 card grid); palet warna Lab k-means; background; layout header/body/footer; graph mermaid sederhana; compare dengan summary semantik.
+**Yang DIDETEKSI:** page type guess (`login`/`dashboard`/`terminal`/`chat`/`form`/`general` + confidence); element boxes (`button` / `input` / `card` / `image` / `text_block` / `icon` / `checkbox` / `avatar`) dengan koordinat presisi (Canny+NMS edge 1px), ukuran, skor, warna rata-rata, **reading order**, dan **caption naratif** ("blue button 200x40 medium at bottom-right"); grid detection (3x2 card grid); **table detection** (rows x cols dari garis grid); layout tree **XY-cut recursive**; palet warna Lab k-means; mermaid dengan **edges real antar shape** (fallback hierarki); compare dengan summary semantik.
 
 **Yang BELUM:** OCR. Teks belum dibaca — field `texts` berisi placeholder bentuk seperti `[button]`, `[text]`. Ini roadmap utama (lihat bawah). Jangan pakai HeraVision untuk membaca isi teks gambar.
 
@@ -115,9 +115,9 @@ Input image (jpg/png/webp)
 ```
 
 **Jujur soal batasan teknis saat ini:**
-- Layout split 3 zona Y, bukan recursive whitespace projection
-- Mermaid = rantai node urut scan, bukan deteksi panah Hough
 - Teks = placeholder bentuk, bukan OCR
+- Table detection butuh garis grid utuh; tabel tanpa border tidak terdeteksi
+- Mermaid edges: arah panah dari posisi (kiri→kanan/atas→bawah), arrowhead belum dianalisis; panah yang menempel penuh ke shape bisa terfusi sebagai satu elemen
 
 Semua angka threshold bisa di-tune via `heravision.json` (copy dari `heravision.json.example`).
 
@@ -140,8 +140,8 @@ Semua angka threshold bisa di-tune via `heravision.json` (copy dari `heravision.
 - [x] Multi-scale pyramid (elemen kecil di gambar besar)
 - [x] Classify v3: icon / checkbox / avatar
 - [x] Page type classifier + caption per region + grid detection + reading order + diff summary (Fase B)
-- [ ] **OCR real** — keputusan arsitektur: boleh bundle model besar (keputusan owner); riset wazero/ONNX berjalan
-- [ ] XY-cut recursive layout + table detection + mermaid panah akurat (Fase C)
+- [x] XY-cut recursive layout + table detection + mermaid edges real (Fase C)
+- [ ] **OCR real** — keputusan arsitektur: boleh bundle model besar (keputusan owner); riset wazero/ONNX berjalan (Fase D)
 
 ---
 

@@ -39,6 +39,7 @@ type Result struct {
 	Texts          []ocr.Text     `json:"texts"`
 	Boxes          []detector.Box `json:"boxes"`
 	Grids          []Grid         `json:"grids"`
+	Tables         []detector.Table `json:"tables"`
 	Colors         Colors         `json:"colors"`
 	Layout         layout.Node    `json:"layout"`
 	Lines          []interface{}  `json:"lines"`
@@ -173,6 +174,11 @@ func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 		MinArea:   cfg.Detector.MinArea,
 	}
 	boxes := detectMultiScale(img, base, params, cfg.MaxSide, cfg.Multiscale)
+	edgeMap := detector.EdgeMap(base, params)
+	tables := detector.TablesFromEdges(edgeMap)
+	if tables == nil {
+		tables = []detector.Table{}
+	}
 	texts := ocr.Extract(base)
 	dominant := color.DominantCfg(base, cfg.Color.K, cfg.Color.K, cfg.Color.DeltaEMerge)
 	bg := color.Background(base)
@@ -194,7 +200,7 @@ func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 	tree := layout.Build(boxes, w, h)
 	var mermaid string
 	if mode == "diagram" {
-		mermaid = diagram.ToMermaid(boxes)
+		mermaid = diagram.ToMermaidGraph(boxes, edgeMap, tree)
 	}
 	r := &Result{
 		Meta: Meta{
@@ -207,6 +213,7 @@ func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 		Texts:          texts,
 		Boxes:          boxes,
 		Grids:          grids,
+		Tables:         tables,
 		Colors:         Colors{Dominant: dominant, Background: bg},
 		Layout:         tree,
 		Lines:          []interface{}{},
@@ -226,6 +233,9 @@ func BuildMarkdown(r *Result) string {
 	sb.WriteString(fmt.Sprintf("- Page type: %s (confidence %.2f)\n", r.PageType, r.PageConfidence))
 	for _, g := range r.Grids {
 		sb.WriteString(fmt.Sprintf("- Grid: %dx%d of %s (%d cells)\n", g.Cols, g.Rows, g.Cell, g.Count))
+	}
+	for _, tb := range r.Tables {
+		sb.WriteString(fmt.Sprintf("- Table at (%d,%d) %dx%d: %d rows x %d cols\n", tb.X, tb.Y, tb.W, tb.H, tb.Rows, tb.Cols))
 	}
 	sb.WriteString(fmt.Sprintf("- Elements detected: %d boxes\n", len(r.Boxes)))
 	for i, bx := range r.Boxes {
