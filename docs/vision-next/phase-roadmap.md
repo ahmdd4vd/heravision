@@ -155,4 +155,4 @@ Hanya setelah fase 3–6 yang memadai, kita menulis technical report/preprint. C
 | `trained-component` | Komponen kecil dilatih dan mengalahkan baseline pada blind test |
 | `research-result` | Ada ablation, reproducibility package, dan klaim yang dapat dipertahankan |
 
-**Status branch saat dokumen ini dibuat: `foundation`.**
+**Status branch setelah pilot COCO128: `trained-component` untuk pilot geometry saja.** Ini belum berarti benchmark general vision selesai; domain tambahan dan blind test eksternal masih wajib.
