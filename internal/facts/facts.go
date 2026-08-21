@@ -33,18 +33,18 @@ type Colors struct {
 }
 
 type Result struct {
-	Meta           Meta           `json:"meta"`
-	PageType       string         `json:"page_type"`
-	PageConfidence float64        `json:"page_confidence"`
-	Texts          []ocr.Text     `json:"texts"`
-	Boxes          []detector.Box `json:"boxes"`
-	Grids          []Grid         `json:"grids"`
+	Meta           Meta             `json:"meta"`
+	PageType       string           `json:"page_type"`
+	PageConfidence float64          `json:"page_confidence"`
+	Texts          []ocr.Text       `json:"texts"`
+	Boxes          []detector.Box   `json:"boxes"`
+	Grids          []Grid           `json:"grids"`
 	Tables         []detector.Table `json:"tables"`
-	Colors         Colors         `json:"colors"`
-	Layout         layout.Node    `json:"layout"`
-	Lines          []interface{}  `json:"lines"`
-	Mermaid        string         `json:"mermaid"`
-	Markdown       string         `json:"markdown"`
+	Colors         Colors           `json:"colors"`
+	Layout         layout.Node      `json:"layout"`
+	Lines          []interface{}    `json:"lines"`
+	Mermaid        string           `json:"mermaid"`
+	Markdown       string           `json:"markdown"`
 }
 
 type Move struct {
@@ -158,7 +158,7 @@ func mergeScales(boxes []detector.Box) []detector.Box {
 
 func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 	start := time.Now()
-	img, _, err := processor.Decode(path)
+	img, _, err := processor.DecodeWithMaxPixels(path, cfg.MaxPixels)
 	if err != nil {
 		return nil, err
 	}

@@ -15,6 +15,13 @@ const MaxSideLimit = 16384
 var MaxPixels int64 = 12_000_000
 
 func Decode(path string) (image.Image, string, error) {
+	return DecodeWithMaxPixels(path, MaxPixels)
+}
+
+func DecodeWithMaxPixels(path string, maxPixels int64) (image.Image, string, error) {
+	if maxPixels <= 0 {
+		maxPixels = MaxPixels
+	}
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, "", fmt.Errorf("open %s: %w", path, err)
@@ -31,8 +38,8 @@ func Decode(path string) (image.Image, string, error) {
 	if w > MaxSideLimit || h > MaxSideLimit {
 		return nil, "", fmt.Errorf("decode %s: dimensions %dx%d exceed limit %dpx per side", path, w, h, MaxSideLimit)
 	}
-	if px := int64(w) * int64(h); px > MaxPixels {
-		return nil, "", fmt.Errorf("decode %s: %d megapixels exceeds limit %d (max_pixels)", path, px/1_000_000, MaxPixels/1_000_000)
+	if px := int64(w) * int64(h); px > maxPixels {
+		return nil, "", fmt.Errorf("decode %s: %d megapixels exceeds limit %d (max_pixels)", path, px/1_000_000, maxPixels/1_000_000)
 	}
 	if _, err := f.Seek(0, 0); err != nil {
 		return nil, "", fmt.Errorf("seek %s: %w", path, err)

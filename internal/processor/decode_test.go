@@ -43,3 +43,15 @@ func TestDecodeValid(t *testing.T) {
 		t.Fatal("expected valid image and format")
 	}
 }
+
+func TestDecodeWithMaxPixelsDoesNotMutateGlobal(t *testing.T) {
+	old := MaxPixels
+	defer func() { MaxPixels = old }()
+	MaxPixels = 1 << 40
+	if _, _, err := DecodeWithMaxPixels("../../testdata/ui.png", 100); err == nil {
+		t.Fatal("expected per-call pixel limit error")
+	}
+	if MaxPixels != 1<<40 {
+		t.Fatalf("per-call decode mutated global MaxPixels: %d", MaxPixels)
+	}
+}
