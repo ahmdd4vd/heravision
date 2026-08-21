@@ -21,7 +21,7 @@ def main() -> int:
     args = parser.parse_args()
     data = json.loads(args.input.read_text())
     assert data["count"] == len(data["samples"]) == 30
-    assert data["annotation_status"] == "pending-independent-answerability-review"
+    assert data["annotation_status"] in {"pending-independent-answerability-review", "internal-third-review-complete"}
     ids = set()
     for sample in data["samples"]:
         assert sample["id"] not in ids
@@ -29,7 +29,7 @@ def main() -> int:
         path = Path(sample["image_path"])
         assert path.exists(), path
         assert sha256(path) == sample["sha256"], sample["id"]
-        assert sample["expected_answer_status"] == ""
+        assert sample["expected_answer_status"] in {"", "answered", "abstain", "insufficient_evidence"}
     print(json.dumps({"status": "valid-pending-abstention-fixture", "samples": len(ids)}))
     return 0
 

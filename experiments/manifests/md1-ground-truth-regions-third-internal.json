@@ -1,0 +1,95 @@
+{
+  "name": "md1-ground-truth-regions-third-internal",
+  "parent_manifest": "experiments/manifests/md1-ground-truth-regions-second-review.json",
+  "count": 7,
+  "annotation_status": "internal-third-review-complete",
+  "reviewer": "Manus AI",
+  "review_method": "blind visual third pass without consulting prior decisions during image judgment",
+  "independence": "same-agent-internal-review; not independent human annotation",
+  "samples": [
+    {
+      "sample_id": "blind-md0-imagenette-140e47321913",
+      "image_path": "data/imagenette/imagenette2-160/val/n03888257/n03888257_9932.JPEG",
+      "domain": "imagenette",
+      "width": 213,
+      "height": 160,
+      "second_status": "needs-review",
+      "third_status": "needs-review",
+      "decision": "unresolved",
+      "bbox": {"x": 0, "y": 0, "w": 213, "h": 160},
+      "reason": "foreground person and city scene support different valid scopes"
+    },
+    {
+      "sample_id": "blind-md0-imagenette-3235df644822",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/n01440764_10470.JPEG",
+      "domain": "imagenette",
+      "width": 213,
+      "height": 160,
+      "second_status": "needs-review",
+      "third_status": "accepted-provisional",
+      "decision": "accept-group",
+      "bbox": {"x": 37, "y": 12, "w": 140, "h": 134},
+      "reason": "person and held fish form one obvious foreground subject group"
+    },
+    {
+      "sample_id": "blind-md0-imagenette-64159a40c4de",
+      "image_path": "data/imagenette/imagenette2-160/val/n03000684/n03000684_9942.JPEG",
+      "domain": "imagenette",
+      "width": 160,
+      "height": 213,
+      "second_status": "needs-review",
+      "third_status": "needs-review",
+      "decision": "unresolved",
+      "bbox": {"x": 16, "y": 4, "w": 125, "h": 202},
+      "reason": "person-only and person-plus-board scopes are both defensible"
+    },
+    {
+      "sample_id": "blind-md0-imagenette-a06d12b2ffd7",
+      "image_path": "data/imagenette/imagenette2-160/val/n03000684/n03000684_13071.JPEG",
+      "domain": "imagenette",
+      "width": 160,
+      "height": 237,
+      "second_status": "needs-review",
+      "third_status": "needs-review",
+      "decision": "unresolved",
+      "bbox": {"x": 29, "y": 7, "w": 115, "h": 223},
+      "reason": "person and equipment assembly require an explicit scope policy"
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-007c38e50b6b",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/n02086240_1312.JPEG",
+      "domain": "imagewoof",
+      "width": 190,
+      "height": 160,
+      "second_status": "needs-review",
+      "third_status": "accepted-provisional",
+      "decision": "accept-group",
+      "bbox": {"x": 0, "y": 16, "w": 190, "h": 128},
+      "reason": "two dogs are clearly visible as one multi-foreground group; separate-object policy may revise"
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-82cb64a1114a",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02099601/n02099601_5240.JPEG",
+      "domain": "imagewoof",
+      "width": 175,
+      "height": 160,
+      "second_status": "needs-review",
+      "third_status": "needs-review",
+      "decision": "unresolved",
+      "bbox": {"x": 58, "y": 22, "w": 106, "h": 122},
+      "reason": "dog, human, and partial right-edge foreground create ownership ambiguity"
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-874b0038f0f7",
+      "image_path": "data/wikimedia14/sample_network_diagram.png",
+      "domain": "wikimedia-diagram",
+      "width": 1363,
+      "height": 640,
+      "second_status": "needs-review",
+      "third_status": "accepted-provisional",
+      "decision": "accept-tight-whole-diagram",
+      "bbox": {"x": 49, "y": 4, "w": 1303, "h": 581},
+      "reason": "whole network composition is the natural visual unit; whitespace can be tightened"
+    }
+  ]
+}

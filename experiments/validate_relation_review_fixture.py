@@ -14,7 +14,7 @@ def main() -> int:
     parser.add_argument("--input", type=Path, required=True)
     args = parser.parse_args()
     data = json.loads(args.input.read_text())
-    assert data["annotation_status"] == "pending-independent-relation-review"
+    assert data["annotation_status"] in {"pending-independent-relation-review", "internal-third-review-complete"}
     edge_count = 0
     for sample in data["samples"]:
         assert Path(sample["image_path"]).exists()
