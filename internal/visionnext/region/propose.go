@@ -11,10 +11,11 @@ import (
 type Config struct {
 	MergeThreshold float64
 	MinArea        int
+	MaxRegions     int
 }
 
 func DefaultConfig() Config {
-	return Config{MergeThreshold: 0.20, MinArea: 1}
+	return Config{MergeThreshold: 0.20, MinArea: 4, MaxRegions: 256}
 }
 
 type dsu struct {
@@ -60,7 +61,10 @@ func Propose(f evidence.Field, cfg Config) []schema.Region {
 		cfg.MergeThreshold = DefaultConfig().MergeThreshold
 	}
 	if cfg.MinArea < 1 {
-		cfg.MinArea = 1
+		cfg.MinArea = DefaultConfig().MinArea
+	}
+	if cfg.MaxRegions < 1 {
+		cfg.MaxRegions = DefaultConfig().MaxRegions
 	}
 	n := f.Width * f.Height
 	d := newDSU(n)
@@ -139,6 +143,18 @@ func Propose(f evidence.Field, cfg Config) []schema.Region {
 		if a.area >= cfg.MinArea {
 			items = append(items, item{root: root, a: a})
 		}
+	}
+	sort.Slice(items, func(i, j int) bool {
+		if items[i].a.area == items[j].a.area {
+			if items[i].a.minY == items[j].a.minY {
+				return items[i].a.minX < items[j].a.minX
+			}
+			return items[i].a.minY < items[j].a.minY
+		}
+		return items[i].a.area > items[j].a.area
+	})
+	if len(items) > cfg.MaxRegions {
+		items = items[:cfg.MaxRegions]
 	}
 	sort.Slice(items, func(i, j int) bool {
 		if items[i].a.minY == items[j].a.minY {

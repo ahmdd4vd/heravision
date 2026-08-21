@@ -11,3 +11,8 @@ internal/ocr/assets/*.wasm
 testdata/*.png
 !testdata/ui.png
 !testdata/demo.png
+
+data/
+experiments/runs/
+__pycache__/
+*.pyc

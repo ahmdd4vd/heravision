@@ -11,16 +11,19 @@ import (
 	"heravision/internal/visionnext/graph"
 	"heravision/internal/visionnext/hypothesis"
 	"heravision/internal/visionnext/imageview"
+	"heravision/internal/visionnext/learned"
 	"heravision/internal/visionnext/region"
 	"heravision/internal/visionnext/relation"
 	"heravision/internal/visionnext/schema"
 )
 
 type RunOptions struct {
-	Mode          string
-	EngineVersion string
-	MaxSide       int
-	LegacyConfig  config.Config
+	Mode                  string
+	EngineVersion         string
+	MaxSide               int
+	LegacyConfig          config.Config
+	RegionFilterPath      string
+	RegionFilterThreshold float64
 }
 
 type Observation struct {
@@ -104,6 +107,13 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 	}
 	field := evidence.Compute(view)
 	regions := region.Propose(field, region.DefaultConfig())
+	if opts.RegionFilterPath != "" {
+		filter, filterErr := learned.LoadRegionFilter(opts.RegionFilterPath)
+		if filterErr != nil {
+			return Observation{}, filterErr
+		}
+		regions = filter.Apply(regions, view.Width, view.Height, opts.RegionFilterThreshold)
+	}
 	hyps := hypothesis.Generate(regions, view.Width, view.Height)
 	edges := relation.Build(regions)
 	g := graph.Build(regions, hyps, edges, schema.Provenance{
