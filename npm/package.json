@@ -1,6 +1,6 @@
 {
   "name": "heravision",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "UI structure extractor for text-only LLMs - pure Go binary, offline, CGO_ENABLED=0, MCP-native",
   "bin": {
     "heravision": "bin/heravision.js"
