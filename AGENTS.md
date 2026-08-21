@@ -27,6 +27,7 @@ Plugin vision universal untuk AI agent coding (Opencode, Claude Code, Codex, Cur
 - `internal/buildinfo/` — single source version
 - `mcp/` — MCP server stdio 3 tools
 - `plugins/` — opencode/claude/codex configs
+- `install.sh` / `install.ps1` / `npm/` — one-line installers; bare `setup` = interactive wizard (OCR → agent config)
 - `plan.md` — single source of truth
 - `testdata/` — fixtures png
 

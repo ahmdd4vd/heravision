@@ -5,8 +5,7 @@
   "detector": {
     "canny_low": 50,
     "canny_high": 150,
-    "min_area": 200,
-    "mode_overrides": { "blur": { "canny_low": 30, "canny_high": 100 } }
+    "min_area": 200
   },
   "preprocess": {
     "blur_threshold": 80
@@ -17,6 +16,9 @@
     "lib_path": "",
     "det_path": "",
     "rec_path": "",
-    "dict_path": ""
+    "dict_path": "",
+    "det_max_side_len": 640,
+    "thread_count": 1,
+    "num_threads": 2
   }
 }
