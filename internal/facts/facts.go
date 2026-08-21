@@ -33,14 +33,17 @@ type Colors struct {
 }
 
 type Result struct {
-	Meta     Meta           `json:"meta"`
-	Texts    []ocr.Text     `json:"texts"`
-	Boxes    []detector.Box `json:"boxes"`
-	Colors   Colors         `json:"colors"`
-	Layout   layout.Node    `json:"layout"`
-	Lines    []interface{}  `json:"lines"`
-	Mermaid  string         `json:"mermaid"`
-	Markdown string         `json:"markdown"`
+	Meta           Meta           `json:"meta"`
+	PageType       string         `json:"page_type"`
+	PageConfidence float64        `json:"page_confidence"`
+	Texts          []ocr.Text     `json:"texts"`
+	Boxes          []detector.Box `json:"boxes"`
+	Grids          []Grid         `json:"grids"`
+	Colors         Colors         `json:"colors"`
+	Layout         layout.Node    `json:"layout"`
+	Lines          []interface{}  `json:"lines"`
+	Mermaid        string         `json:"mermaid"`
+	Markdown       string         `json:"markdown"`
 }
 
 type Move struct {
@@ -56,10 +59,11 @@ type Diff struct {
 }
 
 type CompareResult struct {
-	PathA  string         `json:"path_a"`
-	PathB  string         `json:"path_b"`
-	Diff   Diff           `json:"diff"`
-	Counts map[string]int `json:"counts"`
+	PathA   string         `json:"path_a"`
+	PathB   string         `json:"path_b"`
+	Summary string         `json:"summary"`
+	Diff    Diff           `json:"diff"`
+	Counts  map[string]int `json:"counts"`
 }
 
 const compareSide = 512
@@ -178,6 +182,15 @@ func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 	if bg == "" {
 		bg = dominant[0]
 	}
+	for i := range boxes {
+		boxes[i].Order = i + 1
+		boxes[i].Caption = buildCaption(boxes[i], w, h)
+	}
+	grids := detectGrids(boxes)
+	if grids == nil {
+		grids = []Grid{}
+	}
+	pageType, pageConf := classifyPage(boxes, bg, w, h, grids)
 	tree := layout.Build(boxes, w, h)
 	var mermaid string
 	if mode == "diagram" {
@@ -189,12 +202,15 @@ func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 			Version: version, Orientation: orientation,
 			ElapsedMs: time.Since(start).Milliseconds(),
 		},
-		Texts:   texts,
-		Boxes:   boxes,
-		Colors:  Colors{Dominant: dominant, Background: bg},
-		Layout:  tree,
-		Lines:   []interface{}{},
-		Mermaid: mermaid,
+		PageType:       pageType,
+		PageConfidence: pageConf,
+		Texts:          texts,
+		Boxes:          boxes,
+		Grids:          grids,
+		Colors:         Colors{Dominant: dominant, Background: bg},
+		Layout:         tree,
+		Lines:          []interface{}{},
+		Mermaid:        mermaid,
 	}
 	r.Markdown = BuildMarkdown(r)
 	return r, nil
@@ -207,17 +223,21 @@ func BuildMarkdown(r *Result) string {
 	if r.Meta.Orientation > 1 {
 		sb.WriteString(fmt.Sprintf("- EXIF orientation: %d (auto-rotated)\n", r.Meta.Orientation))
 	}
+	sb.WriteString(fmt.Sprintf("- Page type: %s (confidence %.2f)\n", r.PageType, r.PageConfidence))
+	for _, g := range r.Grids {
+		sb.WriteString(fmt.Sprintf("- Grid: %dx%d of %s (%d cells)\n", g.Cols, g.Rows, g.Cell, g.Count))
+	}
 	sb.WriteString(fmt.Sprintf("- Elements detected: %d boxes\n", len(r.Boxes)))
 	for i, bx := range r.Boxes {
 		if i >= 15 {
 			sb.WriteString(fmt.Sprintf("  - ... and %d more\n", len(r.Boxes)-i))
 			break
 		}
-		c := ""
-		if bx.Color != "" {
-			c = " " + bx.Color
+		cap := bx.Caption
+		if cap == "" {
+			cap = fmt.Sprintf("%s at (%d,%d)", bx.Type, bx.X, bx.Y)
 		}
-		sb.WriteString(fmt.Sprintf("  - %s at (%d,%d) %dx%d%s score %.2f\n", bx.Type, bx.X, bx.Y, bx.W, bx.H, c, bx.Score))
+		sb.WriteString(fmt.Sprintf("  - #%d %s\n", bx.Order, cap))
 	}
 	sb.WriteString("- Text content: NOT OCR-read; text fields are shape placeholders like [button]/[text]\n")
 	for _, t := range r.Texts {
@@ -250,7 +270,7 @@ func Compare(pathA, pathB string, cfg config.Config) (*CompareResult, error) {
 	boxesA := detector.DetectCfg(imgA, params)
 	boxesB := detector.DetectCfg(imgB, params)
 	added, removed, moved, colorChanged := diffBoxes(boxesA, boxesB)
-	return &CompareResult{
+	res := &CompareResult{
 		PathA: pathA,
 		PathB: pathB,
 		Diff: Diff{
@@ -258,7 +278,9 @@ func Compare(pathA, pathB string, cfg config.Config) (*CompareResult, error) {
 			Moved: moved, ColorChanged: colorChanged,
 		},
 		Counts: map[string]int{"a_boxes": len(boxesA), "b_boxes": len(boxesB)},
-	}, nil
+	}
+	res.Summary = buildDiffSummary(res)
+	return res, nil
 }
 
 func diffBoxes(a, b []detector.Box) ([]detector.Box, []detector.Box, []Move, []Move) {

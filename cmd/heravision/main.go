@@ -130,7 +130,7 @@ func doctorCmd() *cobra.Command {
 			fmt.Println("[ok] processor: decode jpg/png/webp + EXIF auto-rotate + decode limits")
 			fmt.Println("[ok] detector: Sobel+Canny hysteresis+NMS, morph close, 8-connect, classify v3, box color")
 			fmt.Println("[ok] color: Lab k-means + dE merge + background border")
-			fmt.Println("[ok] layout: header/body/footer split")
+			fmt.Println("[ok] facts: page_type classifier, grid detection, captions, reading order, diff summary")
 			fmt.Println("[ok] diagram: mermaid chain graph (mode diagram)")
 			fmt.Println("[warn] ocr: heuristic shape placeholders only — real OCR engine not bundled yet (roadmap)")
 			fmt.Printf("[info] targets: binary <12MB core, RAM <80MB, latency <300ms\n")

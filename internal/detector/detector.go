@@ -7,14 +7,16 @@ import (
 )
 
 type Box struct {
-	Type  string  `json:"type"`
-	X     int     `json:"x"`
-	Y     int     `json:"y"`
-	W     int     `json:"w"`
-	H     int     `json:"h"`
-	Color string  `json:"color,omitempty"`
-	Text  string  `json:"text,omitempty"`
-	Score float64 `json:"score,omitempty"`
+	Type    string  `json:"type"`
+	X       int     `json:"x"`
+	Y       int     `json:"y"`
+	W       int     `json:"w"`
+	H       int     `json:"h"`
+	Color   string  `json:"color,omitempty"`
+	Text    string  `json:"text,omitempty"`
+	Score   float64 `json:"score,omitempty"`
+	Order   int     `json:"order,omitempty"`
+	Caption string  `json:"caption,omitempty"`
 }
 
 type Params struct {

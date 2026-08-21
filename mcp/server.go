@@ -19,7 +19,7 @@ func NewServer() *server.MCPServer {
 		server.WithToolCapabilities(true),
 	)
 	s.AddTool(mcp.NewTool("heravision_extract",
-		mcp.WithDescription("Extract UI structure facts from an image: element boxes (button/input/card/image/text_block) with position, size and average color; dominant colors; layout tree; optional mermaid graph. Text is NOT OCR-read - text fields are shape placeholders like [button]. Use when you are a text-only model and need to see layout."),
+		mcp.WithDescription("Extract UI structure facts from an image: page type guess (login/dashboard/terminal/chat/form), element boxes (button/input/card/image/text_block/icon/checkbox/avatar) with position, size, color, reading order and caption; grids; dominant colors; layout tree; optional mermaid graph. Text is NOT OCR-read - text fields are shape placeholders like [button]. Use when you are a text-only model and need to see layout."),
 		mcp.WithString("path", mcp.Required(), mcp.Description("Absolute or relative path to image (png/jpg/webp)")),
 		mcp.WithString("mode", mcp.Description("Mode: general, ui, code, diagram, error, blur"), mcp.DefaultString("general")),
 	), handleExtract)

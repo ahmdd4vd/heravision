@@ -19,7 +19,7 @@
 
 HeraVision adalah **plugin vision struktural** untuk AI coding agent (Opencode, Claude Code, Codex, Cursor) via MCP. LLM text-only tidak bisa lihat gambar — HeraVision melihat **struktur layar**: posisi & ukuran elemen UI, warna dominan, peta layout — lalu mengirimnya sebagai JSON terstruktur untuk direasoning oleh LLM.
 
-**Yang DIDETEKSI:** element boxes (`button` / `input` / `card` / `image` / `text_block` / `icon` / `checkbox` / `avatar`) dengan koordinat presisi (Canny+NMS edge 1px), ukuran, skor, dan warna rata-rata; multi-scale pyramid menangkap elemen kecil di gambar besar; palet warna Lab k-means; background; layout header/body/footer; graph mermaid sederhana.
+**Yang DIDETEKSI:** page type guess (`login`/`dashboard`/`terminal`/`chat`/`form`/`general` + confidence); element boxes (`button` / `input` / `card` / `image` / `text_block` / `icon` / `checkbox` / `avatar`) dengan koordinat presisi (Canny+NMS edge 1px), ukuran, skor, warna rata-rata, **reading order**, dan **caption naratif** ("blue button 200x40 medium at bottom-right"); grid detection (3x2 card grid); palet warna Lab k-means; background; layout header/body/footer; graph mermaid sederhana; compare dengan summary semantik.
 
 **Yang BELUM:** OCR. Teks belum dibaca — field `texts` berisi placeholder bentuk seperti `[button]`, `[text]`. Ini roadmap utama (lihat bawah). Jangan pakai HeraVision untuk membaca isi teks gambar.
 
@@ -139,8 +139,8 @@ Semua angka threshold bisa di-tune via `heravision.json` (copy dari `heravision.
 - [x] Canny NMS + gradient direction (edge 1px)
 - [x] Multi-scale pyramid (elemen kecil di gambar besar)
 - [x] Classify v3: icon / checkbox / avatar
+- [x] Page type classifier + caption per region + grid detection + reading order + diff summary (Fase B)
 - [ ] **OCR real** — keputusan arsitektur: boleh bundle model besar (keputusan owner); riset wazero/ONNX berjalan
-- [ ] Screenshot type classifier + caption per region + reading order (Fase B)
 - [ ] XY-cut recursive layout + table detection + mermaid panah akurat (Fase C)
 
 ---
