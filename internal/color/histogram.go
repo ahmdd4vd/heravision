@@ -8,12 +8,16 @@ import (
 )
 
 func Dominant(img image.Image, n int) []string {
+	return DominantCfg(img, n, 5, 12)
+}
+
+func DominantCfg(img image.Image, n, k int, deltaEMerge float64) []string {
 	samples := collectSamples(img, 8000)
 	if len(samples) == 0 {
 		return []string{"#FFFFFF"}
 	}
-	centers := kmeans(samples, n, 8)
-	merged := mergeClose(centers, 12)
+	centers := kmeans(samples, k, 8)
+	merged := mergeClose(centers, deltaEMerge)
 	sort.Slice(merged, func(i, j int) bool { return merged[i].count > merged[j].count })
 	out := make([]string, 0, len(merged))
 	for _, c := range merged {

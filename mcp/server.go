@@ -8,30 +8,28 @@ import (
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
-	"heravision/internal/color"
-	"heravision/internal/detector"
-	"heravision/internal/diagram"
-	"heravision/internal/layout"
-	"heravision/internal/ocr"
-	"heravision/internal/processor"
+
+	"heravision/internal/buildinfo"
+	"heravision/internal/config"
+	"heravision/internal/facts"
 )
 
 func NewServer() *server.MCPServer {
-	s := server.NewMCPServer("heravision", "0.1.0",
+	s := server.NewMCPServer("heravision", buildinfo.Version,
 		server.WithToolCapabilities(true),
 	)
 	s.AddTool(mcp.NewTool("heravision_extract",
-		mcp.WithDescription("Extract structured facts from image — texts, boxes, colors, layout. Use for any image when you are text-only and need to see."),
+		mcp.WithDescription("Extract UI structure facts from an image: element boxes (button/input/card/image/text_block) with position, size and average color; dominant colors; layout tree; optional mermaid graph. Text is NOT OCR-read - text fields are shape placeholders like [button]. Use when you are a text-only model and need to see layout."),
 		mcp.WithString("path", mcp.Required(), mcp.Description("Absolute or relative path to image (png/jpg/webp)")),
 		mcp.WithString("mode", mcp.Description("Mode: general, ui, code, diagram, error, blur"), mcp.DefaultString("general")),
 	), handleExtract)
 	s.AddTool(mcp.NewTool("heravision_compare",
-		mcp.WithDescription("Compare two images and return diff facts — added/removed/moved boxes and texts."),
+		mcp.WithDescription("Compare two images and return structural diff: added/removed/moved boxes and color changes."),
 		mcp.WithString("path_a", mcp.Required(), mcp.Description("Path to first image")),
 		mcp.WithString("path_b", mcp.Required(), mcp.Description("Path to second image")),
 	), handleCompare)
 	s.AddTool(mcp.NewTool("heravision_describe",
-		mcp.WithDescription("Describe image as markdown — alias to extract but returns markdown only."),
+		mcp.WithDescription("Describe image structure as markdown only (no JSON block). Alias of extract with markdown output."),
 		mcp.WithString("path", mcp.Required(), mcp.Description("Path to image")),
 		mcp.WithString("mode", mcp.Description("Mode: general, ui, code, diagram, error, blur"), mcp.DefaultString("general")),
 	), handleDescribe)
@@ -43,46 +41,29 @@ func Serve() error {
 	return server.ServeStdio(s)
 }
 
+func loadCfg() config.Config {
+	cfg, path, err := config.Load("")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "[warn] config %s: %v\n", path, err)
+	}
+	return cfg
+}
+
 func handleExtract(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	path, err := req.RequireString("path")
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("missing path: %v", err)), nil
 	}
 	mode := req.GetString("mode", "general")
-	img, _, err := processor.Decode(path)
+	r, err := facts.Extract(path, mode, buildinfo.Version, loadCfg())
 	if err != nil {
-		return mcp.NewToolResultError(fmt.Sprintf("decode failed: %v", err)), nil
+		return mcp.NewToolResultError(fmt.Sprintf("extract failed: %v", err)), nil
 	}
-	img = processor.FixOrientation(img)
-	img = processor.Preprocess(img, mode)
-	img = processor.Resize(img, 1024)
-	b := img.Bounds()
-	w, h := b.Dx(), b.Dy()
-	boxes := detector.Detect(img)
-	texts := ocr.Extract(img)
-	dominant := color.Dominant(img, 5)
-	bg := color.Background(img)
-	if len(dominant) == 0 {
-		dominant = []string{"#FFFFFF"}
+	j, err := json.MarshalIndent(r, "", "  ")
+	if err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("marshal: %v", err)), nil
 	}
-	if bg == "" {
-		bg = dominant[0]
-	}
-	tree := layout.Build(boxes, w, h)
-	var mermaid string
-	if mode == "diagram" {
-		mermaid = diagram.ToMermaid(boxes)
-	}
-	result := map[string]interface{}{
-		"meta": map[string]interface{}{"width": w, "height": h, "mode": mode, "path": path},
-		"texts": texts, "boxes": boxes,
-		"colors": map[string]interface{}{"dominant": dominant, "background": bg},
-		"layout": tree, "lines": []interface{}{},
-		"mermaid": mermaid,
-	}
-	md := fmt.Sprintf("## HeraVision Extract (%s)\n- Size: %dx%d\n- Mode: %s\n- Texts: %d\n- Boxes: %d\n- Colors: %v\n- Layout: %s/%d header, %d body\n", mode, w, h, mode, len(texts), len(boxes), dominant, tree.Type, len(tree.Children), len(boxes))
-	j, _ := json.MarshalIndent(result, "", "  ")
-	combined := fmt.Sprintf("%s\n```json\n%s\n```\n", md, string(j))
+	combined := fmt.Sprintf("%s\n```json\n%s\n```\n", r.Markdown, string(j))
 	return &mcp.CallToolResult{Content: []mcp.Content{mcp.TextContent{Type: "text", Text: combined}}}, nil
 }
 
@@ -95,100 +76,23 @@ func handleCompare(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolR
 	if err != nil {
 		return mcp.NewToolResultError("missing path_b"), nil
 	}
-	if _, err := os.Stat(a); err != nil {
-		return mcp.NewToolResultError(fmt.Sprintf("path_a not found: %s", a)), nil
-	}
-	if _, err := os.Stat(bs); err != nil {
-		return mcp.NewToolResultError(fmt.Sprintf("path_b not found: %s", bs)), nil
-	}
-	imgA, _, err := processor.Decode(a)
+	res, err := facts.Compare(a, bs, loadCfg())
 	if err != nil {
-		return mcp.NewToolResultError(fmt.Sprintf("decode a: %v", err)), nil
+		return mcp.NewToolResultError(fmt.Sprintf("compare failed: %v", err)), nil
 	}
-	imgB, _, err := processor.Decode(bs)
-	if err != nil {
-		return mcp.NewToolResultError(fmt.Sprintf("decode b: %v", err)), nil
-	}
-	imgA = processor.Resize(imgA, 512)
-	imgB = processor.Resize(imgB, 512)
-	boxesA := detector.Detect(imgA)
-	boxesB := detector.Detect(imgB)
-	added, removed, moved := diffBoxes(boxesA, boxesB)
-	diff := map[string]interface{}{
-		"path_a": a, "path_b": bs,
-		"diff": map[string]interface{}{"added": added, "removed": removed, "moved": moved, "color_changed": []interface{}{}},
-		"counts": map[string]int{"a_boxes": len(boxesA), "b_boxes": len(boxesB)},
-	}
-	j, _ := json.MarshalIndent(diff, "", "  ")
+	j, _ := json.MarshalIndent(res, "", "  ")
 	return mcp.NewToolResultText(string(j)), nil
 }
 
-func diffBoxes(a, b []detector.Box) ([]detector.Box, []detector.Box, []map[string]interface{}) {
-	used := make([]bool, len(b))
-	var added []detector.Box
-	var removed []detector.Box
-	var moved []map[string]interface{}
-	if added == nil {
-		added = []detector.Box{}
-	}
-	if removed == nil {
-		removed = []detector.Box{}
-	}
-	if moved == nil {
-		moved = []map[string]interface{}{}
-	}
-	for _, ba := range a {
-		found := -1
-		for j, bb := range b {
-			if used[j] {
-				continue
-			}
-			if iou(ba, bb) > 0.5 {
-				found = j
-				break
-			}
-		}
-		if found == -1 {
-			removed = append(removed, ba)
-		} else {
-			used[found] = true
-			bb := b[found]
-			if abs(ba.X-bb.X) > 5 || abs(ba.Y-bb.Y) > 5 {
-				moved = append(moved, map[string]interface{}{"from": ba, "to": bb})
-			}
-		}
-	}
-	for j, bb := range b {
-		if !used[j] {
-			added = append(added, bb)
-		}
-	}
-	return added, removed, moved
-}
-
-func iou(a, b detector.Box) float64 {
-	x1 := max(a.X, b.X)
-	y1 := max(a.Y, b.Y)
-	x2 := min(a.X+a.W, b.X+b.W)
-	y2 := min(a.Y+a.H, b.Y+b.H)
-	if x2 <= x1 || y2 <= y1 {
-		return 0
-	}
-	inter := float64((x2 - x1) * (y2 - y1))
-	union := float64(a.W*a.H+b.W*b.H) - inter
-	if union == 0 {
-		return 0
-	}
-	return inter / union
-}
-
-func abs(a int) int {
-	if a < 0 {
-		return -a
-	}
-	return a
-}
-
 func handleDescribe(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	return handleExtract(ctx, req)
+	path, err := req.RequireString("path")
+	if err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("missing path: %v", err)), nil
+	}
+	mode := req.GetString("mode", "general")
+	r, err := facts.Extract(path, mode, buildinfo.Version, loadCfg())
+	if err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("describe failed: %v", err)), nil
+	}
+	return mcp.NewToolResultText(r.Markdown), nil
 }

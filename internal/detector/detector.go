@@ -1,6 +1,7 @@
 package detector
 
 import (
+	"fmt"
 	"image"
 	"sort"
 )
@@ -16,10 +17,22 @@ type Box struct {
 	Score float64 `json:"score,omitempty"`
 }
 
+type Params struct {
+	CannyLow  uint8
+	CannyHigh uint8
+	MinArea   int
+}
+
+var DefaultParams = Params{CannyLow: 50, CannyHigh: 150, MinArea: 200}
+
 func Detect(img image.Image) []Box {
+	return DetectCfg(img, DefaultParams)
+}
+
+func DetectCfg(img image.Image, p Params) []Box {
 	gray := toGray(img)
 	blurred := gaussian3x3(gray)
-	edges := canny(blurred, 50, 150)
+	edges := canny(blurred, p.CannyLow, p.CannyHigh)
 	closed := morphClose(edges, 2)
 	components := findComponents(closed)
 	b := img.Bounds()
@@ -31,8 +44,8 @@ func Detect(img image.Image) []Box {
 		}
 		area := c.w * c.h
 		minArea := imgW * imgH / 5000
-		if minArea < 200 {
-			minArea = 200
+		if minArea < p.MinArea {
+			minArea = p.MinArea
 		}
 		if area < minArea {
 			continue
@@ -42,6 +55,7 @@ func Detect(img image.Image) []Box {
 		}
 		ed := edgeDensity(closed, c)
 		box := classifyV2(c, imgW, imgH, ed)
+		box.Color = avgColor(img, c)
 		boxes = append(boxes, box)
 	}
 	boxes = dedup(boxes)
@@ -55,6 +69,27 @@ func Detect(img image.Image) []Box {
 		boxes = boxes[:40]
 	}
 	return boxes
+}
+
+func avgColor(img image.Image, c comp) string {
+	step := (c.w / 16)
+	if step < 2 {
+		step = 2
+	}
+	var r, g, bl, n int
+	for y := c.y + 1; y < c.y+c.h-1; y += step {
+		for x := c.x + 1; x < c.x+c.w-1; x += step {
+			cr, cg, cb, _ := img.At(x, y).RGBA()
+			r += int(cr >> 8)
+			g += int(cg >> 8)
+			bl += int(cb >> 8)
+			n++
+		}
+	}
+	if n == 0 {
+		return ""
+	}
+	return fmt.Sprintf("#%02X%02X%02X", r/n, g/n, bl/n)
 }
 
 func dedup(boxes []Box) []Box {

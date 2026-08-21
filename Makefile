@@ -1,8 +1,9 @@
 VERSION ?= 0.1.0
 BIN=heravision
+LDFLAGS=-s -w -X heravision/internal/buildinfo.Version=$(VERSION)
 
 build:
-	CGO_ENABLED=0 go build -ldflags "-s -w -X main.version=$(VERSION)" -o $(BIN) ./cmd/heravision
+	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o $(BIN) ./cmd/heravision
 
 test:
 	go test ./... -count=1
@@ -13,7 +14,7 @@ vet:
 lint:
 	golangci-lint run ./...
 
-bench:
+bench: build
 	./$(BIN) bench --n 20
 
 install:
@@ -21,3 +22,5 @@ install:
 
 clean:
 	rm -f $(BIN) $(BIN).exe
+
+.PHONY: build test vet lint bench install clean

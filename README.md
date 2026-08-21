@@ -1,54 +1,51 @@
-<p align="center">
-  <img src="docs/demo.png" width="640" alt="HeraVision demo"/>
-</p>
-
 <h1 align="center">HeraVision</h1>
-<p align="center"><i>The eyes for blind LLMs — pure Go, offline, no API</i></p>
+<p align="center"><i>UI structure extractor for blind LLMs — pure Go, offline, no API</i></p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.25-00ADD8?style=flat-square&logo=go&logoColor=white"/>
-  <img src="https://img.shields.io/badge/binary-35MB-111827?style=flat-square"/>
-  <img src="https://img.shields.io/badge/latency-14ms-10B981?style=flat-square"/>
-  <img src="https://img.shields.io/badge/MCP-stdio-7C3AED?style=flat-square"/>
+  <img src="https://img.shields.io/badge/binary-6.4MB-111827?style=flat-square"/>
   <img src="https://img.shields.io/badge/license-MIT-9CA3AF?style=flat-square"/>
 </p>
 
 ```
- Text-only LLM (DeepSeek, GLM)  +  HeraVision (mata)  =  Vision 95%
- "gak support vision"               "ada button biru     "oh, fix line 42"
-                                     di 400,300
-                                     tulisan Error 42"
+ Text-only LLM (DeepSeek, GLM)  +  HeraVision (mata struktur)  =  paham layout UI
+ "gak support vision"               "ada button biru #0000FF       "oh, tombolnya di
+                                     di (98,158) 244x84"            situ, fix position"
 ```
 
 ---
 
 ### Apa ini?
 
-HeraVision adalah **plugin vision universal** untuk AI coding agent (Opencode, Claude Code, Codex, Cursor). LLM text-only tidak bisa lihat gambar — HeraVision yang melihat, ekstrak **fakta terstruktur (JSON)**, LLM yang reasoning.
+HeraVision adalah **plugin vision struktural** untuk AI coding agent (Opencode, Claude Code, Codex, Cursor) via MCP. LLM text-only tidak bisa lihat gambar — HeraVision melihat **struktur layar**: posisi & ukuran elemen UI, warna dominan, peta layout — lalu mengirimnya sebagai JSON terstruktur untuk direasoning oleh LLM.
 
-> Hybrid native: **mata (Go+WASM 35MB, offline) + otak (LLM)** = hasil tajam tanpa cloud.
+**Yang DIDETEKSI:** element boxes (`button` / `input` / `card` / `image` / `text_block`) dengan koordinat, ukuran, skor, dan warna rata-rata; palet warna Lab k-means; background; layout header/body/footer; graph mermaid sederhana.
+
+**Yang BELUM:** OCR. Teks belum dibaca — field `texts` berisi placeholder bentuk seperti `[button]`, `[text]`. Ini roadmap utama (lihat bawah). Jangan pakai HeraVision untuk membaca isi teks gambar.
 
 ---
 
-### Install — 30 detik
+### Install
 
 ```bash
-# Go (ringan)
-go install github.com/heravision/heravision@latest
-
-# atau npm
-npm i -g heravision
+# Build dari source (butuh Go 1.25+)
+git clone https://github.com/heravision/heravision
+cd heravision
+# Windows:
+./build.ps1
+# Linux/macOS:
+make build
 
 # hubungkan ke agent kamu
-heravision setup --all              # opencode + claude + codex + cursor
+./heravision setup --all          # opencode + claude + codex + cursor
 # atau satu-satu
-heravision setup --agent opencode
+./heravision setup --agent opencode
 ```
 
 ```bash
-heravision doctor                   # cek
+heravision doctor                   # cek setup
 heravision extract ./ui.png --mode ui --json
-heravision bench --n 20 --mode blur # <30ms
+heravision bench --n 20
 ```
 
 ---
@@ -56,118 +53,93 @@ heravision bench --n 20 --mode blur # <30ms
 ### Cara Pakai
 
 ```bash
-# UI / blur / code / diagram / error
 heravision extract ./screenshot.png --mode ui --json
-heravision extract ./blurry.png     --mode blur --json      # B++ blur 8px tetep kebaca
-heravision extract ./flow.png       --mode diagram --json   # → mermaid
-heravision compare a.png b.png --json
-heravision mcp                      # MCP stdio
+heravision extract ./blurry.png     --mode blur --json    # sharpen + kontras dulu
+heravision extract ./flow.png       --mode diagram --json # + mermaid graph
+heravision compare a.png b.png --json                     # diff struktural
+heravision mcp                                            # MCP stdio server
 ```
 
 **Modes:** `general` • `ui` • `code` • `diagram` • `error` • `blur`
 
+Output nyata (`extract testdata/blurry_ui.png --mode blur`, dipotong):
+
 ```json
-// heravision_extract → LLM
 {
-  "meta": {"width":1024,"height":768,"mode":"blur","elapsed_ms":24,"sr_used":true},
-  "texts": [{"text":"Login","x":450,"y":30,"conf":0.96}],
-  "boxes": [{"type":"button","x":400,"y":300,"w":200,"h":40,"score":0.92}],
-  "colors": {"dominant":["#FFFFFF","#3B82F6"],"background":"#FFFFFF"},
-  "layout": {"type":"root","children":[{"type":"header"},{"type":"body"}]},
-  "mermaid": "flowchart TD\n  N0[card]-->N1[button]"
+  "meta": { "width": 800, "height": 400, "mode": "blur", "elapsed_ms": 98 },
+  "boxes": [
+    { "type": "button", "x": 98, "y": 158, "w": 244, "h": 84,
+      "color": "#2B1E28", "score": 0.17 },
+    { "type": "card", "x": 46, "y": 46, "w": 96, "h": 40,
+      "color": "#AFC1F5", "score": 0.29 }
+  ],
+  "colors": {
+    "dominant": ["#FFFFFF", "#0C05FE", "#AFC1F5", "#2B1E28", "#F8B84B"],
+    "background": "#FFFFFF"
+  },
+  "layout": { "type": "root", "children": [ { "type": "header" }, { "type": "body" } ] },
+  "mermaid": "",
+  "markdown": "## Image Facts (blur)\n- Size: 800x400 px\n..."
 }
 ```
 
 ---
 
-### Workflow — Gimana AI Agent Memakainya
-
-```
-┌──────┐  "fix UI 📸"   ┌──────────┐  tools/call      ┌─────────────────┐
-│ USER │ ───────────→ │ LLM Buta │ ─────────────→ │ HeraVision B++  │
-└──────┘              │ DeepSeek │                │ Go+WASM 35MB    │
-                      └────┬─────┘                └───────┬─────────┘
-                           │ JSON fakta mentah            │ decode+EXIF
-                           │ ←────────────────────────────┘ CLAHE+Unsharp+SR
-                           │ {texts, boxes, colors,       Canny 8 → Lab
-                           │  layout, mermaid}            PP-OCR 6MB
-                           ↓
-                      reasoning → "fix code" → USER
-```
-
-**MCP 3 tools:**
+### MCP Tools
 
 | Tool | Input | Output |
 |---|---|---|
-| `heravision_extract` | `path`, `mode` | `meta, texts[conf], boxes[score], colors Lab, layout, mermaid` + markdown |
-| `heravision_compare` | `path_a`, `path_b` | `added, removed, moved` |
-| `heravision_describe` | `path` | markdown alias |
+| `heravision_extract` | `path`, `mode` | markdown + JSON: meta, boxes (posisi/warna/skor), colors Lab, layout tree |
+| `heravision_compare` | `path_a`, `path_b` | added / removed / moved / color_changed boxes |
+| `heravision_describe` | `path`, `mode` | markdown ringkas saja |
 
 ---
 
-### Sistem — Pipeline B++
+### Sistem — Pipeline
 
 ```
-Input 4K image
-  → Decode (jpg/png/webp) + EXIF rotate
-  → Preprocess: BlurMetric(Laplacian) → if blur: Unsharp + CLAHE, if small: SR 2x Lanczos
-  → Resize 1024
-  → Parallel:
-      ├─ Detector: Gaussian 3x3 → Canny 50/150 + NMS + Hysteresis → Morph close → 8-connect → classify v2
-      ├─ Color: RGB→Lab → k-means k=5 → ΔE<12 merge → bg border
-      ├─ OCR: deskew → Sauvola → PP-OCRv4 6MB WASM (fallback heuristic)
-      ├─ Diagram: HoughLinesP → Mermaid
-      └─ Layout: whitespace projection → rows/cols
-  → JSON + markdown → MCP
+Input image (jpg/png/webp)
+  → Decode (dengan limit dimensi anti decompression-bomb)
+  → EXIF orientation tag 0x0112 → auto-rotate/flip
+  → Preprocess: BlurMetric (Laplacian variance) → sharpen/kontras jika blur
+  → Resize longest side ≤ max_side (default 1024)
+  → Detector: Gaussian 3x3 → Sobel+Canny hysteresis (low/high) → morph close
+              → connected components 8-connect → classify v2 (ar/area/edgeDensity)
+              → warna rata-rata per box
+  → Color: RGB→Lab → k-means (k=5) → merge ΔE<12 → dominant + background border
+  → Layout: split header/body/footer by Y
+  → Mermaid chain graph (mode diagram)
+  → JSON + markdown
 ```
 
-```
-heravision/
-├── cmd/heravision/     cobra CLI
-├── internal/processor/ decode, exif, preprocess, resize
-├── internal/detector/  Canny 8-connect
-├── internal/color/     Lab k-means
-├── internal/ocr/       WASM 6MB + SR 8MB
-├── internal/diagram/   Mermaid
-├── internal/layout/    tree
-├── mcp/                stdio 3 tools
-├── vscode-extension/   HeraVision: Extract
-└── plugins/            opencode/claude/codex
-```
+**Jujur soal batasan teknis saat ini:**
+- Canny tanpa Non-Maximum Suppression (edge lebih tebal dari Canny standar)
+- Layout split 3 zona Y, bukan recursive whitespace projection
+- Mermaid = rantai node urut scan, bukan deteksi panah Hough
+- Teks = placeholder bentuk, bukan OCR
+
+Semua angka threshold bisa di-tune via `heravision.json` (copy dari `heravision.json.example`).
 
 ---
 
-### Logika Matematika — Konsep Inti
+### Performa (diukur, bukan janji)
 
-**1. Grayscale:** `Y = 0.299R + 0.587G + 0.114B` (BT.601)
-
-**2. BlurMetric:** `Laplacian variance` `∇²I = I(x-1)+I(x+1)+I(y-1)+I(y+1)-4I(x,y)` → `var <80 = blur`
-
-**3. Canny:** `Gaussian 3×3 (1 2 1;2 4 2;1 2 1)/16 → Sobel Gx,Gy → |Gx|+|Gy| → NMS → Hysteresis low50/high150` (8-connect tracing)
-
-**4. Lab k-means:** `RGB→XYZ→Lab`, `ΔE = √(ΔL²+Δa²+Δb²)`, merge `<12`, iter 8
-
-**5. Sauvola:** `T = μ·(1+k·(σ/128-1))` window 31, k=0.2 — adaptif untuk shadow/blur
-
-**6. Classify v2:** `ar=W/H, area, edgeDensity=edgePx/area` → `ar>3.2 & ed<0.3 → input`, `1.4<ar<6 & ed 0.08-0.5 → button`
+| Metrik | Nilai |
+|---|---|
+| Binary | 6.4 MB (`-ldflags "-s -w"`, CGO_ENABLED=0) |
+| Latency | ~15 ms (gambar kecil), ~100 ms (mode blur 800x400) |
+| RAM | dibatasi decode limit 12 MP default |
+| Offline | 100%, tanpa API key, tanpa download model |
 
 ---
 
-### Performa
+### Roadmap
 
-|  | HeraVision | Gemini API | Ollama |
-|---|---|---|---|
-| Size | 35MB | API key | 1-2GB |
-| Offline | ✓ | — | ✓ |
-| RAM | 40MB | — | 2GB |
-| Latency | 14ms (24ms blur) | — | 800ms |
-| Cost | free | $$ | free |
-
-```
-binary  <50MB   ▓▓▓▓▓▓▓░░░  35MB
-ram     <80MB   ▓▓▓▓░░░░░░  40MB
-latency <150ms  ▓░░░░░░░░░  14ms
-```
+- [ ] **OCR real** — kandidat: wazero + model WASM, atau ONNX Runtime; riset kompatibilitas CGO-free sedang berjalan
+- [ ] Canny NMS + gradient direction
+- [ ] Deteksi panah Hough → mermaid edges akurat
+- [ ] Layout recursive rows/cols + reading order
+- [ ] Table detection → JSON table
 
 ---
 
@@ -175,16 +147,15 @@ latency <150ms  ▓░░░░░░░░░  14ms
 
 ```bash
 go vet ./... && go test ./...
-heravision doctor
-heravision bench --n 10 --mode blur
-heravision extract testdata/ui.png --mode ui --json | jq .meta
-printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}\n' | heravision mcp
+./heravision doctor
+./heravision bench --n 10 --mode blur
+printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"t","version":"1"}}}\n' | ./heravision mcp
 ```
 
 ### Konfigurasi
 
-`heravision.json.example` — `max_side`, `canny_low/high`, `preprocess.sr_threshold`, `color.deltaE`, `ocr.wasm`
+`heravision.json.example` — `max_side`, `max_pixels`, `detector.canny_low/high/min_area`, `preprocess.blur_threshold`, `color.k/deltaE_merge`. Letakkan di folder project atau `$HOME`.
 
 ---
 
-<p align="center"><i>Built for blind LLMs — eyes open.</i> · <a href="LICENSE">MIT</a> · <a href="CONTRIBUTING.md">Contributing</a></p>
+<p align="center"><i>Built for blind LLMs — structure first, text later.</i> · <a href="LICENSE">MIT</a> · <a href="CONTRIBUTING.md">Contributing</a></p>

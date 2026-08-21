@@ -2,7 +2,7 @@ package processor
 
 import (
 	"image"
-	"image/color"
+	"math"
 
 	"github.com/disintegration/imaging"
 )
@@ -38,9 +38,13 @@ func BlurMetric(gray [][]uint8) float64 {
 }
 
 func Preprocess(img image.Image, mode string) image.Image {
+	return PreprocessCfg(img, mode, 80)
+}
+
+func PreprocessCfg(img image.Image, mode string, blurThreshold float64) image.Image {
 	gray := toGrayQuick(img)
 	bm := BlurMetric(gray)
-	if mode == "blur" || bm < 80 {
+	if mode == "blur" || bm < blurThreshold {
 		img = imaging.AdjustContrast(img, 15)
 		img = imaging.Sharpen(img, 0.8)
 		if isSmallText(img) {
@@ -48,10 +52,8 @@ func Preprocess(img image.Image, mode string) image.Image {
 		}
 	} else if mode == "diagram" {
 		img = imaging.AdjustContrast(img, 10)
-	} else {
-		if bm < 150 {
-			img = imaging.Sharpen(img, 0.4)
-		}
+	} else if bm < blurThreshold*2 {
+		img = imaging.Sharpen(img, 0.4)
 	}
 	return img
 }
@@ -79,7 +81,7 @@ func isSmallText(img image.Image) bool {
 
 func SauvolaBinarize(gray [][]uint8, window int, k float64) [][]uint8 {
 	h := len(gray)
-	if h == 0 {
+	if h == 0 || window < 1 {
 		return gray
 	}
 	w := len(gray[0])
@@ -88,14 +90,21 @@ func SauvolaBinarize(gray [][]uint8, window int, k float64) [][]uint8 {
 		out[y] = make([]uint8, w)
 	}
 	half := window / 2
+	if half < 1 {
+		half = 1
+	}
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
 			var sum, sumsq float64
 			n := 0
 			for dy := -half; dy <= half; dy++ {
+				ny := y + dy
+				if ny < 0 || ny >= h {
+					continue
+				}
 				for dx := -half; dx <= half; dx++ {
-					ny, nx := y+dy, x+dx
-					if ny < 0 || ny >= h || nx < 0 || nx >= w {
+					nx := x + dx
+					if nx < 0 || nx >= w {
 						continue
 					}
 					v := float64(gray[ny][nx])
@@ -109,24 +118,7 @@ func SauvolaBinarize(gray [][]uint8, window int, k float64) [][]uint8 {
 			if variance < 0 {
 				variance = 0
 			}
-			std := 0.0
-			if variance > 0 {
-				s := 0.0
-				for dy := -half; dy <= half; dy++ {
-					for dx := -half; dx <= half; dx++ {
-						ny, nx := y+dy, x+dx
-						if ny < 0 || ny >= h || nx < 0 || nx >= w {
-							continue
-						}
-						d := float64(gray[ny][nx]) - mean
-						s += d * d
-					}
-				}
-				std = (s / float64(n))
-				if std > 0 {
-					std = powStd(std)
-				}
-			}
+			std := math.Sqrt(variance)
 			thresh := mean * (1 + k*(std/128-1))
 			if float64(gray[y][x]) > thresh {
 				out[y][x] = 255
@@ -136,17 +128,6 @@ func SauvolaBinarize(gray [][]uint8, window int, k float64) [][]uint8 {
 		}
 	}
 	return out
-}
-
-func powStd(v float64) float64 {
-	if v <= 0 {
-		return 0
-	}
-	r := v
-	for i := 0; i < 3; i++ {
-		r = (r + v/r) * 0.5
-	}
-	return r
 }
 
 func OtsuThreshold(hist [256]int, total int) uint8 {
@@ -178,7 +159,7 @@ func OtsuThreshold(hist [256]int, total int) uint8 {
 	return uint8(thresh)
 }
 
-func ApplyCLAHE(img image.Image) image.Image {
+func EnhanceContrast(img image.Image) image.Image {
 	return imaging.AdjustContrast(img, 20)
 }
 
@@ -186,5 +167,3 @@ func Upscale2x(img image.Image) image.Image {
 	b := img.Bounds()
 	return imaging.Resize(img, b.Dx()*2, b.Dy()*2, imaging.Lanczos)
 }
-
-var _ = color.RGBA{}

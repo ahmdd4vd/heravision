@@ -15,9 +15,17 @@ Plugin vision universal untuk AI agent coding (Opencode, Claude Code, Codex, Cur
 - Distribusi: go install + npm wrapper + goreleaser
 
 ## Structure
-- `cmd/heravision/` — CLI entry
-- `internal/processor|detector|color|ocr|layout/` — core native pipeline
-- `mcp/` — MCP server
+- `cmd/heravision/` — CLI entry (extract, compare, mcp, setup, bench, doctor, version)
+- `internal/processor/` — decode (+limit anti-bomb), EXIF auto-rotate, preprocess, resize
+- `internal/detector/` — Sobel+Canny hysteresis, components, classify v2, box color
+- `internal/color/` — Lab k-means dominant + background
+- `internal/ocr/` — engine interface + heuristic placeholder (OCR real = Phase 5)
+- `internal/layout/` — header/body/footer tree
+- `internal/diagram/` — mermaid chain graph
+- `internal/facts/` — shared pipeline CLI+MCP (extract, compare, markdown)
+- `internal/config/` — heravision.json loader
+- `internal/buildinfo/` — single source version
+- `mcp/` — MCP server stdio 3 tools
 - `plugins/` — opencode/claude/codex configs
 - `plan.md` — single source of truth
 - `testdata/` — fixtures png
@@ -29,10 +37,11 @@ Plugin vision universal untuk AI agent coding (Opencode, Claude Code, Codex, Cur
 - Semua log ke stderr, stdout hanya JSON-RPC
 
 ## Rules
-- Binary <12MB, RAM <50MB, latency <100ms (tanpa OCR)
+- Binary <12MB, RAM <80MB, latency <150ms
 - Pure Go tanpa CGO, tanpa model download, tanpa API key
 - Update plan.md jika scope berubah
 - Heravision extract return JSON+markdown — jangan breaking change tanpa bump
+- Dokumentasi hanya klaim yang terukur — output contoh = output asli (audit 2026-08-21)
 
 ## Child DOX Index
 - (none yet — new durable boundaries create child AGENTS.md)

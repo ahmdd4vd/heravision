@@ -8,20 +8,20 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"heravision/internal/color"
-	"heravision/internal/detector"
-	"heravision/internal/diagram"
-	"heravision/internal/layout"
-	"heravision/internal/ocr"
-	"heravision/internal/processor"
+
+	"heravision/internal/buildinfo"
+	"heravision/internal/config"
+	"heravision/internal/facts"
 	"heravision/mcp"
 )
 
-var version = "0.1.0"
-
 func main() {
-	root := &cobra.Command{Use: "heravision", Short: "The eyes for blind LLMs — pure native vision", Long: "HeraVision — hybrid native vision: extract facts from images (pure Go, no model/API) for text-only LLMs like DeepSeek V4, GLM 5.3"}
-	root.AddCommand(versionCmd(), extractCmd(), mcpCmd(), doctorCmd(), setupCmd(), benchCmd())
+	root := &cobra.Command{
+		Use:   "heravision",
+		Short: "UI structure extractor for blind LLMs — pure native vision",
+		Long:  "HeraVision extracts UI structure facts from images (element boxes, colors, layout) for text-only LLMs. Pure Go, offline, no API. Text content is not OCR-read.",
+	}
+	root.AddCommand(versionCmd(), extractCmd(), compareCmd(), mcpCmd(), doctorCmd(), setupCmd(), benchCmd())
 	if err := root.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -29,95 +29,121 @@ func main() {
 }
 
 func versionCmd() *cobra.Command {
-	return &cobra.Command{Use: "version", Short: "Print version", Run: func(cmd *cobra.Command, args []string) { fmt.Printf("heravision %s\n", version) }}
+	return &cobra.Command{
+		Use:   "version",
+		Short: "Print version",
+		Run:   func(cmd *cobra.Command, args []string) { fmt.Printf("heravision %s\n", buildinfo.Version) },
+	}
 }
 
 func extractCmd() *cobra.Command {
 	var mode string
 	var asJSON bool
+	var cfgPath string
 	c := &cobra.Command{
-		Use: "extract <image>", Short: "Extract structured facts from image", Args: cobra.ExactArgs(1),
+		Use:   "extract <image>",
+		Short: "Extract structured structure facts from image",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			path := args[0]
-			start := time.Now()
-			img, _, err := processor.Decode(path)
+			cfg, cfgFile, err := config.Load(cfgPath)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "[warn] %v — using defaults\n", err)
+			}
+			r, err := facts.Extract(args[0], mode, buildinfo.Version, cfg)
 			if err != nil {
 				return err
 			}
-				img = processor.FixOrientation(img)
-			img = processor.Preprocess(img, mode)
-			img = processor.Resize(img, 1024)
-			b := img.Bounds()
-			w, h := b.Dx(), b.Dy()
-			boxes := detector.Detect(img)
-			texts := ocr.Extract(img)
-			dominant := color.Dominant(img, 5)
-			bg := color.Background(img)
-			if bg == "" && len(dominant) > 0 {
-				bg = dominant[0]
+			if cfgFile != "" {
+				fmt.Fprintf(os.Stderr, "[info] config: %s\n", cfgFile)
 			}
-			tree := layout.Build(boxes, w, h)
-			var mermaid string
-			if mode == "diagram" {
-				mermaid = diagram.ToMermaid(boxes)
-			}
-			elapsed := time.Since(start).Milliseconds()
-			result := map[string]interface{}{
-				"meta": map[string]interface{}{"width": w, "height": h, "mode": mode, "path": path, "version": version, "elapsed_ms": elapsed},
-				"texts": texts, "boxes": boxes,
-				"colors": map[string]interface{}{"dominant": dominant, "background": bg},
-				"layout": tree, "lines": []interface{}{},
-				"mermaid": mermaid,
-				"markdown": fmt.Sprintf("## Image Facts\n- Size: %dx%d\n- Texts: %d\n- Boxes: %d\n- Colors: %v", w, h, len(texts), len(boxes), dominant),
-			}
+			j, _ := json.MarshalIndent(r, "", "  ")
 			if asJSON {
-				j, _ := json.MarshalIndent(result, "", "  ")
 				fmt.Println(string(j))
 				return nil
 			}
-			j, _ := json.MarshalIndent(result, "", "  ")
-			fmt.Printf("## HeraVision Extract (%s)\n- Size: %dx%d\n- Texts: %d\n- Boxes: %d\n- Colors: %v\n- Elapsed: %dms\n\n```json\n%s\n```\n", mode, w, h, len(texts), len(boxes), dominant, elapsed, string(j))
+			fmt.Printf("%s\n```json\n%s\n```\n", r.Markdown, string(j))
 			return nil
 		},
 	}
 	c.Flags().StringVar(&mode, "mode", "general", "Mode: general|ui|code|diagram|error|blur")
 	c.Flags().BoolVar(&asJSON, "json", false, "Output JSON only")
+	c.Flags().StringVar(&cfgPath, "config", "", "Path to heravision.json config")
+	return c
+}
+
+func compareCmd() *cobra.Command {
+	var cfgPath string
+	c := &cobra.Command{
+		Use:   "compare <a> <b>",
+		Short: "Compare two images and return structural diff",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, _, err := config.Load(cfgPath)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "[warn] %v — using defaults\n", err)
+			}
+			res, err := facts.Compare(args[0], args[1], cfg)
+			if err != nil {
+				return err
+			}
+			j, _ := json.MarshalIndent(res, "", "  ")
+			fmt.Println(string(j))
+			return nil
+		},
+	}
+	c.Flags().StringVar(&cfgPath, "config", "", "Path to heravision.json config")
 	return c
 }
 
 func mcpCmd() *cobra.Command {
-	return &cobra.Command{Use: "mcp", Short: "Run MCP stdio server", RunE: func(cmd *cobra.Command, args []string) error { return mcp.Serve() }}
+	return &cobra.Command{
+		Use:   "mcp",
+		Short: "Run MCP stdio server",
+		RunE:  func(cmd *cobra.Command, args []string) error { return mcp.Serve() },
+	}
 }
 
 func doctorCmd() *cobra.Command {
-	return &cobra.Command{
-		Use: "doctor", Short: "Check heravision setup",
+	var cfgPath string
+	c := &cobra.Command{
+		Use:   "doctor",
+		Short: "Check heravision setup",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("heravision %s\n", version)
-			fmt.Println("[ok] binary: runnable")
+			fmt.Printf("heravision %s\n", buildinfo.Version)
 			exe, _ := os.Executable()
 			if exe != "" {
 				fmt.Printf("[ok] exe: %s\n", exe)
 			}
-			fi, err := os.Stat("testdata")
-			if err == nil && fi.IsDir() {
+			cfg, cfgFile, err := config.Load(cfgPath)
+			if err != nil {
+				fmt.Printf("[warn] config: %v (defaults in use)\n", err)
+			} else if cfgFile != "" {
+				fmt.Printf("[ok] config: %s (max_side=%d, canny=%d/%d)\n", cfgFile, cfg.MaxSide, cfg.Detector.CannyLow, cfg.Detector.CannyHigh)
+			} else {
+				fmt.Println("[info] config: none found — defaults in use (see heravision.json.example)")
+			}
+			if fi, err := os.Stat("testdata"); err == nil && fi.IsDir() {
 				fmt.Println("[ok] testdata: present")
 			} else {
 				fmt.Println("[warn] testdata: missing")
 			}
-			fmt.Println("[ok] processor: decode/resize/preprocess B++ (CLAHE+Unsharp+SR, CGO_ENABLED=0)")
-			fmt.Println("[ok] mcp: 3 tools (heravision_extract, heravision_compare, heravision_describe) + mermaid")
-			fmt.Println("[ok] detector: Canny hysteresis 8-connect morph classify v2")
-			fmt.Println("[ok] color: Lab k-means 5 ΔE merge + bg border")
-			fmt.Println("[ok] layout: whitespace rows/cols")
-			fmt.Println("[ok] ocr: heuristic + WASM stub + SR")
+			fmt.Println("[ok] processor: decode jpg/png/webp + EXIF auto-rotate + decode limits")
+			fmt.Println("[ok] detector: Sobel+Canny hysteresis, morph close, 8-connect, classify v2, box color")
+			fmt.Println("[ok] color: Lab k-means + dE merge + background border")
+			fmt.Println("[ok] layout: header/body/footer split")
+			fmt.Println("[ok] diagram: mermaid chain graph (mode diagram)")
+			fmt.Println("[warn] ocr: heuristic shape placeholders only — real OCR engine not bundled yet (roadmap)")
+			fmt.Printf("[info] targets: binary <12MB, RAM <80MB, latency <150ms\n")
 		},
 	}
+	c.Flags().StringVar(&cfgPath, "config", "", "Path to heravision.json config")
+	return c
 }
 
 func setupCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use: "setup", Short: "Setup MCP config for agents",
+		Use:   "setup",
+		Short: "Setup MCP config for agents",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			agent, _ := cmd.Flags().GetString("agent")
 			all, _ := cmd.Flags().GetBool("all")
@@ -166,43 +192,48 @@ func setupCmd() *cobra.Command {
 }
 
 func benchCmd() *cobra.Command {
+	var cfgPath string
 	c := &cobra.Command{
-		Use: "bench [image]", Short: "Benchmark extract latency",
-		Args: cobra.MaximumNArgs(1),
+		Use:   "bench [image]",
+		Short: "Benchmark extract latency",
+		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			n, _ := cmd.Flags().GetInt("n")
+			mode, _ := cmd.Flags().GetString("mode")
 			path := "testdata/ui.png"
 			if len(args) > 0 {
 				path = args[0]
 			}
-			img, _, err := processor.Decode(path)
+			cfg, _, err := config.Load(cfgPath)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "[warn] %v — using defaults\n", err)
+			}
+			start := time.Now()
+			r, err := facts.Extract(path, mode, buildinfo.Version, cfg)
 			if err != nil {
 				return err
 			}
-			mode, _ := cmd.Flags().GetString("mode")
-			img = processor.FixOrientation(img)
-			img = processor.Preprocess(img, mode)
-			img = processor.Resize(img, 1024)
+			warmup := time.Since(start)
 			var total time.Duration
-			var boxes int
 			for i := 0; i < n; i++ {
-				start := time.Now()
-				b := detector.Detect(img)
-				_ = color.Dominant(img, 5)
-				_ = ocr.Extract(img)
-				boxes = len(b)
-				total += time.Since(start)
+				t0 := time.Now()
+				_, err := facts.Extract(path, mode, buildinfo.Version, cfg)
+				if err != nil {
+					return err
+				}
+				total += time.Since(t0)
 			}
 			avg := float64(total.Microseconds()) / float64(n) / 1000
-			fmt.Printf("bench %s [%s] x%d: avg %.2fms, boxes %d, total %v\n", path, mode, n, avg, boxes, total)
+			fmt.Printf("bench %s [%s] x%d: avg %.2fms, boxes %d, first-run %v (incl. warmup)\n", path, mode, n, avg, len(r.Boxes), warmup)
 			if avg > 150 {
-				fmt.Fprintln(os.Stderr, "[warn] avg >150ms B++ target exceeded")
+				fmt.Fprintln(os.Stderr, "[warn] avg >150ms target exceeded")
 			}
 			return nil
 		},
 	}
 	c.Flags().Int("n", 10, "iterations")
 	c.Flags().String("mode", "general", "Mode: general|ui|code|diagram|error|blur")
+	c.Flags().StringVar(&cfgPath, "config", "", "Path to heravision.json config")
 	return c
 }
 
@@ -232,34 +263,47 @@ func writeAgentConfig(agent, exe string) error {
 		return fmt.Errorf("no path")
 	}
 	dir := filepath.Dir(path)
-	_ = os.MkdirAll(dir, 0755)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return err
+	}
 	if _, err := os.Stat(path); err == nil {
-		data, _ := os.ReadFile(path)
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
 		var existing map[string]interface{}
 		if json.Unmarshal(data, &existing) == nil {
 			var patch map[string]interface{}
-			_ = json.Unmarshal([]byte(content), &patch)
-			for k, v := range patch {
-				if em, ok := existing[k].(map[string]interface{}); ok {
-					if pm, ok := v.(map[string]interface{}); ok {
-						for pk, pv := range pm {
-							em[pk] = pv
+			if json.Unmarshal([]byte(content), &patch) == nil {
+				for k, v := range patch {
+					if em, ok := existing[k].(map[string]interface{}); ok {
+						if pm, ok := v.(map[string]interface{}); ok {
+							for pk, pv := range pm {
+								em[pk] = pv
+							}
+							existing[k] = em
+							continue
 						}
-						existing[k] = em
-						continue
 					}
+					existing[k] = v
 				}
-				existing[k] = v
-			}
-			merged, _ := json.MarshalIndent(existing, "", "  ")
-			if err := os.WriteFile(path, merged, 0644); err == nil {
-				fmt.Fprintf(os.Stderr, "[ok] %s merged: %s\n", agent, path)
-				return nil
+				merged, err := json.MarshalIndent(existing, "", "  ")
+				if err != nil {
+					return err
+				}
+				if err := os.WriteFile(path, merged, 0644); err == nil {
+					fmt.Fprintf(os.Stderr, "[ok] %s merged: %s\n", agent, path)
+					return nil
+				}
 			}
 		}
 		fmt.Fprintf(os.Stderr, "[info] %s exists — manual merge needed: %s\n", agent, path)
 		fmt.Println(content)
 		return nil
 	}
-	return os.WriteFile(path, []byte(content), 0644)
+	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+		return err
+	}
+	fmt.Fprintf(os.Stderr, "[ok] %s created: %s\n", agent, path)
+	return nil
 }

@@ -9,7 +9,7 @@ builds:
     ignore:
       - goos: windows
         goarch: arm64
-    ldflags: ["-s -w -X main.version={{.Version}}"]
+    ldflags: ["-s -w -X heravision/internal/buildinfo.Version={{.Version}}"]
     flags: [-trimpath]
 archives:
   - builds: [heravision]
