@@ -1,0 +1,73 @@
+{
+  "name": "domain-calibration-candidate-logistic",
+  "features": [
+    "flatness_mean",
+    "edge_density",
+    "contrast_mean",
+    "chroma_mean",
+    "chroma_std",
+    "orientation_entropy",
+    "luma_std"
+  ],
+  "labels": [
+    "ambiguous",
+    "diagram_document",
+    "natural_photo"
+  ],
+  "weights": {
+    "ambiguous": [
+      -0.1509466061841304,
+      -0.11571732587336311,
+      -0.4209402344565223,
+      0.4167380124548082,
+      -0.2668382981809352,
+      0.4365149636284245,
+      0.6199075905666496
+    ],
+    "diagram_document": [
+      0.8405960775487685,
+      -0.11456971822801289,
+      0.09518460113804827,
+      -1.789871050774933,
+      0.686468944205261,
+      -0.8321722588170622,
+      -0.2096143031559355
+    ],
+    "natural_photo": [
+      -0.7917267825950776,
+      0.18361588039128707,
+      0.1395247408948881,
+      1.5430714707479123,
+      -0.6219381896970844,
+      0.6014659680503917,
+      -0.16559699132378178
+    ]
+  },
+  "bias": {
+    "ambiguous": -0.3360241682006434,
+    "diagram_document": 0.20016131659931974,
+    "natural_photo": -0.043412838979073026
+  },
+  "min_score": 0.65,
+  "min_margin": 0.1,
+  "training": {
+    "fixture": "experiments/manifests/domain-calibration-candidate-30.json",
+    "samples": 28,
+    "split": "deterministic sample hash",
+    "status": "candidate-metadata-derived-not-independent"
+  },
+  "test_metrics": {
+    "ambiguous": {
+      "test_n": 5,
+      "test_accuracy": 1.0
+    },
+    "diagram_document": {
+      "test_n": 5,
+      "test_accuracy": 1.0
+    },
+    "natural_photo": {
+      "test_n": 5,
+      "test_accuracy": 0.8
+    }
+  }
+}

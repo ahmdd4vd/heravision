@@ -23,6 +23,7 @@ func main() {
 	answerMinScore := flag.Float64("answer-min-score", 0.65, "minimum evidence score for generic answered status")
 	relationTouchingSafe := flag.Bool("relation-touching-safe", false, "suppress containment-derived touching relations")
 	semanticModel := flag.String("semantic-model", "", "optional broad semantic model JSON")
+	domainModel := flag.String("domain-model", "", "optional calibrated domain model JSON")
 	legacyMaxPixels := flag.Int64("legacy-max-pixels", 24_000_000, "explicit B0 decode pixel budget")
 	flag.Parse()
 
@@ -41,6 +42,7 @@ func main() {
 		AnswerMinScore:        *answerMinScore,
 		RelationTouchingSafe:  *relationTouchingSafe,
 		SemanticModelPath:     *semanticModel,
+		DomainModelPath:       *domainModel,
 	})
 	if err != nil {
 		log.Fatal(err)

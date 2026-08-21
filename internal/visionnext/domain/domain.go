@@ -1,8 +1,10 @@
 package domain
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
+	"os"
 	"sort"
 
 	"heravision/internal/visionnext/evidence"
@@ -27,6 +29,18 @@ type Features struct {
 	LumaStd            float64 `json:"luma_std"`
 }
 
+var FeatureNames = []string{"flatness_mean", "edge_density", "contrast_mean", "chroma_mean", "chroma_std", "orientation_entropy", "luma_std"}
+
+type Model struct {
+	Name         string               `json:"name"`
+	FeatureNames []string             `json:"features"`
+	Labels       []string             `json:"labels"`
+	Weights      map[string][]float64 `json:"weights"`
+	Bias         map[string]float64   `json:"bias"`
+	MinScore     float64              `json:"min_score"`
+	MinMargin    float64              `json:"min_margin"`
+}
+
 type Result struct {
 	Label      Label
 	Score      float64
@@ -39,6 +53,85 @@ type Result struct {
 
 // Classify uses bounded evidence-field statistics. It is deliberately a gate,
 // not a semantic recognizer: ambiguous inputs are returned as ambiguous.
+func Load(path string) (Model, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return Model{}, err
+	}
+	var model Model
+	if err := json.Unmarshal(data, &model); err != nil {
+		return Model{}, err
+	}
+	if len(model.Labels) == 0 || len(model.FeatureNames) == 0 {
+		return Model{}, fmt.Errorf("domain model has no labels or features")
+	}
+	if model.MinScore <= 0 {
+		model.MinScore = 0.65
+	}
+	if model.MinMargin <= 0 {
+		model.MinMargin = 0.10
+	}
+	return model, nil
+}
+
+func FeatureVector(field evidence.Field) []float64 {
+	f := summarize(field)
+	return []float64{f.FlatnessMean, f.EdgeDensity, f.ContrastMean, f.ChromaMean, f.ChromaStd, f.OrientationEntropy, f.LumaStd}
+}
+
+func ClassifyWithModel(field evidence.Field, model Model) Result {
+	features := FeatureVector(field)
+	type scored struct {
+		label string
+		score float64
+	}
+	scores := make([]scored, 0, len(model.Labels))
+	for _, label := range model.Labels {
+		w := model.Weights[label]
+		if len(w) != len(features) {
+			continue
+		}
+		z := model.Bias[label]
+		for i, v := range features {
+			z += w[i] * v
+		}
+		scores = append(scores, scored{label: label, score: sigmoid(z)})
+	}
+	sort.Slice(scores, func(i, j int) bool { return scores[i].score > scores[j].score })
+	if len(scores) < 2 {
+		return Classify(field)
+	}
+	margin := scores[0].score - scores[1].score
+	label := Ambiguous
+	score := scores[0].score
+	confidence := "low"
+	if score >= model.MinScore && margin >= model.MinMargin {
+		label = Label(scores[0].label)
+		confidence = "medium"
+		if score >= 0.80 && margin >= 0.20 {
+			confidence = "high"
+		}
+	}
+	action := "abstain_domain"
+	if label == NaturalPhoto || (label == DiagramDocument && confidence != "high") {
+		action = "allow_object_semantic"
+	}
+	if label == DiagramDocument && confidence == "high" {
+		action = "block_object_semantic"
+	}
+	evidenceRefs := []schema.EvidenceRef{{Kind: "domain-calibrated-score", Stage: "domain-gate", Value: round(score), Note: fmt.Sprintf("label=%s margin=%.3f action=%s", label, margin, action)}}
+	return Result{Label: label, Score: round(score), Margin: round(margin), Features: summarize(field), Evidence: evidenceRefs, Confidence: confidence, Action: action}
+}
+
+func sigmoid(v float64) float64 {
+	if v >= 0 {
+		z := math.Exp(-v)
+		return 1 / (1 + z)
+	}
+	z := math.Exp(v)
+	return z / (1 + z)
+}
+
 func Classify(field evidence.Field) Result {
 	features := summarize(field)
 	diagram := clamp01(0.38*features.FlatnessMean + 0.22*features.EdgeDensity + 0.18*(1-features.ChromaMean) + 0.12*(1-features.ChromaStd) + 0.10*features.OrientationEntropy)
@@ -67,7 +160,7 @@ func Classify(field evidence.Field) Result {
 		action = "block_object_semantic"
 	}
 	evidenceRefs := []schema.EvidenceRef{
-		{Kind: "domain-statistics", Stage: "domain-gate", Value: round(features.FlatnessMean), Note: fmt.Sprintf("flatness_mean=%.3f edge_density=%.3f contrast_mean=%.3f", features.FlatnessMean, features.EdgeDensity, features.ContrastMean)},
+		{Kind: "domain-statistics", Stage: "domain-gate", Value: round(features.FlatnessMean), Note: fmt.Sprintf("flatness_mean=%.3f edge_density=%.3f contrast_mean=%.3f chroma_mean=%.3f chroma_std=%.3f orientation_entropy=%.3f luma_std=%.3f", features.FlatnessMean, features.EdgeDensity, features.ContrastMean, features.ChromaMean, features.ChromaStd, features.OrientationEntropy, features.LumaStd)},
 		{Kind: "domain-score", Stage: "domain-gate", Value: round(score), Note: fmt.Sprintf("natural=%.3f diagram_document=%.3f margin=%.3f action=%s", natural, diagram, margin, action)},
 	}
 	return Result{Label: label, Score: round(score), Margin: round(margin), Features: features, Evidence: evidenceRefs, Confidence: confidence, Action: action}

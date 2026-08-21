@@ -34,6 +34,7 @@ type RunOptions struct {
 	AnswerMinScore        float64
 	RelationTouchingSafe  bool
 	SemanticModelPath     string
+	DomainModelPath       string
 }
 
 type Observation struct {
@@ -141,6 +142,13 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 			return Observation{}, fmt.Errorf("load semantic model: %w", err)
 		}
 		domainResult := domain.Classify(field)
+		if opts.DomainModelPath != "" {
+			domainModel, loadErr := domain.Load(opts.DomainModelPath)
+			if loadErr != nil {
+				return Observation{}, fmt.Errorf("load domain model: %w", loadErr)
+			}
+			domainResult = domain.ClassifyWithModel(field, domainModel)
+		}
 		hyps = append(hyps, domain.Hypothesis(regions, domainResult))
 		if domainResult.Action == "allow_object_semantic" {
 			regionSemantic := semantic.InferWithView(regions, view.Width, view.Height, view, model)

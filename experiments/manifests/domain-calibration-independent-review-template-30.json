@@ -1,0 +1,309 @@
+{
+  "name": "domain-calibration-candidate-30-independent-review",
+  "instructions": "Review original images without model predictions or proposed labels. Choose one domain: natural_photo, diagram_document, screenshot_document, ambiguous. Choose answerability: answerable or abstain. Mark confidence high, medium, or low. If uncertain, explain why. A second reviewer must complete a separate copy.",
+  "reviewer_name": "",
+  "reviewer_date": "",
+  "independence_statement": "I reviewed the original images independently of model predictions.",
+  "samples": [
+    {
+      "sample_id": "domain-cal-001",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00000293.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-002",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00002138.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-003",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00003014.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-004",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00006697.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-005",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00007197.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-006",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00009346.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-007",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00000907.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-008",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00001244.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-009",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00001393.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-010",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00002769.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-011",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00004049.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-012",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00004359.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-013",
+      "image_path": "data/wikimedia14/blank_scan_image.jpg",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-014",
+      "image_path": "data/wikimedia14/capacitor_schematic.png",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-015",
+      "image_path": "data/wikimedia14/drafting_table.jpg",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-016",
+      "image_path": "data/wikimedia14/dunning_kruger_effect.png",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-017",
+      "image_path": "data/wikimedia14/flow_chart_loop.png",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-018",
+      "image_path": "data/wikimedia14/flowchart_example.png",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-019",
+      "image_path": "data/domain-calibration/external-diagrams/document-flowchart.png",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-020",
+      "image_path": "data/domain-calibration/external-diagrams/flowchart-sample-1.png",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-021",
+      "image_path": "data/domain-calibration/external-diagrams/flowchart-sample-2.png",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-022",
+      "image_path": "data/domain-calibration/external-diagrams/network-cloud-diagram.png",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-023",
+      "image_path": "data/domain-calibration/external-diagrams/network-diagram.png",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-024",
+      "image_path": "data/domain-calibration/external-diagrams/technical-drawing.png",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-025",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/ILSVRC2012_val_00009111.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-026",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/ILSVRC2012_val_00009191.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-027",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/ILSVRC2012_val_00017472.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-028",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/ILSVRC2012_val_00002701.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-029",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/ILSVRC2012_val_00003841.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    },
+    {
+      "sample_id": "domain-cal-030",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/ILSVRC2012_val_00004081.JPEG",
+      "review_domain": "",
+      "review_answerability": "",
+      "object_presence": "",
+      "confidence": "",
+      "disagreement_reason": "",
+      "notes": ""
+    }
+  ]
+}
