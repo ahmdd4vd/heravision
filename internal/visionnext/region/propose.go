@@ -15,7 +15,7 @@ type Config struct {
 }
 
 func DefaultConfig() Config {
-	return Config{MergeThreshold: 0.20, MinArea: 4, MaxRegions: 256}
+	return Config{MergeThreshold: 0.20, MinArea: 8, MaxRegions: 256}
 }
 
 type dsu struct {
