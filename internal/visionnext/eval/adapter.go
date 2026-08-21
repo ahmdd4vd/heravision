@@ -27,6 +27,7 @@ type RunOptions struct {
 	RegionFilterThreshold float64
 	ScaleStable           bool
 	RelationPrune         bool
+	ScaleMinSupport       int
 }
 
 type Observation struct {
@@ -122,7 +123,8 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 	field := evidence.Compute(view)
 	var regions []schema.Region
 	if opts.ScaleStable {
-		regions, err = region.ProposeStable(img, maxSide, region.StableConfig{Base: region.DefaultConfig()})
+		stableCfg := region.StableConfig{Base: region.DefaultConfig(), MinSupport: opts.ScaleMinSupport}
+		regions, err = region.ProposeStable(img, maxSide, stableCfg)
 		if err != nil {
 			return Observation{}, fmt.Errorf("b1 stable proposals: %w", err)
 		}
