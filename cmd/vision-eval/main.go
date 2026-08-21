@@ -16,12 +16,15 @@ func main() {
 	maxSide := flag.Int("max-side", 512, "B1 canonical maximum side")
 	regionFilter := flag.String("region-filter", "", "optional trained B1 region filter JSON")
 	regionFilterThreshold := flag.Float64("region-filter-threshold", 0.95, "trained region filter threshold")
+	legacyMaxPixels := flag.Int64("legacy-max-pixels", 24_000_000, "explicit B0 decode pixel budget")
 	flag.Parse()
 
+	legacyConfig := config.Default()
+	legacyConfig.MaxPixels = *legacyMaxPixels
 	summary, err := eval.RunManifest(*manifest, *output, eval.RunOptions{
 		Mode:                  *mode,
 		MaxSide:               *maxSide,
-		LegacyConfig:          config.Default(),
+		LegacyConfig:          legacyConfig,
 		RegionFilterPath:      *regionFilter,
 		RegionFilterThreshold: *regionFilterThreshold,
 	})

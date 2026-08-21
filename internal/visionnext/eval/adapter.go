@@ -50,6 +50,11 @@ func RunB0(path string, opts RunOptions) (Observation, error) {
 	if cfg.MaxSide == 0 {
 		cfg = config.Default()
 	}
+	previousMaxPixels := processor.MaxPixels
+	if cfg.MaxPixels > 0 {
+		processor.MaxPixels = cfg.MaxPixels
+	}
+	defer func() { processor.MaxPixels = previousMaxPixels }()
 	result, err := facts.Extract(path, mode, version, cfg)
 	if err != nil {
 		return Observation{}, fmt.Errorf("b0 extract: %w", err)
@@ -97,6 +102,11 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 	if maxSide <= 0 {
 		maxSide = 1024
 	}
+	previousMaxPixels := processor.MaxPixels
+	if opts.LegacyConfig.MaxPixels > 0 {
+		processor.MaxPixels = opts.LegacyConfig.MaxPixels
+	}
+	defer func() { processor.MaxPixels = previousMaxPixels }()
 	img, _, err := processor.Decode(path)
 	if err != nil {
 		return Observation{}, fmt.Errorf("b1 decode: %w", err)
