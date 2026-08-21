@@ -24,6 +24,7 @@ type RunOptions struct {
 	LegacyConfig          config.Config
 	RegionFilterPath      string
 	RegionFilterThreshold float64
+	ScaleStable           bool
 }
 
 type Observation struct {
@@ -116,7 +117,15 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 		return Observation{}, fmt.Errorf("b1 canonical view: %w", err)
 	}
 	field := evidence.Compute(view)
-	regions := region.Propose(field, region.DefaultConfig())
+	var regions []schema.Region
+	if opts.ScaleStable {
+		regions, err = region.ProposeStable(img, maxSide, region.StableConfig{Base: region.DefaultConfig()})
+		if err != nil {
+			return Observation{}, fmt.Errorf("b1 stable proposals: %w", err)
+		}
+	} else {
+		regions = region.Propose(field, region.DefaultConfig())
+	}
 	if opts.RegionFilterPath != "" {
 		filter, filterErr := learned.LoadRegionFilter(opts.RegionFilterPath)
 		if filterErr != nil {

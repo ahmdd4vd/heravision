@@ -16,6 +16,7 @@ func main() {
 	maxSide := flag.Int("max-side", 512, "B1 canonical maximum side")
 	regionFilter := flag.String("region-filter", "", "optional trained B1 region filter JSON")
 	regionFilterThreshold := flag.Float64("region-filter-threshold", 0.95, "trained region filter threshold")
+	scaleStable := flag.Bool("scale-stable", false, "use multi-scale stable boundary-aware proposals")
 	legacyMaxPixels := flag.Int64("legacy-max-pixels", 24_000_000, "explicit B0 decode pixel budget")
 	flag.Parse()
 
@@ -27,6 +28,7 @@ func main() {
 		LegacyConfig:          legacyConfig,
 		RegionFilterPath:      *regionFilter,
 		RegionFilterThreshold: *regionFilterThreshold,
+		ScaleStable:           *scaleStable,
 	})
 	if err != nil {
 		log.Fatal(err)
