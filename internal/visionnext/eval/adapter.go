@@ -16,6 +16,7 @@ import (
 	"heravision/internal/visionnext/region"
 	"heravision/internal/visionnext/relation"
 	"heravision/internal/visionnext/schema"
+	"heravision/internal/visionnext/semantic"
 )
 
 type RunOptions struct {
@@ -31,6 +32,7 @@ type RunOptions struct {
 	ScaleExtraFraction    float64
 	AnswerMinScore        float64
 	RelationTouchingSafe  bool
+	SemanticModelPath     string
 }
 
 type Observation struct {
@@ -132,6 +134,13 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 		regions = filter.Apply(regions, view.Width, view.Height, opts.RegionFilterThreshold)
 	}
 	hyps := hypothesis.Generate(regions, view.Width, view.Height)
+	if opts.SemanticModelPath != "" {
+		model, err := semantic.Load(opts.SemanticModelPath)
+		if err != nil {
+			return Observation{}, fmt.Errorf("load semantic model: %w", err)
+		}
+		hyps = append(hyps, semantic.Infer(regions, view.Width, view.Height, model)...)
+	}
 	var edges []schema.Relation
 	if opts.RelationPrune {
 		pruneCfg := relation.DefaultPruneConfig()
