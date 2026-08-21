@@ -1,18 +1,22 @@
 package ocr
 
 import (
+	"errors"
 	"image"
 
 	"heravision/internal/detector"
 )
 
+var errOnnxUnavailable = errors.New("onnx engine unavailable")
+
 type Text struct {
-	Text string `json:"text"`
-	X    int    `json:"x"`
-	Y    int    `json:"y"`
-	W    int    `json:"w"`
-	H    int    `json:"h"`
-	Size int    `json:"size,omitempty"`
+	Text string  `json:"text"`
+	X    int     `json:"x"`
+	Y    int     `json:"y"`
+	W    int     `json:"w"`
+	H    int     `json:"h"`
+	Size int     `json:"size,omitempty"`
+	Conf float64 `json:"conf,omitempty"`
 }
 
 type Engine interface {
@@ -23,6 +27,9 @@ type Engine interface {
 var engine Engine = heuristicEngine{}
 
 func Extract(img image.Image) []Text {
+	if inst := currentOnnx(); inst != nil && inst.Available() {
+		return inst.Extract(img)
+	}
 	if engine != nil && engine.Available() {
 		return engine.Extract(img)
 	}
@@ -30,6 +37,10 @@ func Extract(img image.Image) []Text {
 }
 
 func SetEngine(e Engine) { engine = e }
+
+func OcrReady() bool {
+	return currentOnnx() != nil
+}
 
 type heuristicEngine struct{}
 

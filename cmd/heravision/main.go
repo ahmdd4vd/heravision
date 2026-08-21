@@ -3,8 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -12,6 +15,7 @@ import (
 	"heravision/internal/buildinfo"
 	"heravision/internal/config"
 	"heravision/internal/facts"
+	"heravision/internal/ocr"
 	"heravision/mcp"
 )
 
@@ -132,7 +136,13 @@ func doctorCmd() *cobra.Command {
 			fmt.Println("[ok] color: Lab k-means + dE merge + background border")
 			fmt.Println("[ok] facts: page_type classifier, grid detection, captions, reading order, diff summary")
 			fmt.Println("[ok] diagram: mermaid chain graph (mode diagram)")
-			fmt.Println("[warn] ocr: heuristic shape placeholders only — real OCR engine not bundled yet (roadmap)")
+			if cfg.Ocr.Enabled && ocr.OcrReady() {
+				fmt.Println("[ok] ocr: ONNX PP-OCR mobile engine ready (real text reading)")
+			} else if cfg.Ocr.Enabled {
+				fmt.Println("[warn] ocr: enabled but bundle missing — run: heravision setup --ocr")
+			} else {
+				fmt.Println("[warn] ocr: heuristic placeholders only — enable via heravision.json + setup --ocr")
+			}
 			fmt.Printf("[info] targets: binary <12MB core, RAM <80MB, latency <300ms\n")
 		},
 	}
@@ -149,6 +159,12 @@ func setupCmd() *cobra.Command {
 			all, _ := cmd.Flags().GetBool("all")
 			if all {
 				agent = "all"
+				if ocrFlag, _ := cmd.Flags().GetBool("ocr"); ocrFlag {
+					return downloadOcrBundle()
+				}
+			}
+			if ocrFlag, _ := cmd.Flags().GetBool("ocr"); ocrFlag {
+				return downloadOcrBundle()
 			}
 			if agent == "" {
 				fmt.Fprintln(os.Stderr, "usage: heravision setup --agent opencode|claude|codex|cursor|all")
@@ -188,7 +204,91 @@ func setupCmd() *cobra.Command {
 	}
 	c.Flags().String("agent", "", "Agent: opencode|claude|codex|cursor")
 	c.Flags().Bool("all", false, "Setup all agents")
+	c.Flags().Bool("ocr", false, "Download OCR bundle (onnxruntime + PP-OCR mobile models, ~28MB)")
 	return c
+}
+
+func ocrBundleDir() string {
+	home, _ := os.UserHomeDir()
+	return filepath.Join(home, ".heravision", "ocr")
+}
+
+func downloadOcrBundle() error {
+	dir := ocrBundleDir()
+	libDir := filepath.Join(dir, "lib")
+	wDir := filepath.Join(dir, "weights")
+	if err := os.MkdirAll(libDir, 0755); err != nil {
+		return err
+	}
+	if err := os.MkdirAll(wDir, 0755); err != nil {
+		return err
+	}
+	base := "https://huggingface.co/GetcharZp/go-ocr/resolve/main"
+	downloads := []struct {
+		url  string
+		dest string
+	}{
+		{base + "/lib/onnxruntime.dll", filepath.Join(libDir, "onnxruntime.dll")},
+		{base + "/lib/onnxruntime_amd64.so", filepath.Join(libDir, "libonnxruntime.so")},
+		{base + "/lib/onnxruntime_amd64.dylib", filepath.Join(libDir, "libonnxruntime.dylib")},
+		{"https://huggingface.co/SWHL/RapidOCR/resolve/main/PP-OCRv4/ch_PP-OCRv4_det_infer.onnx", filepath.Join(wDir, "det.onnx")},
+		{"https://huggingface.co/SWHL/RapidOCR/resolve/main/PP-OCRv3/en_PP-OCRv3_rec_infer.onnx", filepath.Join(wDir, "en_rec.onnx")},
+		{"https://raw.githubusercontent.com/PaddlePaddle/PaddleOCR/main/ppocr/utils/en_dict.txt", filepath.Join(wDir, "en_dict.txt")},
+	}
+	for _, d := range downloads {
+		if _, err := os.Stat(d.dest); err == nil {
+			fmt.Fprintf(os.Stderr, "[skip] %s exists\n", d.dest)
+			continue
+		}
+		fmt.Fprintf(os.Stderr, "[get] %s\n", d.url)
+		if err := fetchFile(d.url, d.dest); err != nil {
+			return fmt.Errorf("download %s: %w", d.dest, err)
+		}
+	}
+	fmt.Fprintf(os.Stderr, "[ok] OCR bundle ready: %s\n", dir)
+	ext := "dll"
+	if runtime.GOOS == "linux" {
+		ext = "so"
+	} else if runtime.GOOS == "darwin" {
+		ext = "dylib"
+	}
+	libPath := filepath.Join(libDir, "onnxruntime."+map[string]string{"so": "so", "dylib": "dylib"}[ext])
+	if ext == "so" {
+		libPath = filepath.Join(libDir, "libonnxruntime.so")
+	}
+	if ext == "dylib" {
+		libPath = filepath.Join(libDir, "libonnxruntime.dylib")
+	}
+	cfgSnippet := map[string]interface{}{
+		"ocr": map[string]interface{}{
+			"enabled":   true,
+			"lib_path":  libPath,
+			"det_path":  filepath.Join(wDir, "det.onnx"),
+			"rec_path":  filepath.Join(wDir, "en_rec.onnx"),
+			"dict_path": filepath.Join(wDir, "en_dict.txt"),
+		},
+	}
+	j, _ := json.MarshalIndent(cfgSnippet, "", "  ")
+	fmt.Printf("Add to heravision.json:\n%s\n", string(j))
+	return nil
+}
+
+func fetchFile(url, dest string) error {
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("http %d", resp.StatusCode)
+	}
+	f, err := os.Create(dest)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = io.Copy(f, resp.Body)
+	return err
 }
 
 func benchCmd() *cobra.Command {

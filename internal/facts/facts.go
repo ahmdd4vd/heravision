@@ -166,6 +166,11 @@ func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 	img = processor.AutoRotate(img, orientation)
 	img = processor.PreprocessCfg(img, mode, cfg.Preprocess.BlurThreshold)
 	base := processor.Resize(img, cfg.MaxSide)
+	if cfg.Ocr.Enabled {
+		ocr.ConfigureOnnx(cfg.Ocr.LibPath, cfg.Ocr.DetPath, cfg.Ocr.RecPath, cfg.Ocr.DictPath)
+	} else {
+		ocr.ConfigureOnnx("", "", "", "")
+	}
 	b := base.Bounds()
 	w, h := b.Dx(), b.Dy()
 	params := detector.Params{
@@ -223,6 +228,15 @@ func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 	return r, nil
 }
 
+func ocrReadyTexts(texts []ocr.Text) bool {
+	for _, t := range texts {
+		if !strings.HasPrefix(t.Text, "[") {
+			return true
+		}
+	}
+	return false
+}
+
 func BuildMarkdown(r *Result) string {
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("## Image Facts (%s)\n", r.Meta.Mode))
@@ -249,9 +263,17 @@ func BuildMarkdown(r *Result) string {
 		}
 		sb.WriteString(fmt.Sprintf("  - #%d %s\n", bx.Order, cap))
 	}
-	sb.WriteString("- Text content: NOT OCR-read; text fields are shape placeholders like [button]/[text]\n")
-	for _, t := range r.Texts {
-		sb.WriteString(fmt.Sprintf("  - %s at (%d,%d) %dx%d\n", t.Text, t.X, t.Y, t.W, t.H))
+	sb.WriteString("- Text content: ")
+	if ocrReadyTexts(r.Texts) {
+		sb.WriteString("OCR-read via ONNX PP-OCR (confidence per line)\n")
+		for _, t := range r.Texts {
+			sb.WriteString(fmt.Sprintf("  - %q at (%d,%d) %dx%d conf %.2f\n", t.Text, t.X, t.Y, t.W, t.H, t.Conf))
+		}
+	} else {
+		sb.WriteString("NOT OCR-read; text fields are shape placeholders like [button]/[text]\n")
+		for _, t := range r.Texts {
+			sb.WriteString(fmt.Sprintf("  - %s at (%d,%d) %dx%d\n", t.Text, t.X, t.Y, t.W, t.H))
+		}
 	}
 	sb.WriteString(fmt.Sprintf("- Dominant colors: %v\n", r.Colors.Dominant))
 	sb.WriteString(fmt.Sprintf("- Background: %s\n", r.Colors.Background))

@@ -23,6 +23,14 @@ type Preprocess struct {
 	BlurThreshold float64 `json:"blur_threshold"`
 }
 
+type Ocr struct {
+	Enabled  bool   `json:"enabled"`
+	LibPath  string `json:"lib_path"`
+	DetPath  string `json:"det_path"`
+	RecPath  string `json:"rec_path"`
+	DictPath string `json:"dict_path"`
+}
+
 type Config struct {
 	MaxSide    int        `json:"max_side"`
 	MaxPixels  int64      `json:"max_pixels"`
@@ -30,6 +38,7 @@ type Config struct {
 	Detector   Detector   `json:"detector"`
 	Color      Color      `json:"color"`
 	Preprocess Preprocess `json:"preprocess"`
+	Ocr        Ocr        `json:"ocr"`
 }
 
 func Default() Config {
@@ -42,6 +51,7 @@ func Default() Config {
 		Preprocess: Preprocess{
 			BlurThreshold: 80,
 		},
+		Ocr: Ocr{},
 	}
 }
 

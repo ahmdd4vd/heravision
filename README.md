@@ -21,7 +21,14 @@ HeraVision adalah **plugin vision struktural** untuk AI coding agent (Opencode, 
 
 **Yang DIDETEKSI:** page type guess (`login`/`dashboard`/`terminal`/`chat`/`form`/`general` + confidence); element boxes (`button` / `input` / `card` / `image` / `text_block` / `icon` / `checkbox` / `avatar`) dengan koordinat presisi (Canny+NMS edge 1px), ukuran, skor, warna rata-rata, **reading order**, dan **caption naratif** ("blue button 200x40 medium at bottom-right"); grid detection (3x2 card grid); **table detection** (rows x cols dari garis grid); layout tree **XY-cut recursive**; palet warna Lab k-means; mermaid dengan **edges real antar shape** (fallback hierarki); compare dengan summary semantik.
 
-**Yang BELUM:** OCR. Teks belum dibaca — field `texts` berisi placeholder bentuk seperti `[button]`, `[text]`. Ini roadmap utama (lihat bawah). Jangan pakai HeraVision untuk membaca isi teks gambar.
+**OCR opsional (Fase D ✅):** `heravision setup --ocr` mengunduh bundle ONNX (~28MB: onnxruntime + PP-OCRv4 mobile det + en rec). Aktifkan via `heravision.json` → teks asli terbaca dengan confidence per baris, tetap `CGO_ENABLED=0` via purego. Tanpa bundle → fallback jujur ke placeholder bentuk.
+
+```json
+"texts": [
+  { "text": "Login",    "x": 46, "y": 37, "w": 75,  "h": 26, "conf": 1.0 },
+  { "text": "Submit",   "x": 91, "y": 216, "w": 65, "h": 20, "conf": 1.0 }
+]
+```
 
 ---
 
@@ -38,8 +45,9 @@ make build
 
 # hubungkan ke agent kamu
 ./heravision setup --all          # opencode + claude + codex + cursor
-# atau satu-satu
-./heravision setup --agent opencode
+
+# opsional: real OCR (unduh ~28MB, CGO-free via purego)
+./heravision setup --ocr
 ```
 
 ```bash
@@ -115,9 +123,9 @@ Input image (jpg/png/webp)
 ```
 
 **Jujur soal batasan teknis saat ini:**
-- Teks = placeholder bentuk, bukan OCR
 - Table detection butuh garis grid utuh; tabel tanpa border tidak terdeteksi
 - Mermaid edges: arah panah dari posisi (kiri→kanan/atas→bawah), arrowhead belum dianalisis; panah yang menempel penuh ke shape bisa terfusi sebagai satu elemen
+- OCR mobile: akurasi tinggi untuk teks UI jelas (conf 0.99+ di fixture); teks kecil/blur berat bisa salah; spasi kadang terbaca "?"
 
 Semua angka threshold bisa di-tune via `heravision.json` (copy dari `heravision.json.example`).
 
@@ -127,10 +135,11 @@ Semua angka threshold bisa di-tune via `heravision.json` (copy dari `heravision.
 
 | Metrik | Nilai |
 |---|---|
-| Binary | ~6.5 MB (`-ldflags "-s -w"`, CGO_ENABLED=0) |
-| Latency | ~14 ms (gambar kecil), ~120 ms (mode blur + multi-scale) |
+| Binary | ~14 MB (`-ldflags "-s -w"`, CGO_ENABLED=0, termasuk binding purego) |
+| Latency | ~16 ms struktur; +~450 ms saat OCR aktif (full-image) |
 | RAM | dibatasi decode limit 12 MP default |
-| Offline | 100%, tanpa API key, tanpa download model |
+| OCR bundle (opsional) | ~28 MB sidecar: onnxruntime + PP-OCRv4 mobile det + en rec |
+| Offline | 100%, tanpa API key |
 
 ---
 
@@ -141,7 +150,8 @@ Semua angka threshold bisa di-tune via `heravision.json` (copy dari `heravision.
 - [x] Classify v3: icon / checkbox / avatar
 - [x] Page type classifier + caption per region + grid detection + reading order + diff summary (Fase B)
 - [x] XY-cut recursive layout + table detection + mermaid edges real (Fase C)
-- [ ] **OCR real** — keputusan arsitektur: boleh bundle model besar (keputusan owner); riset wazero/ONNX berjalan (Fase D)
+- [x] **OCR real CGO-free** — ONNX Runtime via purego + PP-OCR mobile, sidecar opsional (Fase D)
+- [ ] Optimasi OCR latency: rec-only per text_block crop (target <300ms total)
 
 ---
 

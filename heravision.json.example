@@ -11,5 +11,12 @@
   "preprocess": {
     "blur_threshold": 80
   },
-  "color": { "k": 5, "deltaE_merge": 12 }
+  "color": { "k": 5, "deltaE_merge": 12 },
+  "ocr": {
+    "enabled": false,
+    "lib_path": "",
+    "det_path": "",
+    "rec_path": "",
+    "dict_path": ""
+  }
 }
