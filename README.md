@@ -19,7 +19,7 @@
 
 HeraVision adalah **plugin vision struktural** untuk AI coding agent (Opencode, Claude Code, Codex, Cursor) via MCP. LLM text-only tidak bisa lihat gambar — HeraVision melihat **struktur layar**: posisi & ukuran elemen UI, warna dominan, peta layout — lalu mengirimnya sebagai JSON terstruktur untuk direasoning oleh LLM.
 
-**Yang DIDETEKSI:** element boxes (`button` / `input` / `card` / `image` / `text_block`) dengan koordinat, ukuran, skor, dan warna rata-rata; palet warna Lab k-means; background; layout header/body/footer; graph mermaid sederhana.
+**Yang DIDETEKSI:** element boxes (`button` / `input` / `card` / `image` / `text_block` / `icon` / `checkbox` / `avatar`) dengan koordinat presisi (Canny+NMS edge 1px), ukuran, skor, dan warna rata-rata; multi-scale pyramid menangkap elemen kecil di gambar besar; palet warna Lab k-means; background; layout header/body/footer; graph mermaid sederhana.
 
 **Yang BELUM:** OCR. Teks belum dibaca — field `texts` berisi placeholder bentuk seperti `[button]`, `[text]`. Ini roadmap utama (lihat bawah). Jangan pakai HeraVision untuk membaca isi teks gambar.
 
@@ -102,10 +102,12 @@ Input image (jpg/png/webp)
   → Decode (dengan limit dimensi anti decompression-bomb)
   → EXIF orientation tag 0x0112 → auto-rotate/flip
   → Preprocess: BlurMetric (Laplacian variance) → sharpen/kontras jika blur
-  → Resize longest side ≤ max_side (default 1024)
-  → Detector: Gaussian 3x3 → Sobel+Canny hysteresis (low/high) → morph close
-              → connected components 8-connect → classify v2 (ar/area/edgeDensity)
-              → warna rata-rata per box
+  → Multi-scale pyramid: analisis di base 1024 (+2048 jika sumber ≥1.5x,
+    +512) → merge box antar skala (IoU>0.55) — objek kecil tetap ketangkap
+  → Detector per skala: Gaussian 3x3 → Sobel+Canny hysteresis + NMS
+    (edge 1px, posisi presisi) → morph close → components 8-connect
+    → classify v3 (ar/area/edgeDensity/ringRatio/colorVar)
+    → warna rata-rata per box
   → Color: RGB→Lab → k-means (k=5) → merge ΔE<12 → dominant + background border
   → Layout: split header/body/footer by Y
   → Mermaid chain graph (mode diagram)
@@ -113,7 +115,6 @@ Input image (jpg/png/webp)
 ```
 
 **Jujur soal batasan teknis saat ini:**
-- Canny tanpa Non-Maximum Suppression (edge lebih tebal dari Canny standar)
 - Layout split 3 zona Y, bukan recursive whitespace projection
 - Mermaid = rantai node urut scan, bukan deteksi panah Hough
 - Teks = placeholder bentuk, bukan OCR
@@ -126,8 +127,8 @@ Semua angka threshold bisa di-tune via `heravision.json` (copy dari `heravision.
 
 | Metrik | Nilai |
 |---|---|
-| Binary | 6.4 MB (`-ldflags "-s -w"`, CGO_ENABLED=0) |
-| Latency | ~15 ms (gambar kecil), ~100 ms (mode blur 800x400) |
+| Binary | ~6.5 MB (`-ldflags "-s -w"`, CGO_ENABLED=0) |
+| Latency | ~14 ms (gambar kecil), ~120 ms (mode blur + multi-scale) |
 | RAM | dibatasi decode limit 12 MP default |
 | Offline | 100%, tanpa API key, tanpa download model |
 
@@ -135,11 +136,12 @@ Semua angka threshold bisa di-tune via `heravision.json` (copy dari `heravision.
 
 ### Roadmap
 
-- [ ] **OCR real** — kandidat: wazero + model WASM, atau ONNX Runtime; riset kompatibilitas CGO-free sedang berjalan
-- [ ] Canny NMS + gradient direction
-- [ ] Deteksi panah Hough → mermaid edges akurat
-- [ ] Layout recursive rows/cols + reading order
-- [ ] Table detection → JSON table
+- [x] Canny NMS + gradient direction (edge 1px)
+- [x] Multi-scale pyramid (elemen kecil di gambar besar)
+- [x] Classify v3: icon / checkbox / avatar
+- [ ] **OCR real** — keputusan arsitektur: boleh bundle model besar (keputusan owner); riset wazero/ONNX berjalan
+- [ ] Screenshot type classifier + caption per region + reading order (Fase B)
+- [ ] XY-cut recursive layout + table detection + mermaid panah akurat (Fase C)
 
 ---
 

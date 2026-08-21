@@ -128,12 +128,12 @@ func doctorCmd() *cobra.Command {
 				fmt.Println("[warn] testdata: missing")
 			}
 			fmt.Println("[ok] processor: decode jpg/png/webp + EXIF auto-rotate + decode limits")
-			fmt.Println("[ok] detector: Sobel+Canny hysteresis, morph close, 8-connect, classify v2, box color")
+			fmt.Println("[ok] detector: Sobel+Canny hysteresis+NMS, morph close, 8-connect, classify v3, box color")
 			fmt.Println("[ok] color: Lab k-means + dE merge + background border")
 			fmt.Println("[ok] layout: header/body/footer split")
 			fmt.Println("[ok] diagram: mermaid chain graph (mode diagram)")
 			fmt.Println("[warn] ocr: heuristic shape placeholders only — real OCR engine not bundled yet (roadmap)")
-			fmt.Printf("[info] targets: binary <12MB, RAM <80MB, latency <150ms\n")
+			fmt.Printf("[info] targets: binary <12MB core, RAM <80MB, latency <300ms\n")
 		},
 	}
 	c.Flags().StringVar(&cfgPath, "config", "", "Path to heravision.json config")
@@ -225,8 +225,8 @@ func benchCmd() *cobra.Command {
 			}
 			avg := float64(total.Microseconds()) / float64(n) / 1000
 			fmt.Printf("bench %s [%s] x%d: avg %.2fms, boxes %d, first-run %v (incl. warmup)\n", path, mode, n, avg, len(r.Boxes), warmup)
-			if avg > 150 {
-				fmt.Fprintln(os.Stderr, "[warn] avg >150ms target exceeded")
+			if avg > 300 {
+				fmt.Fprintln(os.Stderr, "[warn] avg >300ms target exceeded")
 			}
 			return nil
 		},

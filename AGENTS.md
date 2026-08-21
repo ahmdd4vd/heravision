@@ -37,8 +37,9 @@ Plugin vision universal untuk AI agent coding (Opencode, Claude Code, Codex, Cur
 - Semua log ke stderr, stdout hanya JSON-RPC
 
 ## Rules
-- Binary <12MB, RAM <80MB, latency <150ms
-- Pure Go tanpa CGO, tanpa model download, tanpa API key
+- Binary <12MB core; OCR bundle boleh >12MB setelah Fase D sukses (keputusan 2c)
+- RAM <80MB, latency <300ms (keputusan 3b)
+- Pure Go tanpa CGO, tanpa API key
 - Update plan.md jika scope berubah
 - Heravision extract return JSON+markdown — jangan breaking change tanpa bump
 - Dokumentasi hanya klaim yang terukur — output contoh = output asli (audit 2026-08-21)

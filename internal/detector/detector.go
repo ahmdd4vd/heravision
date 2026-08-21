@@ -43,7 +43,7 @@ func DetectCfg(img image.Image, p Params) []Box {
 			continue
 		}
 		area := c.w * c.h
-		minArea := imgW * imgH / 5000
+		minArea := imgW * imgH / 20000
 		if minArea < p.MinArea {
 			minArea = p.MinArea
 		}
@@ -54,7 +54,8 @@ func DetectCfg(img image.Image, p Params) []Box {
 			continue
 		}
 		ed := edgeDensity(closed, c)
-		box := classifyV2(c, imgW, imgH, ed)
+		feats := boxFeats(img, closed, c)
+		box := classifyV3(c, imgW, imgH, ed, feats)
 		box.Color = avgColor(img, c)
 		boxes = append(boxes, box)
 	}
@@ -173,14 +174,15 @@ func gaussian3x3(gray [][]uint8) [][]uint8 {
 }
 
 func canny(gray [][]uint8, low, high uint8) [][]uint8 {
-	edges := sobel(gray)
-	strong := threshold(edges, high)
-	weak := threshold(edges, low)
-	h := len(edges)
+	mag, dir := sobelGrad(gray)
+	thin := nonMaxSuppress(mag, dir)
+	strong := threshold(thin, high)
+	weak := threshold(thin, low)
+	h := len(thin)
 	if h == 0 {
-		return edges
+		return thin
 	}
-	w := len(edges[0])
+	w := len(thin[0])
 	out := make([][]uint8, h)
 	for y := range out {
 		out[y] = make([]uint8, w)
@@ -208,25 +210,71 @@ func canny(gray [][]uint8, low, high uint8) [][]uint8 {
 	return out
 }
 
-func sobel(gray [][]uint8) [][]uint8 {
+func sobelGrad(gray [][]uint8) (mag [][]uint8, dir [][]uint8) {
 	h := len(gray)
 	if h == 0 {
-		return nil
+		return nil, nil
 	}
 	w := len(gray[0])
-	out := make([][]uint8, h)
-	for y := range out {
-		out[y] = make([]uint8, w)
+	mag = make([][]uint8, h)
+	dir = make([][]uint8, h)
+	for y := range mag {
+		mag[y] = make([]uint8, w)
+		dir[y] = make([]uint8, w)
 	}
 	for y := 1; y < h-1; y++ {
 		for x := 1; x < w-1; x++ {
 			gx := int(gray[y-1][x+1]) + 2*int(gray[y][x+1]) + int(gray[y+1][x+1]) - int(gray[y-1][x-1]) - 2*int(gray[y][x-1]) - int(gray[y+1][x-1])
 			gy := int(gray[y+1][x-1]) + 2*int(gray[y+1][x]) + int(gray[y+1][x+1]) - int(gray[y-1][x-1]) - 2*int(gray[y-1][x]) - int(gray[y-1][x+1])
-			mag := abs(gx) + abs(gy)
-			if mag > 255 {
-				mag = 255
+			ax, ay := abs(gx), abs(gy)
+			m := ax + ay
+			if m > 255 {
+				m = 255
 			}
-			out[y][x] = uint8(mag)
+			mag[y][x] = uint8(m)
+			switch {
+			case ax >= 2*ay:
+				dir[y][x] = 0
+			case ay >= 2*ax:
+				dir[y][x] = 2
+			case (gx >= 0) == (gy >= 0):
+				dir[y][x] = 1
+			default:
+				dir[y][x] = 3
+			}
+		}
+	}
+	return mag, dir
+}
+
+func nonMaxSuppress(mag, dir [][]uint8) [][]uint8 {
+	h := len(mag)
+	if h == 0 {
+		return mag
+	}
+	w := len(mag[0])
+	out := make([][]uint8, h)
+	for y := range out {
+		out[y] = make([]uint8, w)
+	}
+	offs := [4][2][2]int{
+		{{-1, 0}, {1, 0}},
+		{{-1, -1}, {1, 1}},
+		{{0, -1}, {0, 1}},
+		{{-1, 1}, {1, -1}},
+	}
+	for y := 1; y < h-1; y++ {
+		for x := 1; x < w-1; x++ {
+			m := mag[y][x]
+			if m == 0 {
+				continue
+			}
+			d := offs[dir[y][x]]
+			n1 := mag[y+d[0][1]][x+d[0][0]]
+			n2 := mag[y+d[1][1]][x+d[1][0]]
+			if m >= n1 && m > n2 {
+				out[y][x] = m
+			}
 		}
 	}
 	return out
@@ -373,11 +421,93 @@ func findComponents(bin [][]uint8) []comp {
 	return comps
 }
 
-func classifyV2(c comp, imgW, imgH int, ed float64) Box {
+type feats struct {
+	ringRatio float64
+	colorVar  float64
+}
+
+func boxFeats(img image.Image, closed [][]uint8, c comp) feats {
+	total, ring := 0, 0
+	for y := c.y; y < c.y+c.h; y++ {
+		if y < 0 || y >= len(closed) {
+			continue
+		}
+		for x := c.x; x < c.x+c.w; x++ {
+			if x < 0 || x >= len(closed[0]) {
+				continue
+			}
+			if closed[y][x] != 0 {
+				total++
+				if y-c.y < 2 || c.y+c.h-1-y < 2 || x-c.x < 2 || c.x+c.w-1-x < 2 {
+					ring++
+				}
+			}
+		}
+	}
+	ringRatio := 0.0
+	if total > 0 {
+		ringRatio = float64(ring) / float64(total)
+	}
+	step := c.w / 16
+	if step < 2 {
+		step = 2
+	}
+	inset := 4
+	if c.h < 10 || c.w < 10 {
+		inset = 1
+	}
+	var rs, gs, bs, rss, gss, bss float64
+	n := 0
+	for y := c.y + inset; y < c.y+c.h-inset; y += step {
+		if y < 0 || y >= img.Bounds().Dy() {
+			continue
+		}
+		for x := c.x + inset; x < c.x+c.w-inset; x += step {
+			if x < 0 || x >= img.Bounds().Dx() {
+				continue
+			}
+			r, g, bl, _ := img.At(x, y).RGBA()
+			fr, fg, fb := float64(r>>8), float64(g>>8), float64(bl>>8)
+			rs += fr
+			gs += fg
+			bs += fb
+			rss += fr * fr
+			gss += fg * fg
+			bss += fb * fb
+			n++
+		}
+	}
+	colorVar := 0.0
+	if n >= 4 {
+		mr, mg, mb := rs/float64(n), gs/float64(n), bs/float64(n)
+		vr := rss/float64(n) - mr*mr
+		vg := gss/float64(n) - mg*mg
+		vb := bss/float64(n) - mb*mb
+		if vr < 0 {
+			vr = 0
+		}
+		if vg < 0 {
+			vg = 0
+		}
+		if vb < 0 {
+			vb = 0
+		}
+		colorVar = (vr + vg + vb) / (3 * 65025)
+	}
+	return feats{ringRatio: ringRatio, colorVar: colorVar}
+}
+
+func classifyV3(c comp, imgW, imgH int, ed float64, f feats) Box {
 	ar := float64(c.w) / float64(c.h)
 	area := c.w * c.h
 	typ := "card"
 	switch {
+	case c.w >= 12 && c.w <= 28 && c.h >= 12 && c.h <= 28 && ar > 0.7 && ar < 1.4 && f.ringRatio > 0.45 && f.colorVar < 0.02:
+		typ = "checkbox"
+	case c.w < 40 && c.h < 40 && ed > 0.15:
+		typ = "icon"
+	case ar >= 0.8 && ar <= 1.25 && c.w >= 30 && c.w <= 140 && c.h >= 30 && c.h <= 140 && f.colorVar > 0.04:
+		typ = "avatar"
 	case ar > 3.2 && c.h < 70 && c.h > 14 && ed < 0.3:
 		typ = "input"
 	case ar > 1.4 && ar < 6 && c.w > 50 && c.h > 20 && c.h < 85 && area < 40000 && ed > 0.08 && ed < 0.5:

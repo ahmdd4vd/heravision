@@ -26,6 +26,7 @@ type Preprocess struct {
 type Config struct {
 	MaxSide    int        `json:"max_side"`
 	MaxPixels  int64      `json:"max_pixels"`
+	Multiscale bool       `json:"multiscale"`
 	Detector   Detector   `json:"detector"`
 	Color      Color      `json:"color"`
 	Preprocess Preprocess `json:"preprocess"`
@@ -33,10 +34,11 @@ type Config struct {
 
 func Default() Config {
 	return Config{
-		MaxSide:   1024,
-		MaxPixels: 12_000_000,
-		Detector:  Detector{CannyLow: 50, CannyHigh: 150, MinArea: 200},
-		Color:     Color{K: 5, DeltaEMerge: 12},
+		MaxSide:    1024,
+		MaxPixels:  12_000_000,
+		Multiscale: true,
+		Detector:   Detector{CannyLow: 50, CannyHigh: 150, MinArea: 200},
+		Color:      Color{K: 5, DeltaEMerge: 12},
 		Preprocess: Preprocess{
 			BlurThreshold: 80,
 		},

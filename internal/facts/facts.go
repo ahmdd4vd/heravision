@@ -2,7 +2,9 @@ package facts
 
 import (
 	"fmt"
+	"image"
 	"math"
+	"sort"
 	"strings"
 	"time"
 
@@ -62,6 +64,93 @@ type CompareResult struct {
 
 const compareSide = 512
 
+type scaleRun struct {
+	img    image.Image
+	factor float64
+}
+
+func detectMultiScale(src, base image.Image, params detector.Params, maxSide int, enabled bool) []detector.Box {
+	if !enabled {
+		return detector.DetectCfg(base, params)
+	}
+	b := base.Bounds()
+	baseW := b.Dx()
+	srcW, srcH := src.Bounds().Dx(), src.Bounds().Dy()
+	srcLongest := max(srcW, srcH)
+	var runs []scaleRun
+	if srcLongest >= maxSide*3/2 {
+		hi := maxSide * 2
+		if hi > 2048 {
+			hi = 2048
+		}
+		if hi > srcLongest {
+			hi = srcLongest
+		}
+		if hi > maxSide {
+			himg := processor.Resize(src, hi)
+			hw := himg.Bounds().Dx()
+			if hw > baseW {
+				runs = append(runs, scaleRun{img: himg, factor: float64(baseW) / float64(hw)})
+			}
+		}
+	}
+	runs = append(runs, scaleRun{img: base, factor: 1})
+	half := processor.Resize(src, maxSide/2)
+	hw := half.Bounds().Dx()
+	if hw < baseW {
+		runs = append(runs, scaleRun{img: half, factor: float64(baseW) / float64(hw)})
+	}
+	var all []detector.Box
+	for _, r := range runs {
+		for _, bx := range detector.DetectCfg(r.img, params) {
+			all = append(all, mapBox(bx, r.factor))
+		}
+	}
+	return mergeScales(all)
+}
+
+func mapBox(bx detector.Box, f float64) detector.Box {
+	if f == 1 {
+		return bx
+	}
+	return detector.Box{
+		Type:  bx.Type,
+		X:     int(float64(bx.X)*f + 0.5),
+		Y:     int(float64(bx.Y)*f + 0.5),
+		W:     int(float64(bx.W)*f + 0.5),
+		H:     int(float64(bx.H)*f + 0.5),
+		Color: bx.Color,
+		Text:  bx.Text,
+		Score: bx.Score,
+	}
+}
+
+func mergeScales(boxes []detector.Box) []detector.Box {
+	out := []detector.Box{}
+	for _, bx := range boxes {
+		dup := false
+		for j := range out {
+			if iou(bx, out[j]) > 0.55 {
+				dup = true
+				break
+			}
+		}
+		if !dup {
+			out = append(out, bx)
+		}
+	}
+	sort.Slice(out, func(i, j int) bool {
+		if out[i].Y/20 == out[j].Y/20 {
+			return out[i].X < out[j].X
+		}
+		return out[i].Y < out[j].Y
+	})
+	if len(out) > 60 {
+		out = out[:60]
+	}
+	return out
+}
+
 func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 	start := time.Now()
 	img, _, err := processor.Decode(path)
@@ -71,18 +160,18 @@ func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 	orientation := processor.ReadOrientation(path)
 	img = processor.AutoRotate(img, orientation)
 	img = processor.PreprocessCfg(img, mode, cfg.Preprocess.BlurThreshold)
-	img = processor.Resize(img, cfg.MaxSide)
-	b := img.Bounds()
+	base := processor.Resize(img, cfg.MaxSide)
+	b := base.Bounds()
 	w, h := b.Dx(), b.Dy()
 	params := detector.Params{
 		CannyLow:  cfg.Detector.CannyLow,
 		CannyHigh: cfg.Detector.CannyHigh,
 		MinArea:   cfg.Detector.MinArea,
 	}
-	boxes := detector.DetectCfg(img, params)
-	texts := ocr.Extract(img)
-	dominant := color.DominantCfg(img, cfg.Color.K, cfg.Color.K, cfg.Color.DeltaEMerge)
-	bg := color.Background(img)
+	boxes := detectMultiScale(img, base, params, cfg.MaxSide, cfg.Multiscale)
+	texts := ocr.Extract(base)
+	dominant := color.DominantCfg(base, cfg.Color.K, cfg.Color.K, cfg.Color.DeltaEMerge)
+	bg := color.Background(base)
 	if len(dominant) == 0 {
 		dominant = []string{"#FFFFFF"}
 	}
