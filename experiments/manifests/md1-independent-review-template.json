@@ -1,0 +1,72 @@
+{
+  "name": "md1-independent-review-template",
+  "instructions": "Reviewer must inspect the supplied original images/contact sheets independently of the Manus AI review. Choose accepted-provisional, accepted-ignore, or needs-review. If accepted, confirm one main region box or explicitly explain a revised scope. Do not use model predictions as annotation evidence.",
+  "reviewer_name": "",
+  "independence_statement": "",
+  "reviewer_date": "",
+  "samples": [
+    {
+      "sample_id": "blind-md0-imagenette-140e47321913",
+      "category": "scope-ambiguity",
+      "reason": "scene box includes city/background; object-vs-scene scope is ambiguous",
+      "decision": "",
+      "bbox_decision": "keep-provisional | revise | ignore | unresolved",
+      "bbox": null,
+      "notes": ""
+    },
+    {
+      "sample_id": "blind-md0-imagenette-3235df644822",
+      "category": "multiple-foreground",
+      "reason": "foreground person and held fish create two plausible targets",
+      "decision": "",
+      "bbox_decision": "keep-provisional | revise | ignore | unresolved",
+      "bbox": null,
+      "notes": ""
+    },
+    {
+      "sample_id": "blind-md0-imagenette-64159a40c4de",
+      "category": "occlusion-scope",
+      "reason": "person and large board/equipment overlap the candidate box",
+      "decision": "",
+      "bbox_decision": "keep-provisional | revise | ignore | unresolved",
+      "bbox": null,
+      "notes": ""
+    },
+    {
+      "sample_id": "blind-md0-imagenette-a06d12b2ffd7",
+      "category": "scope-ambiguity",
+      "reason": "person and equipment are visually connected but object scope is uncertain",
+      "decision": "",
+      "bbox_decision": "keep-provisional | revise | ignore | unresolved",
+      "bbox": null,
+      "notes": ""
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-007c38e50b6b",
+      "category": "multiple-foreground",
+      "reason": "two dogs share one candidate region",
+      "decision": "",
+      "bbox_decision": "keep-provisional | revise | ignore | unresolved",
+      "bbox": null,
+      "notes": ""
+    },
+    {
+      "sample_id": "blind-md0-imagewoof-82cb64a1114a",
+      "category": "occlusion-scope",
+      "reason": "dog and human overlap; foreground ownership needs reviewer agreement",
+      "decision": "",
+      "bbox_decision": "keep-provisional | revise | ignore | unresolved",
+      "bbox": null,
+      "notes": ""
+    },
+    {
+      "sample_id": "blind-md0-wikimedia-diagram-874b0038f0f7",
+      "category": "diagram-scope",
+      "reason": "whole-diagram box includes network whitespace and connector extent",
+      "decision": "",
+      "bbox_decision": "keep-provisional | revise | ignore | unresolved",
+      "bbox": null,
+      "notes": ""
+    }
+  ]
+}
