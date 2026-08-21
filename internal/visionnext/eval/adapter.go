@@ -29,6 +29,7 @@ type RunOptions struct {
 	RelationPrune         bool
 	ScaleMinSupport       int
 	ScaleExtraFraction    float64
+	AnswerMinScore        float64
 }
 
 type Observation struct {
@@ -90,7 +91,7 @@ func RunB0(path string, opts RunOptions) (Observation, error) {
 	g := graph.Build(regions, hyps, edges, schema.Provenance{
 		EngineVersion: version, SourcePath: path, ImageWidth: result.Meta.Width, ImageHeight: result.Meta.Height, Mode: mode,
 	})
-	return Observation{Engine: "B0", ImagePath: path, Width: result.Meta.Width, Height: result.Meta.Height, ElapsedMS: time.Since(started).Milliseconds(), Graph: g, LegacyBoxes: len(result.Boxes), Answer: answer.FromRegions(regions)}, nil
+	return Observation{Engine: "B0", ImagePath: path, Width: result.Meta.Width, Height: result.Meta.Height, ElapsedMS: time.Since(started).Milliseconds(), Graph: g, LegacyBoxes: len(result.Boxes), Answer: answer.FromRegionsWithMinScore(regions, opts.AnswerMinScore)}, nil
 }
 
 func RunB1(path string, opts RunOptions) (Observation, error) {
@@ -139,7 +140,7 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 	g := graph.Build(regions, hyps, edges, schema.Provenance{
 		EngineVersion: version, SourcePath: path, ImageWidth: view.Width, ImageHeight: view.Height, Mode: opts.Mode,
 	})
-	return Observation{Engine: "B1", ImagePath: path, Width: view.Width, Height: view.Height, ElapsedMS: time.Since(started).Milliseconds(), Graph: g, Answer: answer.FromRegions(regions)}, nil
+	return Observation{Engine: "B1", ImagePath: path, Width: view.Width, Height: view.Height, ElapsedMS: time.Since(started).Milliseconds(), Graph: g, Answer: answer.FromRegionsWithMinScore(regions, opts.AnswerMinScore)}, nil
 }
 
 func safeRatio(a, b int) float64 {

@@ -42,6 +42,7 @@ type RunConfig struct {
 	RelationPrune         bool    `json:"relation_prune"`
 	ScaleMinSupport       int     `json:"scale_min_support,omitempty"`
 	ScaleExtraFraction    float64 `json:"scale_extra_fraction,omitempty"`
+	AnswerMinScore        float64 `json:"answer_min_score,omitempty"`
 }
 
 func RunManifest(manifestPath, outputDir string, opts RunOptions) (DatasetSummary, error) {
@@ -67,7 +68,7 @@ func RunManifest(manifestPath, outputDir string, opts RunOptions) (DatasetSummar
 		Config: RunConfig{
 			Mode: opts.Mode, MaxSide: opts.MaxSide, LegacyMaxPixels: opts.LegacyConfig.MaxPixels,
 			RegionFilterPath: opts.RegionFilterPath, RegionFilterThreshold: opts.RegionFilterThreshold,
-			ScaleStable: opts.ScaleStable, RelationPrune: opts.RelationPrune, ScaleMinSupport: opts.ScaleMinSupport, ScaleExtraFraction: opts.ScaleExtraFraction,
+			ScaleStable: opts.ScaleStable, RelationPrune: opts.RelationPrune, ScaleMinSupport: opts.ScaleMinSupport, ScaleExtraFraction: opts.ScaleExtraFraction, AnswerMinScore: opts.AnswerMinScore,
 		},
 	}
 	var coverageSum, iouSum float64

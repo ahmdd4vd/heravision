@@ -6,6 +6,16 @@ import "heravision/internal/visionnext/schema"
 // that stable visual structure was found, and abstains when pixel/region
 // evidence is weak or absent.
 func FromRegions(regions []schema.Region) schema.Answer {
+	return FromRegionsWithMinScore(regions, 0.65)
+}
+
+func FromRegionsWithMinScore(regions []schema.Region, minScore float64) schema.Answer {
+	if minScore <= 0 {
+		minScore = 0.65
+	}
+	if minScore > 1 {
+		minScore = 1
+	}
 	if len(regions) == 0 {
 		return schema.Answer{
 			Text:       "insufficient visual evidence",
@@ -24,7 +34,7 @@ func FromRegions(regions []schema.Region) schema.Answer {
 	}
 	bestScore = round(bestScore)
 	evidence := append([]schema.EvidenceRef(nil), best.Evidence...)
-	if bestScore < 0.45 {
+	if bestScore < minScore {
 		return schema.Answer{
 			Text:       "abstain: visual evidence is weak or unstable",
 			Status:     "abstain",

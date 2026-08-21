@@ -20,6 +20,7 @@ func main() {
 	relationPrune := flag.Bool("relation-prune", false, "prune distant relation candidate pairs")
 	scaleMinSupport := flag.Int("scale-min-support", 0, "minimum distinct-scale support for stable proposals; 0 uses default")
 	scaleExtraFraction := flag.Float64("scale-extra-fraction", 0, "optional extra stable scale fraction above 1.0")
+	answerMinScore := flag.Float64("answer-min-score", 0.65, "minimum evidence score for generic answered status")
 	legacyMaxPixels := flag.Int64("legacy-max-pixels", 24_000_000, "explicit B0 decode pixel budget")
 	flag.Parse()
 
@@ -35,6 +36,7 @@ func main() {
 		RelationPrune:         *relationPrune,
 		ScaleMinSupport:       *scaleMinSupport,
 		ScaleExtraFraction:    *scaleExtraFraction,
+		AnswerMinScore:        *answerMinScore,
 	})
 	if err != nil {
 		log.Fatal(err)

@@ -41,3 +41,15 @@ func TestFromRegionsUsesOnlyGenericClaim(t *testing.T) {
 		t.Fatal("expected provenance evidence")
 	}
 }
+
+func TestFromRegionsWithMinScoreCanAbstainConservatively(t *testing.T) {
+	regions := []schema.Region{{
+		ID:       "r-1",
+		Area:     400,
+		Features: schema.Features{AreaRatio: 0.25, BoundaryStrength: 0.7, ScaleStability: 0.7},
+	}}
+	answer := FromRegionsWithMinScore(regions, 0.9)
+	if answer.Status != "abstain" {
+		t.Fatalf("expected conservative abstain, got %+v", answer)
+	}
+}
