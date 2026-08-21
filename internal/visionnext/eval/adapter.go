@@ -139,7 +139,9 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 		if err != nil {
 			return Observation{}, fmt.Errorf("load semantic model: %w", err)
 		}
-		hyps = append(hyps, semantic.InferWithView(regions, view.Width, view.Height, view, model)...)
+		regionSemantic := semantic.InferWithView(regions, view.Width, view.Height, view, model)
+		hyps = append(hyps, regionSemantic...)
+		hyps = append(hyps, semantic.AggregateImageEvidence(regions, regionSemantic, model)...)
 	}
 	var edges []schema.Relation
 	if opts.RelationPrune {

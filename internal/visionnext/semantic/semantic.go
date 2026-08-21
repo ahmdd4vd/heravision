@@ -19,6 +19,7 @@ type Model struct {
 	Bias         map[string]float64   `json:"bias"`
 	MinEvidence  float64              `json:"min_evidence"`
 	MinMargin    float64              `json:"min_margin"`
+	MinSupport   int                  `json:"min_support,omitempty"`
 }
 
 func Load(path string) (Model, error) {
@@ -64,6 +65,7 @@ func featuresNamedWithValues(r schema.Region, imageWidth, imageHeight int, names
 		"boundary_strength": clamp01(r.Features.BoundaryStrength), "scale_stability": clamp01(r.Features.ScaleStability),
 		"color0": clamp01(valueAt(r.Features.Color, 0)), "color1": clampSigned(r.Features.Color, 1), "color2": clampSigned(r.Features.Color, 2), "texture0": clamp01(first(r.Features.Texture)),
 		"crop_luma_mean": cropValue(crop, "crop_luma_mean"), "crop_luma_std": cropValue(crop, "crop_luma_std"), "crop_chroma_r_mean": cropValue(crop, "crop_chroma_r_mean"), "crop_chroma_b_mean": cropValue(crop, "crop_chroma_b_mean"), "crop_chroma_mag": cropValue(crop, "crop_chroma_mag"), "crop_edge_density": cropValue(crop, "crop_edge_density"), "crop_dark_fraction": cropValue(crop, "crop_dark_fraction"), "crop_bright_fraction": cropValue(crop, "crop_bright_fraction"),
+		"ring_luma_mean": cropValue(crop, "ring_luma_mean"), "ring_luma_std": cropValue(crop, "ring_luma_std"), "ring_chroma_mag": cropValue(crop, "ring_chroma_mag"), "object_ring_luma_delta": cropValue(crop, "object_ring_luma_delta"), "object_ring_chroma_delta": cropValue(crop, "object_ring_chroma_delta"),
 		"x": clamp01(float64(r.BBox.X) / w), "y": clamp01(float64(r.BBox.Y) / h),
 		"w": clamp01(float64(r.BBox.W) / w), "h": clamp01(float64(r.BBox.H) / h),
 	}
@@ -76,6 +78,100 @@ func featuresNamedWithValues(r schema.Region, imageWidth, imageHeight int, names
 
 func Infer(regions []schema.Region, imageWidth, imageHeight int, model Model) []schema.Hypothesis {
 	return inferWithFeatures(regions, imageWidth, imageHeight, model, func(r schema.Region) []float64 { return FeaturesNamed(r, imageWidth, imageHeight, model.FeatureNames) })
+}
+
+// AggregateImageEvidence combines the strongest independent region hypotheses into
+// image-level semantic hypotheses. It is intentionally conservative: a single
+// small region cannot become an accepted image claim without support from peers.
+func AggregateImageEvidence(regions []schema.Region, regionHypotheses []schema.Hypothesis, model Model) []schema.Hypothesis {
+	if len(regions) == 0 || len(regionHypotheses) == 0 {
+		return nil
+	}
+	regionByID := make(map[string]schema.Region, len(regions))
+	for _, r := range regions {
+		regionByID[r.ID] = r
+	}
+	type scoredRegion struct {
+		id        string
+		score     float64
+		area      float64
+		stability float64
+	}
+	byLabel := make(map[string][]scoredRegion)
+	bestByRegion := make(map[string]scoredRegion)
+	bestLabelByRegion := make(map[string]string)
+	for _, h := range regionHypotheses {
+		if len(h.RegionIDs) != 1 || h.Label == "" {
+			continue
+		}
+		id := h.RegionIDs[0]
+		r, ok := regionByID[id]
+		if !ok {
+			continue
+		}
+		candidate := scoredRegion{id: id, score: clamp01(h.Score), area: clamp01(r.Features.AreaRatio * 4), stability: clamp01(r.Features.ScaleStability)}
+		if previous, exists := bestByRegion[id]; !exists || candidate.score > previous.score {
+			bestByRegion[id] = candidate
+			bestLabelByRegion[id] = h.Label
+		}
+	}
+	for id, item := range bestByRegion {
+		byLabel[bestLabelByRegion[id]] = append(byLabel[bestLabelByRegion[id]], item)
+	}
+	type aggregate struct {
+		label   string
+		score   float64
+		regions []scoredRegion
+	}
+	aggregates := make([]aggregate, 0, len(byLabel))
+	for label, items := range byLabel {
+		sort.Slice(items, func(i, j int) bool { return items[i].score > items[j].score })
+		if len(items) > 3 {
+			items = items[:3]
+		}
+		if len(items) == 0 {
+			continue
+		}
+		top := items[0].score
+		mean := 0.0
+		area := 0.0
+		stability := 0.0
+		for _, item := range items {
+			mean += item.score
+			area += item.score * item.area
+			stability += item.stability
+		}
+		mean /= float64(len(items))
+		area /= float64(len(items))
+		stability /= float64(len(items))
+		support := clamp01(float64(len(items)) / 3)
+		score := clamp01(0.45*top + 0.25*mean + 0.15*area + 0.10*stability + 0.05*support)
+		aggregates = append(aggregates, aggregate{label: label, score: score, regions: items})
+	}
+	sort.Slice(aggregates, func(i, j int) bool { return aggregates[i].score > aggregates[j].score })
+	if len(aggregates) == 0 {
+		return nil
+	}
+	margin := aggregates[0].score
+	if len(aggregates) > 1 { margin -= aggregates[1].score }
+	minSupport := model.MinSupport; if minSupport <= 0 { minSupport = 2 }
+	out := make([]schema.Hypothesis, 0, len(aggregates))
+	for rank, candidate := range aggregates {
+		regionIDs := make([]string, 0, len(candidate.regions))
+		evidence := []schema.EvidenceRef{{Kind: "semantic-image-aggregation", Stage: "semantic-aggregate", Value: round(candidate.score), Note: fmt.Sprintf("label=%s rank=%d support=%d min_support=%d top_margin=%.2f", candidate.label, rank, len(candidate.regions), minSupport, margin)}}
+		for _, item := range candidate.regions {
+			regionIDs = append(regionIDs, item.id)
+			evidence = append(evidence, schema.EvidenceRef{Kind: "semantic-region-support", Stage: "semantic-aggregate", RegionID: item.id, Value: round(item.score), Note: "top-k region evidence"})
+		}
+		status := "candidate"
+		if rank == 0 && candidate.score >= model.MinEvidence && margin >= model.MinMargin && len(candidate.regions) >= minSupport {
+			status = "accepted"
+		} else if rank == 0 && (candidate.score < model.MinEvidence || margin < model.MinMargin || len(candidate.regions) < minSupport) {
+			status = "unknown"
+		}
+		out = append(out, schema.Hypothesis{ID: fmt.Sprintf("image-sem-%s", safeLabel(candidate.label)), RegionIDs: regionIDs, Label: candidate.label, Score: round(candidate.score), Uncertainty: round(1 - candidate.score), Status: status, Evidence: evidence})
+	}
+	return out
 }
 
 func InferWithView(regions []schema.Region, imageWidth, imageHeight int, view imageview.View, model Model) []schema.Hypothesis {
@@ -145,6 +241,14 @@ func cropValue(values map[string]float64, key string) float64 {
 }
 
 func cropValues(r schema.Region, view imageview.View) map[string]float64 {
+	values := cropValuesBase(r, view)
+	for key, value := range ringValues(r, view) {
+		values[key] = value
+	}
+	return values
+}
+
+func cropValuesBase(r schema.Region, view imageview.View) map[string]float64 {
 	out := map[string]float64{}
 	if view.Width <= 0 || view.Height <= 0 || r.BBox.W <= 0 || r.BBox.H <= 0 {
 		return out
@@ -202,7 +306,48 @@ func cropValues(r schema.Region, view imageview.View) map[string]float64 {
 	return out
 }
 
-func clampSignedValue(v float64) float64 { return clamp01((v + 4) / 8) }
+func ringValues(r schema.Region, view imageview.View) map[string]float64 {
+	out := map[string]float64{}
+	padX := max(2, r.BBox.W/2)
+	padY := max(2, r.BBox.H/2)
+	outer := schema.Rect{X: r.BBox.X - padX, Y: r.BBox.Y - padY, W: r.BBox.W + 2*padX, H: r.BBox.H + 2*padY}
+	var sum, sum2, chroma, count float64
+	const grid = 8
+	for gy := 0; gy < grid; gy++ {
+		for gx := 0; gx < grid; gx++ {
+			x := outer.X + (gx*outer.W+outer.W/2)/grid
+			y := outer.Y + (gy*outer.H+outer.H/2)/grid
+			if x >= r.BBox.X && x < r.BBox.X+r.BBox.W && y >= r.BBox.Y && y < r.BBox.Y+r.BBox.H {
+				continue
+			}
+			l, vr, vb, ok := view.At(x, y)
+			if !ok {
+				continue
+			}
+			sum += l
+			sum2 += l * l
+			chroma += math.Sqrt(vr*vr + vb*vb)
+			count++
+		}
+	}
+	if count == 0 {
+		return out
+	}
+	mean := sum / count
+	variance := sum2/count - mean*mean
+	if variance < 0 {
+		variance = 0
+	}
+	crop := cropValuesBase(r, view)
+	cropMean := cropValue(crop, "crop_luma_mean")
+	cropChroma := cropValue(crop, "crop_chroma_mag")
+	out["ring_luma_mean"] = mean
+	out["ring_luma_std"] = math.Sqrt(variance)
+	out["ring_chroma_mag"] = clamp01(chroma / count)
+	out["object_ring_luma_delta"] = clampSignedValue((cropMean - mean) * 4)
+	out["object_ring_chroma_delta"] = clampSignedValue((cropChroma - clamp01(chroma/count)) * 4)
+	return out
+}
 
 func evidenceQuality(r schema.Region) float64 {
 	return clamp01(0.45*clamp01(r.Features.BoundaryStrength) + 0.40*clamp01(r.Features.ScaleStability) + 0.15*clamp01(r.Features.AreaRatio*4))
@@ -225,6 +370,7 @@ func valueAt(values []float64, index int) float64 {
 func clampSigned(values []float64, index int) float64 {
 	return clampSignedValue(valueAt(values, index))
 }
+func clampSignedValue(v float64) float64 { return clamp01((v + 4) / 8) }
 func first(values []float64) float64 {
 	if len(values) == 0 {
 		return 0

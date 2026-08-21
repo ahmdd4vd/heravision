@@ -41,6 +41,30 @@ func TestFeaturesNamedWithViewUsesCropEvidence(t *testing.T) {
 	}
 }
 
+func TestAggregateImageEvidenceUsesTopKAndMargin(t *testing.T) {
+	model := Model{Labels: []string{"animal", "vehicle"}, MinEvidence: 0.65, MinMargin: 0.10}
+	regions := []schema.Region{
+		{ID: "r-1", Features: schema.Features{AreaRatio: 0.20, ScaleStability: 1}},
+		{ID: "r-2", Features: schema.Features{AreaRatio: 0.15, ScaleStability: 1}},
+		{ID: "r-3", Features: schema.Features{AreaRatio: 0.05, ScaleStability: 0.5}},
+	}
+	hyps := []schema.Hypothesis{
+		{ID: "r-1-sem-animal", RegionIDs: []string{"r-1"}, Label: "animal", Score: 0.82},
+		{ID: "r-2-sem-animal", RegionIDs: []string{"r-2"}, Label: "animal", Score: 0.78},
+		{ID: "r-3-sem-vehicle", RegionIDs: []string{"r-3"}, Label: "vehicle", Score: 0.50},
+	}
+	out := AggregateImageEvidence(regions, hyps, model)
+	if len(out) != 2 || out[0].Label != "animal" {
+		t.Fatalf("expected animal first, got %+v", out)
+	}
+	if out[0].Status != "accepted" {
+		t.Fatalf("expected supported image claim, got %+v", out[0])
+	}
+	if len(out[0].RegionIDs) != 2 || len(out[0].Evidence) < 3 {
+		t.Fatalf("expected top-k provenance, got %+v", out[0])
+	}
+}
+
 func TestInferMarksWeakEvidenceUnknown(t *testing.T) {
 	model := Model{
 		Labels: []string{"animal", "artifact"}, FeatureNames: []string{"boundary_strength", "scale_stability"},
