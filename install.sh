@@ -5,12 +5,12 @@ set -e
 
 REPO="ahmdd4vd/heravision"
 case "$(uname -s)" in
-  Linux) OSN=Linux ;;
-  Darwin) OSN=Darwin ;;
+  Linux) OSN=linux ;;
+  Darwin) OSN=darwin ;;
   *) echo "unsupported os: $(uname -s)" >&2; exit 1 ;;
 esac
 case "$(uname -m)" in
-  x86_64|amd64) ARN=x86_64 ;;
+  x86_64|amd64) ARN=amd64 ;;
   arm64|aarch64) ARN=arm64 ;;
   *) echo "unsupported arch: $(uname -m)" >&2; exit 1 ;;
 esac

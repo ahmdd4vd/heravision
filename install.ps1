@@ -5,7 +5,7 @@ $ErrorActionPreference = "Stop"
 $repo = "ahmdd4vd/heravision"
 $rel = Invoke-RestMethod "https://api.github.com/repos/$repo/releases/latest"
 $asset = $rel.assets | Where-Object {
-  ($_.name -like "heravision_*_Windows_*x86_64.zip") -or ($_.name -like "heravision_*_Windows_*amd64.zip")
+  ($_.name -like "heravision_*_windows_*x86_64.zip") -or ($_.name -like "heravision_*_windows_*amd64.zip")
 } | Select-Object -First 1
 if (-not $asset) { throw "no matching Windows asset in the latest release" }
 
