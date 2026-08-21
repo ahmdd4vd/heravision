@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
+	"runtime/debug"
 	"time"
 )
 
@@ -21,6 +23,23 @@ type DatasetSummary struct {
 	MeanB0MS     float64   `json:"mean_b0_ms"`
 	MeanB1MS     float64   `json:"mean_b1_ms"`
 	GeneratedAt  time.Time `json:"generated_at"`
+	GitSHA       string    `json:"git_sha,omitempty"`
+	GoVersion    string    `json:"go_version"`
+	GOOS         string    `json:"goos"`
+	GOARCH       string    `json:"goarch"`
+	GOMAXPROCS   int       `json:"gomaxprocs"`
+	GOMEMLIMIT   string    `json:"gomemlimit,omitempty"`
+	Config       RunConfig `json:"config"`
+}
+
+type RunConfig struct {
+	Mode                  string  `json:"mode"`
+	MaxSide               int     `json:"max_side"`
+	LegacyMaxPixels       int64   `json:"legacy_max_pixels"`
+	RegionFilterPath      string  `json:"region_filter_path,omitempty"`
+	RegionFilterThreshold float64 `json:"region_filter_threshold,omitempty"`
+	ScaleStable           bool    `json:"scale_stable"`
+	RelationPrune         bool    `json:"relation_prune"`
 }
 
 func RunManifest(manifestPath, outputDir string, opts RunOptions) (DatasetSummary, error) {
@@ -39,7 +58,16 @@ func RunManifest(manifestPath, outputDir string, opts RunOptions) (DatasetSummar
 	defer file.Close()
 	writer := bufio.NewWriter(file)
 	encoder := json.NewEncoder(writer)
-	summary := DatasetSummary{Manifest: manifestPath, Samples: len(manifest.Samples), GeneratedAt: time.Now().UTC()}
+	summary := DatasetSummary{
+		Manifest: manifestPath, Samples: len(manifest.Samples), GeneratedAt: time.Now().UTC(),
+		GitSHA: gitSHA(), GoVersion: runtime.Version(), GOOS: runtime.GOOS, GOARCH: runtime.GOARCH,
+		GOMAXPROCS: runtime.GOMAXPROCS(0), GOMEMLIMIT: os.Getenv("GOMEMLIMIT"),
+		Config: RunConfig{
+			Mode: opts.Mode, MaxSide: opts.MaxSide, LegacyMaxPixels: opts.LegacyConfig.MaxPixels,
+			RegionFilterPath: opts.RegionFilterPath, RegionFilterThreshold: opts.RegionFilterThreshold,
+			ScaleStable: opts.ScaleStable, RelationPrune: opts.RelationPrune,
+		},
+	}
 	var coverageSum, iouSum float64
 	var matchedCount int
 	for _, sample := range manifest.Samples {
@@ -77,4 +105,18 @@ func RunManifest(manifestPath, outputDir string, opts RunOptions) (DatasetSummar
 		return DatasetSummary{}, err
 	}
 	return summary, nil
+}
+
+func gitSHA() string {
+	if value := os.Getenv("HERAVISION_GIT_SHA"); value != "" {
+		return value
+	}
+	if info, ok := debug.ReadBuildInfo(); ok {
+		for _, setting := range info.Settings {
+			if setting.Key == "vcs.revision" {
+				return setting.Value
+			}
+		}
+	}
+	return ""
 }

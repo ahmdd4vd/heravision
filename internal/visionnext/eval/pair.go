@@ -19,10 +19,20 @@ func EvaluatePair(sample Sample, opts RunOptions) PairResult {
 		out.Error = err.Error()
 		return out
 	}
+	if err := b0.Graph.Validate(); err != nil {
+		out.Status = "error"
+		out.Error = "b0 graph validation: " + err.Error()
+		return out
+	}
 	b1, err := RunB1(sample.ImagePath, opts)
 	if err != nil {
 		out.Status = "error"
 		out.Error = err.Error()
+		return out
+	}
+	if err := b1.Graph.Validate(); err != nil {
+		out.Status = "error"
+		out.Error = "b1 graph validation: " + err.Error()
 		return out
 	}
 	out.B0 = b0
