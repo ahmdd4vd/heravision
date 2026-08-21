@@ -61,7 +61,7 @@ def main() -> int:
     args = parser.parse_args()
     manifest = json.loads(args.manifest.read_text())
     by_id = {sample["id"]: sample for sample in manifest["samples"]}
-    rows = [json.loads(line) for line in args.predictions.read_text().splitlines() if line.strip()]
+    rows = [json.loads(line) for line in args.predictions.read_text().splitlines() if line.strip() and json.loads(line)["sample_id"] in by_id]
     per_engine = {}
     per_sample = []
     for row in rows:
