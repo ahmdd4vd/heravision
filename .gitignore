@@ -4,6 +4,7 @@ plan.md
 .agents/
 .DS_Store
 *.log
+.serena/
 npm/node_modules/
 vscode-extension/node_modules/
 internal/ocr/assets/*.wasm

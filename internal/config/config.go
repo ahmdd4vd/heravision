@@ -24,11 +24,14 @@ type Preprocess struct {
 }
 
 type Ocr struct {
-	Enabled  bool   `json:"enabled"`
-	LibPath  string `json:"lib_path"`
-	DetPath  string `json:"det_path"`
-	RecPath  string `json:"rec_path"`
-	DictPath string `json:"dict_path"`
+	Enabled       bool   `json:"enabled"`
+	LibPath       string `json:"lib_path"`
+	DetPath       string `json:"det_path"`
+	RecPath       string `json:"rec_path"`
+	DictPath      string `json:"dict_path"`
+	DetMaxSideLen int    `json:"det_max_side_len"`
+	ThreadCount   int    `json:"thread_count"`
+	NumThreads    int    `json:"num_threads"`
 }
 
 type Config struct {
@@ -118,5 +121,14 @@ func (c *Config) normalize() {
 	}
 	if c.Preprocess.BlurThreshold <= 0 {
 		c.Preprocess.BlurThreshold = 80
+	}
+	if c.Ocr.DetMaxSideLen < 0 {
+		c.Ocr.DetMaxSideLen = 0
+	}
+	if c.Ocr.ThreadCount < 0 {
+		c.Ocr.ThreadCount = 0
+	}
+	if c.Ocr.NumThreads < 0 {
+		c.Ocr.NumThreads = 0
 	}
 }

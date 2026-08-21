@@ -167,9 +167,10 @@ func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 	img = processor.PreprocessCfg(img, mode, cfg.Preprocess.BlurThreshold)
 	base := processor.Resize(img, cfg.MaxSide)
 	if cfg.Ocr.Enabled {
-		ocr.ConfigureOnnx(cfg.Ocr.LibPath, cfg.Ocr.DetPath, cfg.Ocr.RecPath, cfg.Ocr.DictPath)
+		ocr.ConfigureOnnx(cfg.Ocr.LibPath, cfg.Ocr.DetPath, cfg.Ocr.RecPath, cfg.Ocr.DictPath,
+			cfg.Ocr.DetMaxSideLen, cfg.Ocr.ThreadCount, cfg.Ocr.NumThreads)
 	} else {
-		ocr.ConfigureOnnx("", "", "", "")
+		ocr.ConfigureOnnx("", "", "", "", 0, 0, 0)
 	}
 	b := base.Bounds()
 	w, h := b.Dx(), b.Dy()
@@ -178,13 +179,16 @@ func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 		CannyHigh: cfg.Detector.CannyHigh,
 		MinArea:   cfg.Detector.MinArea,
 	}
+	// OCR only needs `base` and shares no state with the structural stages —
+	// run it concurrently so its latency overlaps detection/color/layout.
+	ocrCh := make(chan []ocr.Text, 1)
+	go func() { ocrCh <- ocr.Extract(base) }()
 	boxes := detectMultiScale(img, base, params, cfg.MaxSide, cfg.Multiscale)
 	edgeMap := detector.EdgeMap(base, params)
 	tables := detector.TablesFromEdges(edgeMap)
 	if tables == nil {
 		tables = []detector.Table{}
 	}
-	texts := ocr.Extract(base)
 	dominant := color.DominantCfg(base, cfg.Color.K, cfg.Color.K, cfg.Color.DeltaEMerge)
 	bg := color.Background(base)
 	if len(dominant) == 0 {
@@ -207,6 +211,7 @@ func Extract(path, mode, version string, cfg config.Config) (*Result, error) {
 	if mode == "diagram" {
 		mermaid = diagram.ToMermaidGraph(boxes, edgeMap, tree)
 	}
+	texts := <-ocrCh
 	r := &Result{
 		Meta: Meta{
 			Width: w, Height: h, Mode: mode, Path: path,

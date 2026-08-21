@@ -60,6 +60,15 @@ func TestLoadNoFileReturnsDefaults(t *testing.T) {
 	dir := t.TempDir()
 	old, _ := os.Getwd()
 	defer os.Chdir(old)
+	oldHome := os.Getenv("USERPROFILE")
+	oldHomePosix := os.Getenv("HOME")
+	defer func() {
+		os.Setenv("USERPROFILE", oldHome)
+		os.Setenv("HOME", oldHomePosix)
+	}()
+	// isolate from a real ~/heravision.json (the setup wizard may create one)
+	os.Setenv("USERPROFILE", dir)
+	os.Setenv("HOME", dir)
 	if err := os.Chdir(dir); err != nil {
 		t.Fatal(err)
 	}

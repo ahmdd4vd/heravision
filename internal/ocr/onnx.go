@@ -21,7 +21,7 @@ var (
 	onnxInst *OnnxEngine
 )
 
-func ConfigureOnnx(libPath, detPath, recPath, dictPath string) {
+func ConfigureOnnx(libPath, detPath, recPath, dictPath string, detMaxSideLen, threadCount, numThreads int) {
 	onnxMu.Lock()
 	defer onnxMu.Unlock()
 	if libPath == "" || detPath == "" || recPath == "" || dictPath == "" {
@@ -39,6 +39,9 @@ func ConfigureOnnx(libPath, detPath, recPath, dictPath string) {
 		DetModelPath:       detPath,
 		RecModelPath:       recPath,
 		DictPath:           dictPath,
+		DetMaxSideLen:      detMaxSideLen,
+		ThreadCount:        threadCount,
+		NumThreads:         numThreads,
 	}}
 }
 
@@ -46,6 +49,19 @@ func currentOnnx() *OnnxEngine {
 	onnxMu.Lock()
 	defer onnxMu.Unlock()
 	return onnxInst
+}
+
+// BundlePresent reports whether all OCR sidecar files exist on disk.
+func BundlePresent(libPath, detPath, recPath, dictPath string) bool {
+	if libPath == "" || detPath == "" || recPath == "" || dictPath == "" {
+		return false
+	}
+	for _, p := range []string{libPath, detPath, recPath, dictPath} {
+		if _, err := os.Stat(p); err != nil {
+			return false
+		}
+	}
+	return true
 }
 
 func (e *OnnxEngine) ensure() (*paddle.Engine, error) {

@@ -9,6 +9,12 @@ jobs:
         with: { go-version: '1.25' }
       - run: go vet ./...
       - run: go test ./... -count=1
+      - name: check installer scripts
+        run: |
+          node --check npm/install.js
+          node --check npm/bin/heravision.js
+          shellcheck install.sh
+          pwsh -NoProfile -Command '$t=$null;$e=$null;[System.Management.Automation.Language.Parser]::ParseFile("./install.ps1",[ref]$t,[ref]$e)|Out-Null; if($e.Count){$e|ForEach-Object{Write-Error $_.Message};exit 1}else{Write-Host "install.ps1 OK"}'
       - run: CGO_ENABLED=0 go build -o heravision ./cmd/heravision
       - run: ./heravision doctor
       - run: ./heravision bench --n 5 --mode blur

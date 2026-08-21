@@ -12,6 +12,7 @@ import (
 	"heravision/internal/buildinfo"
 	"heravision/internal/config"
 	"heravision/internal/facts"
+	"heravision/internal/ocr"
 )
 
 func NewServer() *server.MCPServer {
@@ -37,6 +38,7 @@ func NewServer() *server.MCPServer {
 }
 
 func Serve() error {
+	defer ocr.CloseOnnx()
 	s := NewServer()
 	return server.ServeStdio(s)
 }
