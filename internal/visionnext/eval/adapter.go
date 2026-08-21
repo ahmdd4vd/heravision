@@ -30,6 +30,7 @@ type RunOptions struct {
 	ScaleMinSupport       int
 	ScaleExtraFraction    float64
 	AnswerMinScore        float64
+	RelationTouchingSafe  bool
 }
 
 type Observation struct {
@@ -133,7 +134,9 @@ func RunB1(path string, opts RunOptions) (Observation, error) {
 	hyps := hypothesis.Generate(regions, view.Width, view.Height)
 	var edges []schema.Relation
 	if opts.RelationPrune {
-		edges = relation.BuildPruned(regions, relation.DefaultPruneConfig())
+		pruneCfg := relation.DefaultPruneConfig()
+		pruneCfg.SafeTouching = opts.RelationTouchingSafe
+		edges = relation.BuildPruned(regions, pruneCfg)
 	} else {
 		edges = relation.Build(regions)
 	}

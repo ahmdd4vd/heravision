@@ -9,6 +9,7 @@ import (
 
 type PruneConfig struct {
 	MaxGapPixels int
+	SafeTouching bool
 }
 
 func DefaultPruneConfig() PruneConfig {
@@ -16,7 +17,7 @@ func DefaultPruneConfig() PruneConfig {
 }
 
 func Build(regions []schema.Region) []schema.Relation {
-	return build(regions, func(schema.Region, schema.Region) bool { return true })
+	return build(regions, func(schema.Region, schema.Region) bool { return true }, false)
 }
 
 // BuildPruned avoids evaluating obviously unrelated distant region pairs. It
@@ -31,23 +32,23 @@ func BuildPruned(regions []schema.Region, cfg PruneConfig) []schema.Relation {
 			return true
 		}
 		return boundaryGap(a.BBox, b.BBox) <= cfg.MaxGapPixels
-	})
+	}, cfg.SafeTouching)
 }
 
-func build(regions []schema.Region, keep func(schema.Region, schema.Region) bool) []schema.Relation {
+func build(regions []schema.Region, keep func(schema.Region, schema.Region) bool, safeTouching bool) []schema.Relation {
 	var out []schema.Relation
 	for i := 0; i < len(regions); i++ {
 		for j := i + 1; j < len(regions); j++ {
 			a, b := regions[i], regions[j]
 			if keep(a, b) {
-				out = append(out, pair(a, b)...)
+				out = append(out, pair(a, b, safeTouching)...)
 			}
 		}
 	}
 	return out
 }
 
-func pair(a, b schema.Region) []schema.Relation {
+func pair(a, b schema.Region, safeTouching bool) []schema.Relation {
 	var out []schema.Relation
 	if a.ID == "" || b.ID == "" {
 		return out
@@ -60,8 +61,12 @@ func pair(a, b schema.Region) []schema.Relation {
 	if overlap := iou(a.BBox, b.BBox); overlap > 0 {
 		out = append(out, visible(a.ID, b.ID, "overlapping", clamp(overlap)))
 	}
-	if gap := boundaryGap(a.BBox, b.BBox); gap == 0 {
-		out = append(out, visible(a.ID, b.ID, "touching", 0.8))
+	if gap := boundaryGap(a.BBox, b.BBox); gap == 0 && (!safeTouching || (!contains(a.BBox, b.BBox) && !contains(b.BBox, a.BBox))) {
+		relation := visible(a.ID, b.ID, "touching", 0.8)
+		if safeTouching {
+			relation.Evidence = []schema.EvidenceRef{{Kind: "boundary-contact", Stage: "relation", RegionID: a.ID, Note: fmt.Sprintf("bbox boundary contact -> %s", b.ID)}}
+		}
+		out = append(out, relation)
 	}
 	acx, acy := center(a.BBox)
 	bcx, bcy := center(b.BBox)
