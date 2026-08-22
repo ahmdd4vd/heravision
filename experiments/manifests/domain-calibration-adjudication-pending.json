@@ -1,0 +1,425 @@
+{
+  "name": "domain-calibration-adjudication",
+  "instructions": "Review only disagreement samples using the original image. Do not select a consensus merely to maximize agreement. Choose one domain and answerability, or mark unresolved and exclude from training/benchmark. Record the adjudicator and reason.",
+  "samples": [
+    {
+      "sample_id": "domain-cal-002",
+      "split": "calibration",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-003",
+      "split": "holdout",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-004",
+      "split": "calibration",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-005",
+      "split": "holdout",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-007",
+      "split": "calibration",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-008",
+      "split": "holdout",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-009",
+      "split": "calibration",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-010",
+      "split": "holdout",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-012",
+      "split": "calibration",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-014",
+      "split": "calibration",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-015",
+      "split": "holdout",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-016",
+      "split": "calibration",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-017",
+      "split": "holdout",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-019",
+      "split": "calibration",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-020",
+      "split": "holdout",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-021",
+      "split": "calibration",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-022",
+      "split": "holdout",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-024",
+      "split": "calibration",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-026",
+      "split": "calibration",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-027",
+      "split": "holdout",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-028",
+      "split": "calibration",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    },
+    {
+      "sample_id": "domain-cal-029",
+      "split": "holdout",
+      "review_a": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "review_b": {
+        "domain": "",
+        "answerability": "",
+        "confidence": ""
+      },
+      "adjudicated_domain": "",
+      "adjudicated_answerability": "",
+      "adjudicator_name": "",
+      "adjudication_reason": "",
+      "status": "pending"
+    }
+  ],
+  "status": "pending"
+}
