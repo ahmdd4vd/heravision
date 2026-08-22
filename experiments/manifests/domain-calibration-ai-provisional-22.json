@@ -1,0 +1,250 @@
+{
+  "name": "domain-calibration-ai-provisional-22",
+  "description": "AI pass 1 plus same-process self-audit; use only for provisional experiments.",
+  "annotation_status": "ai-two-pass-provisional",
+  "independence": "not-independent-human",
+  "samples": [
+    {
+      "id": "domain-cal-002",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00002138.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagenette-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "not-independent",
+      "notes": "natural photo candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-003",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00003014.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagenette-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "not-independent",
+      "notes": "natural photo candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-004",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00006697.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagenette-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "not-independent",
+      "notes": "natural photo candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-005",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00007197.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagenette-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "not-independent",
+      "notes": "natural photo candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-007",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00000907.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagewoof-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "not-independent",
+      "notes": "animal photo candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-008",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00001244.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagewoof-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "not-independent",
+      "notes": "animal photo candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-009",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00001393.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagewoof-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "not-independent",
+      "notes": "animal photo candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-010",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00002769.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagewoof-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "not-independent",
+      "notes": "animal photo candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-012",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00004359.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagewoof-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "not-independent",
+      "notes": "animal photo candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-014",
+      "image_path": "data/wikimedia14/capacitor_schematic.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "wikimedia14",
+      "source_overlap": "blind-md0-overlap",
+      "independent_review_status": "not-independent",
+      "notes": "diagram/document candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-015",
+      "image_path": "data/wikimedia14/drafting_table.jpg",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "wikimedia14",
+      "source_overlap": "blind-md0-overlap",
+      "independent_review_status": "not-independent",
+      "notes": "diagram/document candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-016",
+      "image_path": "data/wikimedia14/dunning_kruger_effect.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "wikimedia14",
+      "source_overlap": "blind-md0-overlap",
+      "independent_review_status": "not-independent",
+      "notes": "diagram/document candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-017",
+      "image_path": "data/wikimedia14/flow_chart_loop.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "wikimedia14",
+      "source_overlap": "blind-md0-overlap",
+      "independent_review_status": "not-independent",
+      "notes": "diagram/document candidate",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-019",
+      "image_path": "data/domain-calibration/external-diagrams/document-flowchart.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-asset-review-pending",
+      "independent_review_status": "not-independent",
+      "notes": "external diagram or flowchart; license/source review pending",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-020",
+      "image_path": "data/domain-calibration/external-diagrams/flowchart-sample-1.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-asset-review-pending",
+      "independent_review_status": "not-independent",
+      "notes": "external diagram or flowchart; license/source review pending",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-021",
+      "image_path": "data/domain-calibration/external-diagrams/flowchart-sample-2.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-asset-review-pending",
+      "independent_review_status": "not-independent",
+      "notes": "external diagram or flowchart; license/source review pending",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-022",
+      "image_path": "data/domain-calibration/external-diagrams/network-cloud-diagram.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-asset-review-pending",
+      "independent_review_status": "not-independent",
+      "notes": "external diagram or flowchart; license/source review pending",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-024",
+      "image_path": "data/domain-calibration/external-diagrams/technical-drawing.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-asset-review-pending",
+      "independent_review_status": "not-independent",
+      "notes": "external diagram or flowchart; license/source review pending",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-026",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/ILSVRC2012_val_00009191.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagenette-val",
+      "source_overlap": "md0-family-overlap",
+      "independent_review_status": "not-independent",
+      "notes": "ambiguous candidate requiring independent review",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-027",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/ILSVRC2012_val_00017472.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagenette-val",
+      "source_overlap": "md0-family-overlap",
+      "independent_review_status": "not-independent",
+      "notes": "ambiguous candidate requiring independent review",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-028",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/ILSVRC2012_val_00002701.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagewoof-val",
+      "source_overlap": "md0-family-overlap",
+      "independent_review_status": "not-independent",
+      "notes": "ambiguous candidate requiring independent review",
+      "label_source": "ai-two-pass-provisional"
+    },
+    {
+      "id": "domain-cal-029",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/ILSVRC2012_val_00003841.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagewoof-val",
+      "source_overlap": "md0-family-overlap",
+      "independent_review_status": "not-independent",
+      "notes": "ambiguous candidate requiring independent review",
+      "label_source": "ai-two-pass-provisional"
+    }
+  ]
+}

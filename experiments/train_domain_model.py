@@ -17,10 +17,11 @@ def fit(X,y,steps=1600,lr=.12,l2=.02):
     return w,b
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--fixture',type=Path,required=True); ap.add_argument('--predictions',type=Path,required=True); ap.add_argument('--output',type=Path,required=True); ap.add_argument('--reconciliation',type=Path,required=True); args=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument('--fixture',type=Path,required=True); ap.add_argument('--predictions',type=Path,required=True); ap.add_argument('--output',type=Path,required=True); ap.add_argument('--reconciliation',type=Path,required=True); ap.add_argument('--allow-ai-provisional',action='store_true'); args=ap.parse_args()
     reconciliation=json.loads(args.reconciliation.read_text())
-    if reconciliation.get('status')!='consensus-ready' or reconciliation.get('counts',{}).get('disagreement',1)!=0:
-        raise SystemExit('refusing to train: reviewer reconciliation is not consensus-ready')
+    allowed = reconciliation.get('status')=='consensus-ready' or (args.allow_ai_provisional and reconciliation.get('status')=='ai-consensus-provisional')
+    if not allowed or reconciliation.get('counts',{}).get('disagreement',1)!=0:
+        raise SystemExit('refusing to train: reviewer reconciliation is not eligible for this training mode')
     fixture={s['id']:s for s in json.loads(args.fixture.read_text())['samples']}; X=[]; y=[]; ids=[]
     for line in args.predictions.read_text().splitlines():
         if not line.strip(): continue
@@ -40,5 +41,5 @@ def main():
     labels=sorted(set(y)); A=np.asarray(X,float); split=np.asarray([int.from_bytes(hashlib.sha256(i.encode()).digest()[:8],'big')%5!=0 for i in ids]); weights={}; bias={}; metrics={}
     for label in labels:
         yy=(np.asarray(y)==label).astype(float); w,b=fit(A[split],yy[split]); weights[label]=w.tolist(); bias[label]=float(b); pred=(sigmoid(A[~split]@w+b)>=.5) if (~split).any() else np.array([]); metrics[label]={'test_n':int((~split).sum()),'test_accuracy':float((pred==yy[~split]).mean()) if (~split).any() else None}
-    model={'name':'domain-calibration-reviewed-logistic','features':FEATURES,'labels':labels,'weights':weights,'bias':bias,'min_score':.65,'min_margin':.10,'training':{'fixture':str(args.fixture),'samples':len(y),'split':'deterministic sample hash','status':'independent-review-consensus-required'},'test_metrics':metrics}; args.output.write_text(json.dumps(model,indent=2)+'\n'); print(json.dumps({'samples':len(y),'labels':labels,'metrics':metrics},indent=2))
+    model={'name':'domain-calibration-reviewed-logistic','features':FEATURES,'labels':labels,'weights':weights,'bias':bias,'min_score':.65,'min_margin':.10,'training':{'fixture':str(args.fixture),'samples':len(y),'split':'deterministic sample hash','status':'ai-provisional-experiment' if args.allow_ai_provisional else 'independent-review-consensus-required'},'test_metrics':metrics}; args.output.write_text(json.dumps(model,indent=2)+'\n'); print(json.dumps({'samples':len(y),'labels':labels,'metrics':metrics},indent=2))
 if __name__=='__main__': main()

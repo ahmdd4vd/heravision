@@ -1,0 +1,58 @@
+{
+  "name": "domain-calibration-reviewed-logistic",
+  "features": [
+    "flatness_mean",
+    "edge_density",
+    "contrast_mean",
+    "chroma_mean",
+    "chroma_std",
+    "orientation_entropy",
+    "luma_std"
+  ],
+  "labels": [
+    "diagram_document",
+    "natural_photo"
+  ],
+  "weights": {
+    "diagram_document": [
+      0.8238390045901899,
+      -0.1100341180890364,
+      0.10378036749528476,
+      -1.6609481077470944,
+      1.1197924452793555,
+      -0.9518859962993778,
+      -0.12581259548905105
+    ],
+    "natural_photo": [
+      -0.8238390045901898,
+      0.11003411808903643,
+      -0.1037803674952847,
+      1.6609481077470947,
+      -1.1197924452793557,
+      0.9518859962993775,
+      0.12581259548905108
+    ]
+  },
+  "bias": {
+    "diagram_document": 0.051387501136512574,
+    "natural_photo": -0.05138750113651241
+  },
+  "min_score": 0.65,
+  "min_margin": 0.1,
+  "training": {
+    "fixture": "experiments/manifests/domain-calibration-ai-provisional-22.json",
+    "samples": 21,
+    "split": "deterministic sample hash",
+    "status": "ai-provisional-experiment"
+  },
+  "test_metrics": {
+    "diagram_document": {
+      "test_n": 4,
+      "test_accuracy": 1.0
+    },
+    "natural_photo": {
+      "test_n": 4,
+      "test_accuracy": 1.0
+    }
+  }
+}
