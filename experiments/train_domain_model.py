@@ -4,8 +4,8 @@ import argparse, hashlib, json, re
 from pathlib import Path
 import numpy as np
 
-FEATURES = ['flatness_mean','edge_density','contrast_mean','chroma_mean','chroma_std','orientation_entropy','luma_std']
-PAT = re.compile(r'flatness_mean=([0-9.]+) edge_density=([0-9.]+) contrast_mean=([0-9.]+) chroma_mean=([0-9.]+) chroma_std=([0-9.]+) orientation_entropy=([0-9.]+) luma_std=([0-9.]+)')
+FEATURES = ['flatness_mean','edge_density','contrast_mean','chroma_mean','chroma_std','orientation_entropy','luma_std','aspect_ratio','blank_fraction','low_info_fraction','edge_high_fraction','orientation_concentration','axis_concentration','luma_range','line_structure']
+PAT = re.compile(r'flatness_mean=([0-9.]+) edge_density=([0-9.]+) contrast_mean=([0-9.]+) chroma_mean=([0-9.]+) chroma_std=([0-9.]+) orientation_entropy=([0-9.]+) luma_std=([0-9.]+) aspect_ratio=([0-9.]+) blank_fraction=([0-9.]+) low_info_fraction=([0-9.]+) edge_high_fraction=([0-9.]+) orientation_concentration=([0-9.]+) axis_concentration=([0-9.]+) luma_range=([0-9.]+) line_structure=([0-9.]+)')
 
 def sigmoid(x):
     x=np.clip(x,-30,30); return 1/(1+np.exp(-x))

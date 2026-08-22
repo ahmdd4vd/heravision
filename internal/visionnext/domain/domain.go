@@ -14,22 +14,31 @@ import (
 type Label string
 
 const (
-	NaturalPhoto    Label = "natural_photo"
-	DiagramDocument Label = "diagram_document"
-	Ambiguous       Label = "ambiguous"
+	NaturalPhoto       Label = "natural_photo"
+	DiagramDocument    Label = "diagram_document"
+	ScreenshotDocument Label = "screenshot_document"
+	Ambiguous          Label = "ambiguous"
 )
 
 type Features struct {
-	FlatnessMean       float64 `json:"flatness_mean"`
-	EdgeDensity        float64 `json:"edge_density"`
-	ContrastMean       float64 `json:"contrast_mean"`
-	ChromaMean         float64 `json:"chroma_mean"`
-	ChromaStd          float64 `json:"chroma_std"`
-	OrientationEntropy float64 `json:"orientation_entropy"`
-	LumaStd            float64 `json:"luma_std"`
+	FlatnessMean             float64 `json:"flatness_mean"`
+	EdgeDensity              float64 `json:"edge_density"`
+	ContrastMean             float64 `json:"contrast_mean"`
+	ChromaMean               float64 `json:"chroma_mean"`
+	ChromaStd                float64 `json:"chroma_std"`
+	OrientationEntropy       float64 `json:"orientation_entropy"`
+	LumaStd                  float64 `json:"luma_std"`
+	AspectRatio              float64 `json:"aspect_ratio"`
+	BlankFraction            float64 `json:"blank_fraction"`
+	LowInfoFraction          float64 `json:"low_info_fraction"`
+	EdgeHighFraction         float64 `json:"edge_high_fraction"`
+	OrientationConcentration float64 `json:"orientation_concentration"`
+	AxisConcentration        float64 `json:"axis_concentration"`
+	LumaRange                float64 `json:"luma_range"`
+	LineStructure            float64 `json:"line_structure"`
 }
 
-var FeatureNames = []string{"flatness_mean", "edge_density", "contrast_mean", "chroma_mean", "chroma_std", "orientation_entropy", "luma_std"}
+var FeatureNames = []string{"flatness_mean", "edge_density", "contrast_mean", "chroma_mean", "chroma_std", "orientation_entropy", "luma_std", "aspect_ratio", "blank_fraction", "low_info_fraction", "edge_high_fraction", "orientation_concentration", "axis_concentration", "luma_range", "line_structure"}
 
 type Model struct {
 	Name         string               `json:"name"`
@@ -76,7 +85,7 @@ func Load(path string) (Model, error) {
 
 func FeatureVector(field evidence.Field) []float64 {
 	f := summarize(field)
-	return []float64{f.FlatnessMean, f.EdgeDensity, f.ContrastMean, f.ChromaMean, f.ChromaStd, f.OrientationEntropy, f.LumaStd}
+	return []float64{f.FlatnessMean, f.EdgeDensity, f.ContrastMean, f.ChromaMean, f.ChromaStd, f.OrientationEntropy, f.LumaStd, f.AspectRatio, f.BlankFraction, f.LowInfoFraction, f.EdgeHighFraction, f.OrientationConcentration, f.AxisConcentration, f.LumaRange, f.LineStructure}
 }
 
 func ClassifyWithModel(field evidence.Field, model Model) Result {
@@ -116,7 +125,7 @@ func ClassifyWithModel(field evidence.Field, model Model) Result {
 	if label == NaturalPhoto || (label == DiagramDocument && confidence != "high") {
 		action = "allow_object_semantic"
 	}
-	if label == DiagramDocument && confidence == "high" {
+	if (label == DiagramDocument || label == ScreenshotDocument) && confidence == "high" {
 		action = "block_object_semantic"
 	}
 	evidenceRefs := []schema.EvidenceRef{{Kind: "domain-calibrated-score", Stage: "domain-gate", Value: round(score), Note: fmt.Sprintf("label=%s margin=%.3f action=%s", label, margin, action)}}
@@ -156,11 +165,11 @@ func Classify(field evidence.Field) Result {
 	if label == NaturalPhoto || (label == DiagramDocument && confidence != "high") {
 		action = "allow_object_semantic"
 	}
-	if label == DiagramDocument && confidence == "high" {
+	if (label == DiagramDocument || label == ScreenshotDocument) && confidence == "high" {
 		action = "block_object_semantic"
 	}
 	evidenceRefs := []schema.EvidenceRef{
-		{Kind: "domain-statistics", Stage: "domain-gate", Value: round(features.FlatnessMean), Note: fmt.Sprintf("flatness_mean=%.3f edge_density=%.3f contrast_mean=%.3f chroma_mean=%.3f chroma_std=%.3f orientation_entropy=%.3f luma_std=%.3f", features.FlatnessMean, features.EdgeDensity, features.ContrastMean, features.ChromaMean, features.ChromaStd, features.OrientationEntropy, features.LumaStd)},
+		{Kind: "domain-statistics", Stage: "domain-gate", Value: round(features.FlatnessMean), Note: fmt.Sprintf("flatness_mean=%.3f edge_density=%.3f contrast_mean=%.3f chroma_mean=%.3f chroma_std=%.3f orientation_entropy=%.3f luma_std=%.3f aspect_ratio=%.3f blank_fraction=%.3f low_info_fraction=%.3f edge_high_fraction=%.3f orientation_concentration=%.3f axis_concentration=%.3f luma_range=%.3f line_structure=%.3f", features.FlatnessMean, features.EdgeDensity, features.ContrastMean, features.ChromaMean, features.ChromaStd, features.OrientationEntropy, features.LumaStd, features.AspectRatio, features.BlankFraction, features.LowInfoFraction, features.EdgeHighFraction, features.OrientationConcentration, features.AxisConcentration, features.LumaRange, features.LineStructure)},
 		{Kind: "domain-score", Stage: "domain-gate", Value: round(score), Note: fmt.Sprintf("natural=%.3f diagram_document=%.3f margin=%.3f action=%s", natural, diagram, margin, action)},
 	}
 	return Result{Label: label, Score: round(score), Margin: round(margin), Features: features, Evidence: evidenceRefs, Confidence: confidence, Action: action}
@@ -172,18 +181,37 @@ func summarize(field evidence.Field) Features {
 		return Features{}
 	}
 	var lum, lum2, flat, edge, contrast, chroma, chroma2 float64
+	var blank, lowInfo, edgeHigh float64
 	bins := make([]float64, 8)
 	orientTotal := 0.0
+	lumaMin, lumaMax := 1.0, 0.0
 	for i := 0; i < n; i++ {
-		lum += field.Luminance[i]
-		lum2 += field.Luminance[i] * field.Luminance[i]
-		flat += value(field.Flatness, i)
-		edge += value(field.Edge, i)
+		l := value(field.Luminance, i)
+		lum += l
+		lum2 += l * l
+		if l < lumaMin {
+			lumaMin = l
+		}
+		if l > lumaMax {
+			lumaMax = l
+		}
+		flatness := value(field.Flatness, i)
+		e := value(field.Edge, i)
+		flat += flatness
+		edge += e
 		contrast += value(field.LocalContrast, i)
 		c := value(field.ChromaMagnitude, i)
 		chroma += c
 		chroma2 += c * c
-		e := value(field.Edge, i)
+		if l <= 0.04 || l >= 0.96 {
+			blank++
+		}
+		if flatness >= 0.85 && e <= 0.08 {
+			lowInfo++
+		}
+		if e >= 0.20 {
+			edgeHigh++
+		}
 		if e > 1e-6 {
 			angle := value(field.Orientation, i)
 			bin := int(math.Floor((angle + math.Pi) / (2 * math.Pi) * 8))
@@ -207,16 +235,43 @@ func summarize(field evidence.Field) Features {
 	if cvar < 0 {
 		cvar = 0
 	}
-	entropy := 0.0
+	entropy, orientationConcentration, axisConcentration := 0.0, 0.0, 0.0
 	if orientTotal > 0 {
+		maxBin := 0.0
 		for _, b := range bins {
+			if b > maxBin {
+				maxBin = b
+			}
 			if b > 0 {
 				p := b / orientTotal
 				entropy -= p * math.Log(p) / math.Log(8)
 			}
 		}
+		orientationConcentration = maxBin / orientTotal
+		for i := 0; i < 4; i++ {
+			pair := (bins[i] + bins[i+4]) / orientTotal
+			if pair > axisConcentration {
+				axisConcentration = pair
+			}
+		}
 	}
-	return Features{FlatnessMean: clamp01(flat / float64(n)), EdgeDensity: clamp01(edge / float64(n)), ContrastMean: clamp01(contrast * 4 / float64(n)), ChromaMean: clamp01(cmean), ChromaStd: clamp01(math.Sqrt(cvar)), OrientationEntropy: clamp01(entropy), LumaStd: clamp01(math.Sqrt(lvar))}
+	aspect := 0.0
+	if field.Width > 0 && field.Height > 0 {
+		aspect = float64(field.Width) / float64(field.Height)
+		if aspect > 1 {
+			aspect = 1 / aspect
+		}
+	}
+	flatMean := clamp01(flat / float64(n))
+	edgeMean := clamp01(edge / float64(n))
+	edgeHighMean := clamp01(edgeHigh / float64(n))
+	return Features{
+		FlatnessMean: flatMean, EdgeDensity: edgeMean, ContrastMean: clamp01(contrast * 4 / float64(n)),
+		ChromaMean: clamp01(cmean), ChromaStd: clamp01(math.Sqrt(cvar)), OrientationEntropy: clamp01(entropy), LumaStd: clamp01(math.Sqrt(lvar)),
+		AspectRatio: clamp01(aspect), BlankFraction: clamp01(blank / float64(n)), LowInfoFraction: clamp01(lowInfo / float64(n)),
+		EdgeHighFraction: edgeHighMean, OrientationConcentration: clamp01(orientationConcentration), AxisConcentration: clamp01(axisConcentration),
+		LumaRange: clamp01(lumaMax - lumaMin), LineStructure: clamp01(2 * edgeHighMean * orientationConcentration),
+	}
 }
 
 func Hypothesis(regions []schema.Region, result Result) schema.Hypothesis {
