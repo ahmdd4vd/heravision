@@ -1,0 +1,9 @@
+{
+  "samples_a": 22,
+  "samples_b": 22,
+  "reviewer_a": "",
+  "reviewer_b": "",
+  "errors": [],
+  "status": "pending",
+  "warning": "Pair validity does not prove the reviews were actually performed independently."
+}
