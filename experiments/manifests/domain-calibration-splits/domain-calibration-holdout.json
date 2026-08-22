@@ -1,0 +1,128 @@
+{
+  "name": "domain-calibration-candidate-30-holdout",
+  "description": "Candidate only; labels require independent review before calibration claims.",
+  "split": "holdout",
+  "independence": "pending-independent-review",
+  "samples": [
+    {
+      "id": "domain-cal-027",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/ILSVRC2012_val_00017472.JPEG",
+      "visual_domain": "ambiguous",
+      "answerability": "abstain",
+      "source": "imagenette-val",
+      "source_overlap": "md0-family-overlap",
+      "independent_review_status": "pending",
+      "notes": "ambiguous candidate requiring independent review",
+      "split": "holdout",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-029",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/ILSVRC2012_val_00003841.JPEG",
+      "visual_domain": "ambiguous",
+      "answerability": "abstain",
+      "source": "imagewoof-val",
+      "source_overlap": "md0-family-overlap",
+      "independent_review_status": "pending",
+      "notes": "ambiguous candidate requiring independent review",
+      "split": "holdout",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-015",
+      "image_path": "data/wikimedia14/drafting_table.jpg",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "wikimedia14",
+      "source_overlap": "blind-md0-overlap",
+      "independent_review_status": "pending",
+      "notes": "diagram/document candidate",
+      "split": "holdout",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-017",
+      "image_path": "data/wikimedia14/flow_chart_loop.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "wikimedia14",
+      "source_overlap": "blind-md0-overlap",
+      "independent_review_status": "pending",
+      "notes": "diagram/document candidate",
+      "split": "holdout",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-020",
+      "image_path": "data/domain-calibration/external-diagrams/flowchart-sample-1.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-asset-review-pending",
+      "independent_review_status": "pending",
+      "notes": "external diagram or flowchart; license/source review pending",
+      "split": "holdout",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-022",
+      "image_path": "data/domain-calibration/external-diagrams/network-cloud-diagram.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-asset-review-pending",
+      "independent_review_status": "pending",
+      "notes": "external diagram or flowchart; license/source review pending",
+      "split": "holdout",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-003",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00003014.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagenette-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "pending",
+      "notes": "natural photo candidate",
+      "split": "holdout",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-005",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00007197.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagenette-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "pending",
+      "notes": "natural photo candidate",
+      "split": "holdout",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-008",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00001244.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagewoof-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "pending",
+      "notes": "animal photo candidate",
+      "split": "holdout",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-010",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00002769.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagewoof-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "pending",
+      "notes": "animal photo candidate",
+      "split": "holdout",
+      "split_assignment": "stratified_domain_round_robin"
+    }
+  ]
+}

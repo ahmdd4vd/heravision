@@ -1,0 +1,104 @@
+{
+  "name": "domain-calibration-candidate-30-train",
+  "description": "Candidate only; labels require independent review before calibration claims.",
+  "split": "train",
+  "independence": "pending-independent-review",
+  "samples": [
+    {
+      "id": "domain-cal-025",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/ILSVRC2012_val_00009111.JPEG",
+      "visual_domain": "ambiguous",
+      "answerability": "abstain",
+      "source": "imagenette-val",
+      "source_overlap": "md0-family-overlap",
+      "independent_review_status": "pending",
+      "notes": "ambiguous candidate requiring independent review",
+      "split": "train",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-030",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/ILSVRC2012_val_00004081.JPEG",
+      "visual_domain": "ambiguous",
+      "answerability": "abstain",
+      "source": "imagewoof-val",
+      "source_overlap": "md0-family-overlap",
+      "independent_review_status": "pending",
+      "notes": "ambiguous candidate requiring independent review",
+      "split": "train",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-013",
+      "image_path": "data/wikimedia14/blank_scan_image.jpg",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "wikimedia14",
+      "source_overlap": "blind-md0-overlap",
+      "independent_review_status": "pending",
+      "notes": "diagram/document candidate",
+      "split": "train",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-018",
+      "image_path": "data/wikimedia14/flowchart_example.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "wikimedia14",
+      "source_overlap": "blind-md0-overlap",
+      "independent_review_status": "pending",
+      "notes": "diagram/document candidate",
+      "split": "train",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-023",
+      "image_path": "data/domain-calibration/external-diagrams/network-diagram.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-asset-review-pending",
+      "independent_review_status": "pending",
+      "notes": "external diagram or flowchart; license/source review pending",
+      "split": "train",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-001",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00000293.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagenette-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "pending",
+      "notes": "natural photo candidate",
+      "split": "train",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-006",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00009346.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagenette-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "pending",
+      "notes": "natural photo candidate",
+      "split": "train",
+      "split_assignment": "stratified_domain_round_robin"
+    },
+    {
+      "id": "domain-cal-011",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00004049.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "imagewoof-train",
+      "source_overlap": "semantic-training-pseudo",
+      "independent_review_status": "pending",
+      "notes": "animal photo candidate",
+      "split": "train",
+      "split_assignment": "stratified_domain_round_robin"
+    }
+  ]
+}

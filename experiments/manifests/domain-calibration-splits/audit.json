@@ -1,0 +1,50 @@
+{
+  "splits": {
+    "train": {
+      "count": 8,
+      "domains": {
+        "ambiguous": 2,
+        "diagram_document": 3,
+        "natural_photo": 3
+      },
+      "source_overlap": {
+        "md0-family-overlap": 2,
+        "blind-md0-overlap": 2,
+        "external-asset-review-pending": 1,
+        "semantic-training-pseudo": 3
+      }
+    },
+    "calibration": {
+      "count": 12,
+      "domains": {
+        "ambiguous": 2,
+        "diagram_document": 5,
+        "natural_photo": 5
+      },
+      "source_overlap": {
+        "md0-family-overlap": 2,
+        "blind-md0-overlap": 2,
+        "external-asset-review-pending": 3,
+        "semantic-training-pseudo": 5
+      }
+    },
+    "holdout": {
+      "count": 10,
+      "domains": {
+        "ambiguous": 2,
+        "diagram_document": 4,
+        "natural_photo": 4
+      },
+      "source_overlap": {
+        "md0-family-overlap": 2,
+        "blind-md0-overlap": 2,
+        "external-asset-review-pending": 2,
+        "semantic-training-pseudo": 4
+      }
+    }
+  },
+  "total_unique_ids": 30,
+  "overlap_errors": [],
+  "status": "ok",
+  "warning": "Metadata-derived candidate labels and source overlap remain; this is a split audit, not an accuracy claim."
+}
