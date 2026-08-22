@@ -1,0 +1,594 @@
+{
+  "name": "domain-calibration-review-reconciliation",
+  "reviewers": {
+    "a": "AI reviewer \u2014 expanded pass 1",
+    "b": "AI reviewer \u2014 expanded self-audit pass 2"
+  },
+  "samples": [
+    {
+      "sample_id": "domain-cal-002",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-003",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-004",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-005",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-007",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-008",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-009",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-010",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-012",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-014",
+      "split": "",
+      "review_a": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-015",
+      "split": "",
+      "review_a": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-016",
+      "split": "",
+      "review_a": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-017",
+      "split": "",
+      "review_a": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-019",
+      "split": "",
+      "review_a": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-020",
+      "split": "",
+      "review_a": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-021",
+      "split": "",
+      "review_a": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-022",
+      "split": "",
+      "review_a": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-024",
+      "split": "",
+      "review_a": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "diagram_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-026",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-027",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-028",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-cal-029",
+      "split": "",
+      "review_a": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "natural_photo",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-extra-ambiguous-blank-scan",
+      "split": "",
+      "review_a": {
+        "domain": "ambiguous",
+        "answerability": "abstain",
+        "confidence": "medium"
+      },
+      "review_b": {
+        "domain": "ambiguous",
+        "answerability": "abstain",
+        "confidence": "medium"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-extra-ambiguous-blurry-street-woman",
+      "split": "",
+      "review_a": {
+        "domain": "ambiguous",
+        "answerability": "abstain",
+        "confidence": "medium"
+      },
+      "review_b": {
+        "domain": "ambiguous",
+        "answerability": "abstain",
+        "confidence": "medium"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-extra-ambiguous-motion-blur-cyclist",
+      "split": "",
+      "review_a": {
+        "domain": "ambiguous",
+        "answerability": "abstain",
+        "confidence": "medium"
+      },
+      "review_b": {
+        "domain": "ambiguous",
+        "answerability": "abstain",
+        "confidence": "medium"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-extra-ambiguous-motion-blur-street",
+      "split": "",
+      "review_a": {
+        "domain": "ambiguous",
+        "answerability": "abstain",
+        "confidence": "medium"
+      },
+      "review_b": {
+        "domain": "ambiguous",
+        "answerability": "abstain",
+        "confidence": "medium"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-extra-screen-cloud-interface-ui",
+      "split": "",
+      "review_a": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-extra-screen-dashboard-template-ui",
+      "split": "",
+      "review_a": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-extra-screen-desktop-app-ui",
+      "split": "",
+      "review_a": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-extra-screen-moderation-table-ui",
+      "split": "",
+      "review_a": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-extra-screen-people-dashboard-ui",
+      "split": "",
+      "review_a": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-extra-screen-table-creation-ui",
+      "split": "",
+      "review_a": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-extra-screen-toc-document-ui",
+      "split": "",
+      "review_a": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    },
+    {
+      "sample_id": "domain-extra-screen-word-document-table",
+      "split": "",
+      "review_a": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "review_b": {
+        "domain": "screenshot_document",
+        "answerability": "answerable",
+        "confidence": "high"
+      },
+      "status": "ai-consensus-provisional",
+      "consensus_domain": "",
+      "consensus_answerability": ""
+    }
+  ],
+  "counts": {
+    "consensus": 0,
+    "ai_consensus_provisional": 34,
+    "disagreement": 0
+  },
+  "status": "ai-consensus-provisional",
+  "warning": "Consensus requires independent reviewer identities and adjudication of every disagreement."
+}

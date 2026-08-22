@@ -1,0 +1,88 @@
+{
+  "name": "domain-calibration-reviewed-logistic",
+  "features": [
+    "flatness_mean",
+    "edge_density",
+    "contrast_mean",
+    "chroma_mean",
+    "chroma_std",
+    "orientation_entropy",
+    "luma_std"
+  ],
+  "labels": [
+    "ambiguous",
+    "diagram_document",
+    "natural_photo",
+    "screenshot_document"
+  ],
+  "weights": {
+    "ambiguous": [
+      -0.06899719258106096,
+      -0.12364401997167995,
+      -0.27003276362795076,
+      -0.5547767724987832,
+      -2.3223510544261092,
+      0.12047290928735474,
+      -0.3829887274603364
+    ],
+    "diagram_document": [
+      0.4433234661215178,
+      -0.022401526397022,
+      0.12027807210805955,
+      -1.4275373623673695,
+      1.3989878653012378,
+      -0.4860230131850222,
+      -0.13453795349457315
+    ],
+    "natural_photo": [
+      -0.8560480201636913,
+      0.16483904978946848,
+      -0.02070260326026901,
+      1.0585025926906744,
+      -0.33188015300355433,
+      1.021700984614137,
+      0.0640131804856249
+    ],
+    "screenshot_document": [
+      0.5543394802306758,
+      -0.09797670968118578,
+      0.061614848427095636,
+      0.5264749751937675,
+      -0.34969365700233906,
+      -0.7883179563241867,
+      0.3349996316008162
+    ]
+  },
+  "bias": {
+    "ambiguous": 0.7995037103055802,
+    "diagram_document": -0.2973115689346392,
+    "natural_photo": -0.41277754081535845,
+    "screenshot_document": 0.18976144187245658
+  },
+  "min_score": 0.65,
+  "min_margin": 0.1,
+  "training": {
+    "fixture": "experiments/manifests/domain-calibration-expanded-ai-provisional.json",
+    "samples": 33,
+    "split": "deterministic sample hash",
+    "status": "ai-provisional-experiment"
+  },
+  "test_metrics": {
+    "ambiguous": {
+      "test_n": 7,
+      "test_accuracy": 0.7142857142857143
+    },
+    "diagram_document": {
+      "test_n": 7,
+      "test_accuracy": 0.8571428571428571
+    },
+    "natural_photo": {
+      "test_n": 7,
+      "test_accuracy": 0.8571428571428571
+    },
+    "screenshot_document": {
+      "test_n": 7,
+      "test_accuracy": 0.5714285714285714
+    }
+  }
+}

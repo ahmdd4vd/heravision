@@ -1,0 +1,348 @@
+{
+  "name": "domain-calibration-expanded-candidate",
+  "description": "Expanded candidate fixture; includes screenshot and ambiguous assets but remains provisional until review/source audit.",
+  "annotation_status": "ai-provisional-candidate",
+  "independence": "not-independent",
+  "samples": [
+    {
+      "id": "domain-cal-026",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/ILSVRC2012_val_00009191.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "calibration",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-028",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/ILSVRC2012_val_00002701.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "calibration",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-014",
+      "image_path": "data/wikimedia14/capacitor_schematic.png",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "calibration",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-016",
+      "image_path": "data/wikimedia14/dunning_kruger_effect.png",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "calibration",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-019",
+      "image_path": "data/domain-calibration/external-diagrams/document-flowchart.png",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "calibration",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-021",
+      "image_path": "data/domain-calibration/external-diagrams/flowchart-sample-2.png",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "calibration",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-024",
+      "image_path": "data/domain-calibration/external-diagrams/technical-drawing.png",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "calibration",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-002",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00002138.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "calibration",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-004",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00006697.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "calibration",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-007",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00000907.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "calibration",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-009",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00001393.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "calibration",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-012",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00004359.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "calibration",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-027",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/ILSVRC2012_val_00017472.JPEG",
+      "visual_domain": "natural_photo",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "holdout",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-029",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/ILSVRC2012_val_00003841.JPEG",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "holdout",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-015",
+      "image_path": "data/wikimedia14/drafting_table.jpg",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "holdout",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-017",
+      "image_path": "data/wikimedia14/flow_chart_loop.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "holdout",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-020",
+      "image_path": "data/domain-calibration/external-diagrams/flowchart-sample-1.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "holdout",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-022",
+      "image_path": "data/domain-calibration/external-diagrams/network-cloud-diagram.png",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "holdout",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-003",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00003014.JPEG",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "holdout",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-005",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00007197.JPEG",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "holdout",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-008",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00001244.JPEG",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "holdout",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-cal-010",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00002769.JPEG",
+      "visual_domain": "diagram_document",
+      "answerability": "answerable",
+      "source": "ai-review-base",
+      "source_overlap": "existing-candidate",
+      "split": "holdout",
+      "annotation_status": "ai-provisional"
+    },
+    {
+      "id": "domain-extra-screen-cloud-interface-ui",
+      "image_path": "data/domain-calibration/external-screenshots/cloud-interface-ui.png",
+      "visual_domain": "screenshot_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-source-review-pending",
+      "split": "holdout",
+      "annotation_status": "ai-provisional-pending-review"
+    },
+    {
+      "id": "domain-extra-screen-dashboard-template-ui",
+      "image_path": "data/domain-calibration/external-screenshots/dashboard-template-ui.jpg",
+      "visual_domain": "screenshot_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-source-review-pending",
+      "split": "calibration",
+      "annotation_status": "ai-provisional-pending-review"
+    },
+    {
+      "id": "domain-extra-screen-desktop-app-ui",
+      "image_path": "data/domain-calibration/external-screenshots/desktop-app-ui.jpg",
+      "visual_domain": "screenshot_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-source-review-pending",
+      "split": "holdout",
+      "annotation_status": "ai-provisional-pending-review"
+    },
+    {
+      "id": "domain-extra-screen-moderation-table-ui",
+      "image_path": "data/domain-calibration/external-screenshots/moderation-table-ui.png",
+      "visual_domain": "screenshot_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-source-review-pending",
+      "split": "calibration",
+      "annotation_status": "ai-provisional-pending-review"
+    },
+    {
+      "id": "domain-extra-screen-people-dashboard-ui",
+      "image_path": "data/domain-calibration/external-screenshots/people-dashboard-ui.jpg",
+      "visual_domain": "screenshot_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-source-review-pending",
+      "split": "holdout",
+      "annotation_status": "ai-provisional-pending-review"
+    },
+    {
+      "id": "domain-extra-screen-table-creation-ui",
+      "image_path": "data/domain-calibration/external-screenshots/table-creation-ui.png",
+      "visual_domain": "screenshot_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-source-review-pending",
+      "split": "calibration",
+      "annotation_status": "ai-provisional-pending-review"
+    },
+    {
+      "id": "domain-extra-screen-toc-document-ui",
+      "image_path": "data/domain-calibration/external-screenshots/toc-document-ui.jpg",
+      "visual_domain": "screenshot_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-source-review-pending",
+      "split": "holdout",
+      "annotation_status": "ai-provisional-pending-review"
+    },
+    {
+      "id": "domain-extra-screen-word-document-table",
+      "image_path": "data/domain-calibration/external-screenshots/word-document-table.png",
+      "visual_domain": "screenshot_document",
+      "answerability": "answerable",
+      "source": "public-image-search",
+      "source_overlap": "external-source-review-pending",
+      "split": "calibration",
+      "annotation_status": "ai-provisional-pending-review"
+    },
+    {
+      "id": "domain-extra-ambiguous-blank-scan",
+      "image_path": "data/domain-calibration/external-ambiguous/blank-scan.jpg",
+      "visual_domain": "ambiguous",
+      "answerability": "abstain",
+      "source": "public-image-search-or-local-scan",
+      "source_overlap": "external-source-review-pending",
+      "split": "holdout",
+      "annotation_status": "ai-provisional-pending-review"
+    },
+    {
+      "id": "domain-extra-ambiguous-blurry-street-woman",
+      "image_path": "data/domain-calibration/external-ambiguous/blurry-street-woman.jpg",
+      "visual_domain": "ambiguous",
+      "answerability": "abstain",
+      "source": "public-image-search-or-local-scan",
+      "source_overlap": "external-source-review-pending",
+      "split": "calibration",
+      "annotation_status": "ai-provisional-pending-review"
+    },
+    {
+      "id": "domain-extra-ambiguous-motion-blur-cyclist",
+      "image_path": "data/domain-calibration/external-ambiguous/motion-blur-cyclist.jpg",
+      "visual_domain": "ambiguous",
+      "answerability": "abstain",
+      "source": "public-image-search-or-local-scan",
+      "source_overlap": "external-source-review-pending",
+      "split": "holdout",
+      "annotation_status": "ai-provisional-pending-review"
+    },
+    {
+      "id": "domain-extra-ambiguous-motion-blur-street",
+      "image_path": "data/domain-calibration/external-ambiguous/motion-blur-street.jpeg",
+      "visual_domain": "ambiguous",
+      "answerability": "abstain",
+      "source": "public-image-search-or-local-scan",
+      "source_overlap": "external-source-review-pending",
+      "split": "calibration",
+      "annotation_status": "ai-provisional-pending-review"
+    }
+  ]
+}

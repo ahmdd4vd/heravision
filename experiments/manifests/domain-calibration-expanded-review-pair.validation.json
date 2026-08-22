@@ -1,0 +1,9 @@
+{
+  "samples_a": 34,
+  "samples_b": 34,
+  "reviewer_a": "AI reviewer \u2014 expanded pass 1",
+  "reviewer_b": "AI reviewer \u2014 expanded self-audit pass 2",
+  "errors": [],
+  "status": "valid-pair",
+  "warning": "Pair validity does not prove the reviews were actually performed independently."
+}
