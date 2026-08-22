@@ -1,0 +1,340 @@
+{
+  "reviewer_name": "",
+  "reviewer_date": "",
+  "samples": 22,
+  "complete": 0,
+  "errors": [
+    {
+      "sample_id": "domain-cal-026",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-026",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-026",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-028",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-028",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-028",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-014",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-014",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-014",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-016",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-016",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-016",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-019",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-019",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-019",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-021",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-021",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-021",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-024",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-024",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-024",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-002",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-002",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-002",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-004",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-004",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-004",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-007",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-007",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-007",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-009",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-009",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-009",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-012",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-012",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-012",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-027",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-027",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-027",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-029",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-029",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-029",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-015",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-015",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-015",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-017",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-017",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-017",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-020",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-020",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-020",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-022",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-022",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-022",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-003",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-003",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-003",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-005",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-005",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-005",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-008",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-008",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-008",
+      "field": "review_confidence",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-010",
+      "field": "review_domain",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-010",
+      "field": "review_answerability",
+      "value": ""
+    },
+    {
+      "sample_id": "domain-cal-010",
+      "field": "review_confidence",
+      "value": ""
+    }
+  ],
+  "status": "pending",
+  "warning": "A valid schema does not prove reviewer independence; identity and process must still be checked."
+}

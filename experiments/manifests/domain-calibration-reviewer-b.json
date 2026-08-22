@@ -1,0 +1,207 @@
+{
+  "name": "domain-calibration-independent-review-calibration-holdout",
+  "instructions": "Review original images without model predictions or proposed labels. Use natural_photo, diagram_document, screenshot_document, or ambiguous. Mark answerability and confidence. Complete a separate copy for each reviewer.",
+  "reviewer_name": "",
+  "reviewer_date": "",
+  "independence_statement": "",
+  "samples": [
+    {
+      "sample_id": "domain-cal-026",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/ILSVRC2012_val_00009191.JPEG",
+      "split": "calibration",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-028",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/ILSVRC2012_val_00002701.JPEG",
+      "split": "calibration",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-014",
+      "image_path": "data/wikimedia14/capacitor_schematic.png",
+      "split": "calibration",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-016",
+      "image_path": "data/wikimedia14/dunning_kruger_effect.png",
+      "split": "calibration",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-019",
+      "image_path": "data/domain-calibration/external-diagrams/document-flowchart.png",
+      "split": "calibration",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-021",
+      "image_path": "data/domain-calibration/external-diagrams/flowchart-sample-2.png",
+      "split": "calibration",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-024",
+      "image_path": "data/domain-calibration/external-diagrams/technical-drawing.png",
+      "split": "calibration",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-002",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00002138.JPEG",
+      "split": "calibration",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-004",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00006697.JPEG",
+      "split": "calibration",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-007",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00000907.JPEG",
+      "split": "calibration",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-009",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00001393.JPEG",
+      "split": "calibration",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-012",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00004359.JPEG",
+      "split": "calibration",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-027",
+      "image_path": "data/imagenette/imagenette2-160/val/n01440764/ILSVRC2012_val_00017472.JPEG",
+      "split": "holdout",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-029",
+      "image_path": "data/imagewoof/imagewoof2-160/val/n02086240/ILSVRC2012_val_00003841.JPEG",
+      "split": "holdout",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-015",
+      "image_path": "data/wikimedia14/drafting_table.jpg",
+      "split": "holdout",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-017",
+      "image_path": "data/wikimedia14/flow_chart_loop.png",
+      "split": "holdout",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-020",
+      "image_path": "data/domain-calibration/external-diagrams/flowchart-sample-1.png",
+      "split": "holdout",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-022",
+      "image_path": "data/domain-calibration/external-diagrams/network-cloud-diagram.png",
+      "split": "holdout",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-003",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00003014.JPEG",
+      "split": "holdout",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-005",
+      "image_path": "data/imagenette/imagenette2-160/train/n01440764/ILSVRC2012_val_00007197.JPEG",
+      "split": "holdout",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-008",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00001244.JPEG",
+      "split": "holdout",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    },
+    {
+      "sample_id": "domain-cal-010",
+      "image_path": "data/imagewoof/imagewoof2-160/train/n02086240/ILSVRC2012_val_00002769.JPEG",
+      "split": "holdout",
+      "review_domain": "",
+      "review_answerability": "",
+      "review_confidence": "",
+      "reviewer_notes": ""
+    }
+  ]
+}
